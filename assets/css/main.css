@@ -1,0 +1,80 @@
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,700;1,400&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+}
+
+* body {
+  background-color: #f3f3f3 !important;
+}
+
+* body .navbar {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 99;
+}
+
+* body .navbar .container-fluid .navbar-brand {
+  color: #ff4500;
+  font-size: 24px;
+}
+
+* body .navbar .container-fluid .navbar-collapse .navbar-nav .nav-item .dropdown a span.inisial {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  padding: 20px;
+  background-color: #ff4500 !important;
+  line-height: initial;
+}
+
+* body .navbar .container-fluid .navbar-collapse .navbar-nav .nav-item .dropdown a span.inisial span {
+  font-family: 20px;
+}
+
+* body .navbar .container-fluid .navbar-collapse .navbar-nav .nav-item .dropdown a .row #nama {
+  color: #414141;
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
+}
+
+* body .navbar .container-fluid .navbar-collapse .navbar-nav .nav-item .dropdown a .row #nama:hover {
+  color: #6f6f6f;
+}
+
+* body .navbar .container-fluid .navbar-collapse .navbar-nav .nav-item .daftar {
+  background: #ff4500;
+  border-radius: 10px;
+}
+
+* body .container section .subheading {
+  color: #ff4500;
+}
+
+* body .container #section2 .row a h6 {
+  font-size: 12px;
+}
+
+* body .container #section2 .row a div p {
+  margin: initial;
+}
+
+* body .container #section2 .row a div .lokasi,
+* body .container #section2 .row a div .penjual {
+  font-size: 11px;
+}
+
+* body .container #section2 .row a div .lokasi i,
+* body .container #section2 .row a div .penjual i {
+  color: #ff4500;
+}
+/*# sourceMappingURL=main.css.map */

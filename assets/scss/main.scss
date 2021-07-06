@@ -1,0 +1,89 @@
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,700;1,400&display=swap");
+
+$primarycolor: #ff4500;
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+
+  body {
+    background-color: #f3f3f3 !important;
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 99;
+      .container-fluid {
+        .navbar-brand {
+          color: $primarycolor;
+          font-size: 24px;
+        }
+        .navbar-collapse {
+          .navbar-nav {
+            .nav-item {
+              .dropdown {
+                a {
+                  span.inisial {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 20px;
+                    background-color: $primarycolor !important;
+                    line-height: initial;
+                    span {
+                      font-family: 20px;
+                    }
+                  }
+                  .row {
+                    #nama {
+                      color: rgb(65, 65, 65);
+                      transition: 0.3s;
+                    }
+                    #nama:hover {
+                      color: rgb(111, 111, 111);
+                    }
+                  }
+                }
+              }
+            }
+            .nav-item {
+              .daftar {
+                background: $primarycolor;
+                border-radius: 10px;
+              }
+            }
+          }
+        }
+      }
+    }
+    .container {
+      section {
+        .subheading {
+          color: $primarycolor;
+        }
+      }
+      #section2 {
+        .row {
+          a {
+            h6 {
+              font-size: 12px;
+            }
+            div {
+              p {
+                margin: initial;
+              }
+              .lokasi,
+              .penjual {
+                font-size: 11px;
+                i {
+                  color: $primarycolor;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

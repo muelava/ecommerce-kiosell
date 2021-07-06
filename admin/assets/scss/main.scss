@@ -1,0 +1,148 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Material+Icons");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
+
+#title {
+  font-family: "poppins";
+  font-size: 36px !important;
+}
+#menu {
+  font-family: "poppins";
+  li {
+    a {
+      color: black;
+      #nama {
+        font-size: 14px;
+      }
+      #sebagai {
+        font-size: 12px;
+      }
+    }
+  }
+}
+.sidebar {
+  border-right: 1px solid rgb(201, 201, 201);
+}
+.mainLoginInput,
+.btncari {
+  height: 40px;
+  padding: 0px;
+  font-size: 30px;
+  margin: 5px 0;
+}
+.btncari {
+  width: initial !important;
+  padding: 0 50px !important;
+  background-color: #a8a8a8 !important;
+  transition: 0.3s !important;
+}
+.btncari:hover {
+  background-color: initial !important;
+  color: initial !important;
+}
+
+.mainLoginInput::placeholder {
+  font-family: FontAwesome, poppins;
+  font-weight: normal;
+  overflow: visible;
+  vertical-align: top;
+  display: inline-block !important;
+  padding-left: 5px;
+  padding-top: 2px;
+  color: hsl(9, 40%, 60%);
+}
+.form-cari {
+  background-color: #f2f2f2;
+  border-radius: 15px;
+}
+.cari {
+  color: red;
+}
+#content {
+  font-family: "poppins";
+  td {
+    line-height: initial !important;
+  }
+  .delete {
+    transition: 0.3s;
+  }
+  .delete:hover {
+    color: green !important;
+  }
+  table,
+  .delete {
+    font-size: 14px;
+    padding: initial;
+  }
+  td,
+  .delete {
+    line-height: 50px;
+  }
+}
+span.inisial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  // background-color: red;
+  line-height: initial;
+  span {
+    font-family: 20px;
+  }
+}
+.waktu {
+  font-size: 10px;
+}
+div.humberger {
+  width: 20px;
+  height: 3px;
+  border-radius: 5px;
+  background-color: rgb(36, 36, 36);
+  margin: 5px 0;
+}
+.form-login {
+  margin: 15% auto;
+  width: 90%;
+}
+
+// responsive break point
+@media only screen and (max-width: 920px) {
+  #title {
+    font-size: 26px !important;
+  }
+  #menu {
+    li {
+      div {
+        a {
+          // display: block !important;
+        }
+      }
+    }
+  }
+  .sidebar {
+    display: none;
+  }
+  #content {
+    form {
+      div {
+        .form-control {
+          font-size: 0.7em;
+        }
+        .btncari {
+          padding: 0 25px !important;
+        }
+      }
+    }
+  }
+}
+
+// tab responsive
+@media (min-width: 920px) {
+  .sidebar {
+    display: initial;
+  }
+  .form-login {
+    margin: 15% auto;
+    width: 30%;
+  }
+}
