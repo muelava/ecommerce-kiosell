@@ -73,9 +73,9 @@ if (isset($_POST['publish'])) {
     $jml_barang = strip_tags($_POST['jml_barang']);
     $deskripsi = $_POST['deskripsi'];
 
-    $gambar1 = upload();
-    $gambar2 = upload();
-    $gambar3 = upload();
+    $gambar1 = upload1();
+    $gambar2 = upload2();
+    $gambar3 = upload3();
 
     if (!$gambar1) {
         return false;
@@ -89,73 +89,132 @@ if (isset($_POST['publish'])) {
 }
 
 
-function upload()
+function upload1()
 {
     $nameFile = $_FILES["gambar1"]["name"];
-    $nameFile2 = $_FILES["gambar2"]["name"];
-    $nameFile3 = $_FILES["gambar3"]["name"];
 
     $sizeFile = $_FILES["gambar1"]["size"];
-    $sizeFile2 = $_FILES["gambar2"]["size"];
-    $sizeFile3 = $_FILES["gambar3"]["size"];
 
     $error = $_FILES["gambar1"]["error"];
-    $error2 = $_FILES["gambar2"]["error"];
-    $error3 = $_FILES["gambar3"]["error"];
 
     $tmpName = $_FILES["gambar1"]["tmp_name"];
-    $tmpName2 = $_FILES["gambar2"]["tmp_name"];
-    $tmpName3 = $_FILES["gambar3"]["tmp_name"];
-
 
     if ($error === 4) {
         echo "<script>alert('Tidak ada gambar 1 yang dipilih');</script>";
-        return false;
-    } else if ($error2 === 4) {
-        echo "<script>alert('Tidak ada gambar 2 yang dipilih');</script>";
         return false;
     }
 
     $imageValid = ["jpg", "jpeg", "png"];
     $extImage = explode(".", $nameFile);
-    $extImage2 = explode(".", $nameFile2);
-    $extImage3 = explode(".", $nameFile3);
 
     $extImage = strtolower(end($extImage));
-    $extImage2 = strtolower(end($extImage2));
-    $extImage3 = strtolower(end($extImage3));
 
-    if (!in_array($extImage, $imageValid) && !in_array($extImage2, $imageValid) && !in_array($extImage3, $imageValid)) {
+    if (!in_array($extImage, $imageValid)) {
         echo "<script>alert('Yang anda upload bukan gambar');</script>";
         return false;
     }
 
-    if ($sizeFile > 2000000 && $sizeFile2 > 2000000 && $sizeFile3 > 2000000) {
+    if ($sizeFile > 2000000) {
         echo "<script>alert('File gambar terlalu besar. Maximal 2mb!');</script>";
         return false;
     }
 
     $newNameFile = uniqid();
-    $newNameFile2 = uniqid();
-    $newNameFile3 = uniqid();
 
     $newNameFile .= ".";
-    $newNameFile2 .= ".";
-    $newNameFile3 .= ".";
 
     $newNameFile .= $extImage;
-    $newNameFile2 .= $extImage2;
-    $newNameFile3 .= $extImage3;
 
     // cari jarum dalam jerami
     move_uploaded_file($tmpName, 'assets/img/post/' . $newNameFile);
-    move_uploaded_file($tmpName2, 'assets/img/post/' . $newNameFile2);
-    move_uploaded_file($tmpName3, 'assets/img/post/' . $newNameFile3);
 
     return $newNameFile;
-    return $newNameFile2;
-    return $newNameFile3;
 }
+
+function upload2()
+{
+    $nameFile = $_FILES["gambar2"]["name"];
+
+    $sizeFile = $_FILES["gambar2"]["size"];
+
+    $error = $_FILES["gambar2"]["error"];
+
+    $tmpName = $_FILES["gambar2"]["tmp_name"];
+
+    if ($error === 4) {
+        echo "<script>alert('Tidak ada gambar 1 yang dipilih');</script>";
+        return false;
+    }
+
+    $imageValid = ["jpg", "jpeg", "png"];
+    $extImage = explode(".", $nameFile);
+
+    $extImage = strtolower(end($extImage));
+
+    if (!in_array($extImage, $imageValid)) {
+        echo "<script>alert('Yang anda upload bukan gambar');</script>";
+        return false;
+    }
+
+    if ($sizeFile > 2000000) {
+        echo "<script>alert('File gambar terlalu besar. Maximal 2mb!');</script>";
+        return false;
+    }
+
+    $newNameFile = uniqid();
+
+    $newNameFile .= ".";
+
+    $newNameFile .= $extImage;
+
+    // cari jarum dalam jerami
+    move_uploaded_file($tmpName, 'assets/img/post/' . $newNameFile);
+
+    return $newNameFile;
+}
+
+function upload3()
+{
+    $nameFile = $_FILES["gambar3"]["name"];
+
+    $sizeFile = $_FILES["gambar3"]["size"];
+
+    $error = $_FILES["gambar3"]["error"];
+
+    $tmpName = $_FILES["gambar3"]["tmp_name"];
+
+    if ($error === 4) {
+        echo "<script>alert('Tidak ada gambar 1 yang dipilih');</script>";
+        return false;
+    }
+
+    $imageValid = ["jpg", "jpeg", "png"];
+    $extImage = explode(".", $nameFile);
+
+    $extImage = strtolower(end($extImage));
+
+    if (!in_array($extImage, $imageValid)) {
+        echo "<script>alert('Yang anda upload bukan gambar');</script>";
+        return false;
+    }
+
+    if ($sizeFile > 2000000) {
+        echo "<script>alert('File gambar terlalu besar. Maximal 2mb!');</script>";
+        return false;
+    }
+
+    $newNameFile = uniqid();
+
+    $newNameFile .= ".";
+
+    $newNameFile .= $extImage;
+
+    // cari jarum dalam jerami
+    move_uploaded_file($tmpName, 'assets/img/post/' . $newNameFile);
+
+    return $newNameFile;
+}
+
 
 ?>
 
@@ -269,12 +328,11 @@ function upload()
                         <label for="floatingInputInvalid">Harga</label>
                     </div>
                     <div class="mb-3 d-flex form-floating w-100">
-                        <input class="form-control" list="datalistOptions" id="exampleDataList" name="kategori">
-                        <datalist id="datalistOptions">
-                            <option value="Elektronik">
-                            <option value="Kecantikan">
-                            <option value="Pakaian">
-                        </datalist>
+                        <select class="form-select form-select-sm" aria-label="Default select example" name="kategori">
+                            <option value="Elektronik">Elektronik</option>
+                            <option value="Pakaian">Pakaian</option>
+                            <option value="Otomotif">Otomotif</option>
+                        </select>
                         <label for="floatingInputInvalid">Kategori</label>
 
                         <div class="mb-3 w-100 form-floating mx-2">

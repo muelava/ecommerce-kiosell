@@ -9,6 +9,15 @@ $primarycolor: #ff4500;
   font-family: "Poppins", sans-serif;
 
   body {
+    #btnTop {
+      position: fixed;
+      bottom: 12%;
+      right: 5%;
+      background-color: #f8f8f8;
+      color: $primarycolor;
+      z-index: 99;
+    }
+
     background-color: #f3f3f3 !important;
     .navbar {
       position: sticky;
@@ -63,9 +72,14 @@ $primarycolor: #ff4500;
           color: $primarycolor;
         }
       }
-      #section2 {
+      #section2,
+      #section3,
+      #section4 {
         .row {
           a {
+            .img-content {
+              height: 9em;
+            }
             h6 {
               font-size: 12px;
             }
@@ -79,6 +93,74 @@ $primarycolor: #ff4500;
                 i {
                   color: $primarycolor;
                 }
+              }
+            }
+          }
+        }
+      }
+    }
+    #container-produk {
+      .row {
+        .kiri {
+        }
+        .kanan {
+          .detail {
+            font-size: 14px;
+            p {
+              strong {
+                color: $primarycolor;
+              }
+            }
+            .detail-produk {
+              .tombol-show {
+                position: absolute;
+                bottom: -5%;
+                left: 10%;
+                font-size: 12px;
+                color: red;
+                cursor: pointer;
+                font-weight: bold;
+              }
+            }
+          }
+          .info-penjual {
+            .penjual {
+              p:nth-of-type(1) {
+                font-size: 16px;
+                margin-bottom: initial !important;
+              }
+              small {
+                font-size: 11px;
+              }
+              p {
+                font-size: 12px;
+                margin: initial;
+              }
+            }
+            .beli {
+              .tombol-beli {
+                border-color: $primarycolor;
+              }
+              .tombol-beli:hover {
+                background-color: $primarycolor;
+              }
+            }
+          }
+        }
+      }
+    }
+    footer {
+      .foot {
+        .container {
+          .row {
+            .foot-brand {
+              h6 {
+                color: $primarycolor;
+              }
+            }
+            div {
+              p {
+                font-size: 14px;
               }
             }
           }

@@ -10,6 +10,15 @@
   background-color: #f3f3f3 !important;
 }
 
+* body #btnTop {
+  position: fixed;
+  bottom: 12%;
+  right: 5%;
+  background-color: #f8f8f8;
+  color: #ff4500;
+  z-index: 99;
+}
+
 * body .navbar {
   position: -webkit-sticky;
   position: sticky;
@@ -60,21 +69,87 @@
   color: #ff4500;
 }
 
-* body .container #section2 .row a h6 {
+* body .container #section2 .row a .img-content,
+* body .container #section3 .row a .img-content,
+* body .container #section4 .row a .img-content {
+  height: 9em;
+}
+
+* body .container #section2 .row a h6,
+* body .container #section3 .row a h6,
+* body .container #section4 .row a h6 {
   font-size: 12px;
 }
 
-* body .container #section2 .row a div p {
+* body .container #section2 .row a div p,
+* body .container #section3 .row a div p,
+* body .container #section4 .row a div p {
   margin: initial;
 }
 
 * body .container #section2 .row a div .lokasi,
-* body .container #section2 .row a div .penjual {
+* body .container #section2 .row a div .penjual,
+* body .container #section3 .row a div .lokasi,
+* body .container #section3 .row a div .penjual,
+* body .container #section4 .row a div .lokasi,
+* body .container #section4 .row a div .penjual {
   font-size: 11px;
 }
 
 * body .container #section2 .row a div .lokasi i,
-* body .container #section2 .row a div .penjual i {
+* body .container #section2 .row a div .penjual i,
+* body .container #section3 .row a div .lokasi i,
+* body .container #section3 .row a div .penjual i,
+* body .container #section4 .row a div .lokasi i,
+* body .container #section4 .row a div .penjual i {
   color: #ff4500;
+}
+
+* body #container-produk .row .kanan .detail {
+  font-size: 14px;
+}
+
+* body #container-produk .row .kanan .detail p strong {
+  color: #ff4500;
+}
+
+* body #container-produk .row .kanan .detail .detail-produk .tombol-show {
+  position: absolute;
+  bottom: -5%;
+  left: 10%;
+  font-size: 12px;
+  color: red;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+* body #container-produk .row .kanan .info-penjual .penjual p:nth-of-type(1) {
+  font-size: 16px;
+  margin-bottom: initial !important;
+}
+
+* body #container-produk .row .kanan .info-penjual .penjual small {
+  font-size: 11px;
+}
+
+* body #container-produk .row .kanan .info-penjual .penjual p {
+  font-size: 12px;
+  margin: initial;
+}
+
+* body #container-produk .row .kanan .info-penjual .beli .tombol-beli {
+  border-color: #ff4500;
+}
+
+* body #container-produk .row .kanan .info-penjual .beli .tombol-beli:hover {
+  background-color: #ff4500;
+}
+
+* body footer .foot .container .row .foot-brand h6 {
+  color: #ff4500;
+}
+
+* body footer .foot .container .row div p {
+  font-size: 14px;
 }
 /*# sourceMappingURL=main.css.map */

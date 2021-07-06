@@ -5,7 +5,11 @@ session_start();
 
 $conn = mysqli_connect("localhost", "root", "", "kiosell");
 
-$barang = mysqli_query($conn, "SELECT *FROM barang");
+$barang = mysqli_query($conn, "SELECT *FROM barang ORDER BY id_barang DESC");
+
+$kategori_pakaian = mysqli_query($conn, "SELECT *FROM barang where kategori='pakaian' ORDER BY id_barang DESC");
+$kategori_elektro = mysqli_query($conn, "SELECT *FROM barang where kategori='elektronik' ORDER BY id_barang DESC");
+$kategori_otomotif = mysqli_query($conn, "SELECT *FROM barang where kategori='otomotif' ORDER BY id_barang DESC");
 
 $result_barang = mysqli_fetch_assoc($barang);
 
@@ -24,10 +28,17 @@ $result_barang = mysqli_fetch_assoc($barang);
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
+    <!-- jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     <title>Kiosell - Tempatnya Belanja Onine</title>
 </head>
 
 <body>
+
+    <button class="btn shadow-sm" id="btnTop">
+        <i class="fa fa-chevron-up"></i>
+    </button>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
         <div class="container-fluid mx-5">
@@ -38,13 +49,13 @@ $result_barang = mysqli_fetch_assoc($barang);
             <div class="collapse navbar-collapse" id="navbarText">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Elektronik</a>
+                        <a class="nav-link active" aria-current="page" href="#kategori">Kategori</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Pakaian</a>
+                        <a class="nav-link" href="#terbaru">Terbaru</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">About</a>
+                        <a class="nav-link" href="#otomotif">Otomotif</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav mb-2 mb-lg-0">
@@ -64,7 +75,9 @@ $result_barang = mysqli_fetch_assoc($barang);
                                         <span class='text-uppercase position-absolute fw-bold coba'><?= substr($_SESSION["login"], 0, 1);; ?></span>
                                     </span>
                                     <div class="row">
-                                        <span class="ms-1 text-capitalize fw-bold" id="nama"><?= $_SESSION["login"]; ?> <img src="assets/img/check-verifed.png" alt="" width="16"> <i class="fa fa-chevron-down"></i></span>
+                                        <span class="ms-1 text-capitalize fw-bold" id="nama"><?= $_SESSION["login"]; ?> <?php if ($_SESSION["status"] == "admin") {
+                                                                                                                            echo '<img src="admin/assets/img/check-verifed.png" alt="" width="16">';
+                                                                                                                        } ?> <i class="fa fa-chevron-down"></i></span>
                                     </div>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-light text-small border-0 shadow-sm">
@@ -123,27 +136,29 @@ $result_barang = mysqli_fetch_assoc($barang);
         </div>
 
         <section id="section1" class="mt-5">
-            <h5 class="fw-bold mb-4 subheading">Kategori Pilihan</h5>
+            <h5 class="fw-bold mb-4 subheading" id="kategori">Kategori Pilihan</h5>
             <div class="row">
                 <div class="col">
-                    <a class="btn shadow-sm fw-bold py-0 px-4 mx-2 mb-3" href="#">Elektronik</a>
-                    <a class="btn shadow-sm fw-bold py-0 px-4 mx-2 mb-3" href="#">Kecantikan</a>
-                    <a class="btn shadow-sm fw-bold py-0 px-4 mx-2 mb-3" href="#">Pakaian</a>
+                    <a class="btn shadow-sm fw-bold py-0 px-4 mx-2 mb-3" href="#pakaian">Pakaian</a>
+                    <a class="btn shadow-sm fw-bold py-0 px-4 mx-2 mb-3" href="#elektronik">Elektronik</a>
+                    <a class="btn shadow-sm fw-bold py-0 px-4 mx-2 mb-3" href="#otomotif">Otomotif</a>
                 </div>
             </div>
         </section>
 
         <section id="section2" class="mt-5">
-            <h5 class="fw-bold mb-4 subheading">Paling Terbaru</h5>
+            <h5 class="fw-bold mb-4 subheading" id="terbaru">Terbaru</h5>
             <div class="row">
-                <?php foreach ($barang as $rst_barang) : ?>
-                    <a href="#" class="btn shadow col-sm-2">
-                        <img class="img-fluid" width="100" src="admin/assets/img/post/60e2cea315190.jpg" alt="">
-                        <h6 class="my-3"><?= $rst_barang["nama_barang"]; ?></h6>
+                <?php foreach ($barang as $rst_terbaru) : ?>
+                    <a href="produk?id=<?= $rst_terbaru['id_barang'] ?>" target="_blank" class="btn shadow-sm col-sm-2">
+                        <div class="img-content">
+                            <img class="img-fluid" width="100" src="admin/assets/img/post/<?= $rst_terbaru['gambar1'] ?>" alt="">
+                        </div>
+                        <h6 class="my-3"><?= $rst_terbaru["nama_barang"]; ?></h6>
                         <div class="text-start">
-                            <p class="fw-bold harga mb-2">Rp <?= $rst_barang["harga"]; ?></p>
+                            <p class="fw-bold harga mb-2">Rp <?= number_format($rst_terbaru["harga"], 0, ',', '.'); ?></p>
                             <?php
-                            $id_admin = $rst_barang["id_admin"];
+                            $id_admin = $rst_terbaru["id_admin"];
                             $query = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");
                             $result = mysqli_fetch_assoc($query);
                             ?>
@@ -156,12 +171,148 @@ $result_barang = mysqli_fetch_assoc($barang);
         </section>
 
         <section id="section3" class="mt-5">
-            <h5 class="fw-bold mb-4 subheading">Terlaris</h5>
+            <h5 class="fw-bold mb-4 subheading" id="pakaian">Pakaian</h5>
+            <div class="row">
+                <?php foreach ($kategori_pakaian as $pakaian) : ?>
+                    <a href="produk?id=<?= $pakaian['id_barang'] ?>" class="btn shadow-sm col-sm-2">
+                        <div class="img-content">
+                            <img class="img-fluid" width="100" src="admin/assets/img/post/<?= $pakaian['gambar1'] ?>" alt="">
+                        </div>
+                        <h6 class="my-3"><?= $pakaian["nama_barang"]; ?></h6>
+                        <div class="text-start">
+                            <p class="fw-bold harga mb-2">Rp <?= number_format($pakaian["harga"], 0, ',', '.'); ?></p>
+                            <?php
+                            $id_admin = $pakaian["id_admin"];
+                            $query = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");
+                            $result = mysqli_fetch_assoc($query);
+                            ?>
+                            <p class="lokasi mb-1"><i class="fa fa-user"></i> <?= $result["username"]; ?></p>
+                            <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $result["alamat"]; ?></p>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        </section>
 
+        <section id="section4" class="mt-5">
+            <h5 class="fw-bold mb-4 subheading">Elektronik</h5>
+            <div class="row">
+                <?php foreach ($kategori_elektro as $elektronik) : ?>
+                    <a href="produk?id=<?= $elektronik['id_barang'] ?>" class="btn shadow-sm col-sm-2">
+                        <div class="img-content">
+                            <img class="img-fluid" width="100" src="admin/assets/img/post/<?= $elektronik['gambar1'] ?>" alt="">
+                        </div>
+                        <h6 class="my-3"><?= $elektronik["nama_barang"]; ?></h6>
+                        <div class="text-start">
+                            <p class="fw-bold harga mb-2">Rp <?= number_format($elektronik["harga"], 0, ',', '.'); ?></p>
+                            <?php
+                            $id_admin = $elektronik["id_admin"];
+                            $query = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");
+                            $result = mysqli_fetch_assoc($query);
+                            ?>
+                            <p class="lokasi mb-1"><i class="fa fa-user"></i> <?= $result["username"]; ?></p>
+                            <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $result["alamat"]; ?></p>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        </section>
+
+        <section id="section4" class="mt-5">
+            <h5 class="fw-bold mb-4 subheading" id="otomotif">Otomotif</h5>
+            <div class="row">
+                <?php foreach ($kategori_otomotif as $otomotif) : ?>
+                    <a href="produk?id=<?= $otomotif['id_barang'] ?>" class="btn shadow-sm col-sm-2">
+                        <div class="img-content">
+                            <img class="img-fluid" width="100" src="admin/assets/img/post/<?= $otomotif['gambar1'] ?>" alt="">
+                        </div>
+                        <h6 class="my-3"><?= $otomotif["nama_barang"]; ?></h6>
+                        <div class="text-start">
+                            <p class="fw-bold harga mb-2">Rp <?= number_format($otomotif["harga"], 0, ',', '.'); ?></p>
+                            <?php
+                            $id_admin = $otomotif["id_admin"];
+                            $query = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");
+                            $result = mysqli_fetch_assoc($query);
+                            ?>
+                            <p class="lokasi mb-1"><i class="fa fa-user"></i> <?= $result["username"]; ?></p>
+                            <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $result["alamat"]; ?></p>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            </div>
         </section>
     </div>
 
+
+    <!-- Footer -->
+    <footer class="text-center text-lg-start bg-light text-muted">
+        <hr class="my-5">
+        <!-- Section: Links  -->
+        <section class="foot">
+            <div class="container text-center text-md-start mt-5">
+                <!-- Grid row -->
+                <div class="row mt-3">
+                    <!-- Grid column -->
+                    <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4 foot-brand">
+                        <!-- Content -->
+                        <h6 class="text-capitlize fw-bold mb-4">Kiosell</h6>
+                        <p>
+                            Nikmati kebebasan dan dapatkan semua kebutuhan anda.
+                        </p>
+                    </div>
+                    <!-- Grid column -->
+
+                    <!-- Grid column -->
+                    <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+                        <!-- Links -->
+                        <h6 class="text-capitalize fw-bold mb-4">
+                            Support
+                        </h6>
+                        <p>
+                            <a href="#!" class="text-reset">Bantuan</a>
+                        </p>
+                        <p>
+                            <a href="#!" class="text-reset">About</a>
+                        </p>
+                        <p>
+                            <a href="#!" class="text-reset">Syarat & Ketentuan</a>
+                        </p>
+                    </div>
+                    <!-- Grid column -->
+
+                    <!-- Grid column -->
+                    <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+                        <!-- Links -->
+                        <h6 class="text-capitalize fw-bold mb-4">
+                            Sosial Media
+                        </h6>
+                        <p><i class="fa fa-facebook me-3 fa-2x text-primary"></i>Hokisell
+                        </p>
+                        <p>
+                            <i class="fa fa-instagram fa-2x me-3 text-danger"></i>Hokisell
+                        </p>
+                        <p><i class="fa fa-whatsapp me-3 fa-2x text-success"></i>082115100979</p>
+                    </div>
+                    <!-- Grid column -->
+                </div>
+                <!-- Grid row -->
+            </div>
+        </section>
+        <!-- Section: Links  -->
+        <!-- Copyright -->
+        <div class="text-center p-4">
+            © 2021 Copyright :
+            <a class="text-reset fw-bold" href="https://muelava.github.io" target="_blank">Muelava</a>
+        </div>
+        <!-- Copyright -->
+    </footer>
+    <!-- Footer -->
+
+
+
     <!-- Optional JavaScript; choose one of the two! -->
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/jquery.easing.1.3.js"></script>
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
