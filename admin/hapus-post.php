@@ -1,5 +1,16 @@
 <?php
 
+session_start();
+
+if (!isset($_SESSION["login"])) {
+    header("Location: ../login");
+    return false;
+} elseif ($_SESSION["status"] != "admin") {
+    header("Location: index");
+    return false;
+}
+
+
 $conn = mysqli_connect('localhost', 'root', '', 'kiosell');
 
 $id_barang = $_GET["id_post"];

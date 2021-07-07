@@ -1,5 +1,15 @@
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,700;1,400&display=swap");
+#mycolor-text {
+  color: #ff4500;
+}
+
+#mycolor-bg {
+  background-color: #ff4500;
+  border: none;
+  color: white !important;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -78,7 +88,7 @@
 * body .container #section2 .row a h6,
 * body .container #section3 .row a h6,
 * body .container #section4 .row a h6 {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 * body .container #section2 .row a div p,
@@ -102,6 +112,19 @@
 * body .container #section3 .row a div .penjual i,
 * body .container #section4 .row a div .lokasi i,
 * body .container #section4 .row a div .penjual i {
+  color: #ff4500;
+}
+
+* body .container #section2 .row a div .stok,
+* body .container #section3 .row a div .stok,
+* body .container #section4 .row a div .stok {
+  text-align: end !important;
+  font-size: 11px;
+}
+
+* body .container #section2 .row a div .stok strong,
+* body .container #section3 .row a div .stok strong,
+* body .container #section4 .row a div .stok strong {
   color: #ff4500;
 }
 

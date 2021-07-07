@@ -65,15 +65,12 @@ if ($_SESSION["status"] === "admin") {
                                     </div>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-light text-small border-0 shadow-sm">
-                                    <li class="py-1">
-                                        <a class="dropdown-item" href="admin"><i class="fa fa-columns"></i> Profile</a>
-                                    </li>
                                     <?php if ($_SESSION["status"] == "user") : ?>
                                         <li class="py-1">
-                                            <a class="dropdown-item" href="akun"><i class="fa fa-user-circle"></i> Akun</a>
+                                            <a class="dropdown-item" href="akun?id_user=<?= $result["id_user"] ?>"><i class="fa fa-user-circle"></i> Akun</a>
                                         </li>
                                         <li class="py-1">
-                                            <a class="dropdown-item" href="edit-akun"><i class="fa fa-edit"></i> Edit Akun</a>
+                                            <a class="dropdown-item" href="edit-akun?id_user=<?= $result["id_user"] ?>"><i class="fa fa-edit"></i> Edit Akun</a>
                                         </li>
                                     <?php endif; ?>
                                     <li class="py-1">

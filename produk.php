@@ -5,9 +5,14 @@ $id_barang = $_GET["id"];
 
 $conn = mysqli_connect("localhost", "root", "", "kiosell");
 
+// cari barang
 $barang = mysqli_query($conn, "SELECT *FROM barang where id_barang = '$id_barang' ORDER BY id_barang DESC");
-
 $result = mysqli_fetch_assoc($barang);
+
+// dapatkan kategori barang
+$kategori = $result["kategori"];
+$barang_ktgr = mysqli_query($conn, "SELECT *FROM barang where kategori = '$kategori' ORDER BY id_barang DESC");
+
 
 $id_admin = $result["id_admin"];
 
@@ -83,12 +88,14 @@ $result_admin = mysqli_fetch_assoc($admin);
                                     <li class="py-1">
                                         <a class="dropdown-item" href="admin"><i class="fa fa-columns"></i> Dashboard</a>
                                     </li>
-                                    <?php if ($_SESSION["status"] == "user") : ?>
+                                    <?php if ($_SESSION["status"] == "user") :
+                                        $username = $_SESSION['login'];
+                                        $user = mysqli_query($conn, "SELECT *FROM user WHERE username = '$username'");
+                                        $result_user = mysqli_fetch_assoc($user);
+                                    ?>
                                         <li class="py-1">
-                                            <a class="dropdown-item" href="akun"><i class="fa fa-user-circle"></i> Akun</a>
-                                        </li>
-                                        <li class="py-1">
-                                            <a class="dropdown-item" href="edit-akun"><i class="fa fa-edit"></i> Edit Akun</a>
+                                            <a class="dropdown-item" href="admin/akun?id_user=<?= $result_user["id_user"] ?>"><i class="fa fa-user-circle"></i> Akun</a>
+
                                         </li>
                                     <?php endif; ?>
                                     <li class="py-1">
@@ -144,7 +151,7 @@ $result_admin = mysqli_fetch_assoc($admin);
                     <p>Kondisi : <strong><?= $result["kondisi"]; ?></strong></p>
                     <p>Stok : <strong><?= $result["jml_barang"]; ?></strong></p>
                     <p>Kategori : <strong><?= $result["kategori"]; ?></strong></p>
-                    <p class="mb-5">Di Post. <span><?= $result["wkt_post"]; ?></span></p>
+                    <p class="mb-5 text-secondary">Di Post. <span><?= $result["wkt_post"]; ?></span></p>
                     <div class="detail-produk" style="max-height: 300px; overflow:hidden; position:relative">
                         <?= $result["deskripsi"]; ?>
                         <p class="tombol-show">Lihat Selengkapnya <i class="fa fa-chevron-down"></i></p>
@@ -168,19 +175,20 @@ $result_admin = mysqli_fetch_assoc($admin);
         <section id="section2" class="mt-5">
             <h5 class="fw-bold mb-4 subheading" id="terbaru">Produk Lainnya</h5>
             <div class="row">
-                <?php foreach ($barang as $rst_terbaru) : ?>
+                <?php foreach ($barang_ktgr as $rst_terbaru) : ?>
                     <a href="produk?id=<?= $rst_terbaru['id_barang'] ?>" target="_blank" class="btn shadow-sm col-sm-2">
                         <div class="img-content">
                             <img class="img-fluid" width="100" src="admin/assets/img/post/<?= $rst_terbaru['gambar1'] ?>" alt="">
                         </div>
                         <h6 class="my-3"><?= $rst_terbaru["nama_barang"]; ?></h6>
                         <div class="text-start">
-                            <p class="fw-bold harga mb-2">Rp <?= number_format($rst_terbaru["harga"], 0, ',', '.'); ?></p>
+                            <p class="fw-bold harga">Rp <?= number_format($rst_terbaru["harga"], 0, ',', '.'); ?></p>
                             <?php
                             $id_admin = $rst_terbaru["id_admin"];
                             $query = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");
                             $result = mysqli_fetch_assoc($query);
                             ?>
+                            <p class="stok">Stok : <strong><?= $rst_terbaru["jml_barang"]; ?></strong> </p>
                             <p class="lokasi mb-1"><i class="fa fa-user"></i> <?= $result["username"]; ?></p>
                             <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $result["alamat"]; ?></p>
                         </div>

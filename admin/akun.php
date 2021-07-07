@@ -5,23 +5,23 @@ session_start();
 
 if (!isset($_SESSION["login"])) {
     header("Location: ../login");
+    return false;
 }
 
 
+// ambil id user dari get
+$id_user = $_GET["id_user"];
+
+// ambil id use dari session
 $username = $_SESSION["login"];
+
 
 $conn = mysqli_connect("localhost", "root", "", "kiosell");
 
 
-if ($_SESSION["status"] === "admin") {
-    $admin = mysqli_query($conn, "SELECT *FROM admin WHERE username = '$username'");
-    $result  = mysqli_fetch_assoc($admin);
-} else {
-    $user = mysqli_query($conn, "SELECT *FROM user WHERE username = '$username'");
-    $result  = mysqli_fetch_assoc($user);
-}
-
-
+// cari user
+$user = mysqli_query($conn, "SELECT *FROM user WHERE id_user = '$id_user'");
+$result = mysqli_fetch_assoc($user);
 
 
 ?>
@@ -33,7 +33,7 @@ if ($_SESSION["status"] === "admin") {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin</title>
+    <title>Pemberitahuan</title>
 
     <script src="assets/js/main.js"></script>
 
@@ -67,10 +67,10 @@ if ($_SESSION["status"] === "admin") {
                                 <ul class="dropdown-menu dropdown-menu-light text-small border-0 shadow-sm">
                                     <?php if ($_SESSION["status"] == "user") : ?>
                                         <li class="py-1">
-                                            <a class="dropdown-item" href="akun?id_user=<?= $result['id_user'] ?>"><i class="fa fa-user-circle"></i> Akun</a>
+                                            <a class="dropdown-item" href="akun?id_user=<?= $result["id_user"] ?>"><i class="fa fa-user-circle"></i> Akun</a>
                                         </li>
                                         <li class="py-1">
-                                            <a class="dropdown-item" href="edit-akun"><i class="fa fa-edit"></i> Edit Akun</a>
+                                            <a class="dropdown-item" href="edit-akun?id_user=<?= $result["id_user"] ?>"><i class="fa fa-edit"></i> Edit Akun</a>
                                         </li>
                                     <?php endif; ?>
                                     <li class="py-1">
@@ -117,11 +117,54 @@ if ($_SESSION["status"] === "admin") {
             </span>
 
             <div class="col py-3 mt-5" id="content">
-                <h2 class="pt-5 text-capitalize">Hello, <b><?= $result["username"]; ?>!</b></h2>
-                <br>
-                <p>Ingat! Segudang uang tidak akan mampu membeli kesempatan kedua. <strong>Enjoyy!!</strong></p>
-                <a href="../">get Home</a> for check!
 
+                <h2 class="py-5 text-capitalize">Data <b><?= $result["status"]; ?></b></h2>
+
+                <table class="table table-borderless">
+                    <thead>
+                        <tr>
+                            <td>Nama</td>
+                            <td>:</td>
+                            <td class="text-capitalize fw-bold"><?= $result["nama_user"]; ?></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Username</td>
+                            <td>:</td>
+                            <td><?= $result["username"]; ?></td>
+                        </tr>
+                        <tr>
+                            <td>Email</td>
+                            <td>:</td>
+                            <td class="fw-bold"><?= $result["email"]; ?></td>
+                        </tr>
+                        <tr>
+                            <td>Nomor Hp</td>
+                            <td>:</td>
+                            <td class="fw-bold"><?= $result["nomor_hp"]; ?></td>
+                        </tr>
+                        <tr>
+                            <td>Alamat</td>
+                            <td>:</td>
+                            <td class="text-capitalize fw-bold"><?= $result["alamat"]; ?></td>
+                        </tr>
+                        <tr>
+                            <td>Status</td>
+                            <td>:</td>
+                            <td class="text-capitalize"><?= $result["status"]; ?></td>
+                        </tr>
+                        <tr>
+                            <td>Waktu Registrasi</td>
+                            <td>:</td>
+                            <td><?= $result["wkt_register"]; ?></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <?php if ($_SESSION["status"] == "admin") : ?>
+                    <a class="btn btn-danger text-" href="hapus-user?id_user=<?= $result['id_user']; ?>" title="Hapus <?= $result['id_user']; ?>" onclick=" return confirm('Yakin Ingin Menghapus <?= $result["nama_user"] ?>  ?')">Hapus</a>
+                <?php endif; ?>
 
             </div>
         </div>

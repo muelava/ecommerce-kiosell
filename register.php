@@ -9,36 +9,33 @@ if (isset($_SESSION["login"])) {
 $conn = mysqli_connect("localhost", "root", "", "kiosell");
 
 
-if (isset($_POST["login"])) {
+if (isset($_POST["register"])) {
+    $nama_user = $_POST["nama_depan"] . " " . $_POST["nama_belakang"];
     $username = $_POST["username"];
+    $email = $_POST["email"];
+    $nomor_hp = $_POST["nomor_hp"];
+    $alamat = $_POST["alamat"];
     $password = $_POST["password"];
+    $konfirm_password = $_POST["konfirm_password"];
 
-    $result = mysqli_query($conn, "SELECT * FROM admin WHERE username = '$username' or email = '$username'");
+    $result = mysqli_query($conn, "SELECT username FROM user WHERE username = '$username'");
 
-    if (mysqli_num_rows($result) === 1) {
-        $row = mysqli_fetch_assoc($result);
-
-        if ($password === $row["password"]) {
-            header("Location: admin");
-            $_SESSION["login"] = $username;
-            $_SESSION["status"] = $row["status"];
-            exit;
-        }
-    } else {
-        $result = mysqli_query($conn, "SELECT * FROM user WHERE username = '$username' or email = '$username'");
-
-        if (mysqli_num_rows($result) === 1) {
-            $row = mysqli_fetch_assoc($result);
-
-            if ($password === $row["password"]) {
-                header("Location: admin");
-                $_SESSION["login"] = $username;
-                $_SESSION["status"] = $row["status"];
-                exit;
-            }
-        }
+    if (mysqli_fetch_assoc($result)) {
+        echo "<script>alert('Username telah digunakan'); document.location.href = 'register'</script>";
+        return false;
     }
-    $error = true;
+
+    if ($password != $konfirm_password) {
+        echo "<script>alert('Password tidak sesuai'); document.location.href = 'register'</script>";
+        return false;
+    }
+
+    $password = password_hash($password, PASSWORD_DEFAULT);
+
+    mysqli_query($conn, "INSERT INTO user VALUES('','$nama_user','$username','$email','$nomor_hp',' ','$alamat','$password','user','sekarang')");
+
+    echo "<script>alert('Berhasil Regitrasi. Silakan Login!'); document.location.href = 'login'</script>";
+    return mysqli_affected_rows($conn);
 }
 
 ?>
@@ -51,7 +48,7 @@ if (isset($_POST["login"])) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Register</title>
     <link rel="stylesheet" href="admin/assets/css/main.css">
 
 
@@ -84,8 +81,8 @@ if (isset($_POST["login"])) {
                 </ul>
                 <ul class="navbar-nav mb-2 mb-lg-0">
                     <?php if (!isset($_SESSION["login"])) : ?>
-                        <li class="nav-item ">
-                            <a class="nav-link text-white fw-bold btn daftar" href="register">Daftar</a>
+                        <li class="nav-item pe-3">
+                            <a class="nav-link" href="login">Login</a>
                         </li>
                     <?php else : ?>
 
@@ -127,15 +124,20 @@ if (isset($_POST["login"])) {
     </nav>
 
     <!-- container -->
-    <h4 class="text-center mt-5">Selamat Datang Di <strong>Kiosell</strong></h4>
-    <p class="text-center">Tempat membuang-buang uang. Jangan kesini jika belum waktu <b>gajian</b>, <br> karena kami tidak bertanggung jawab apabila anda membeli <br> banyak <b>barang</b> yang sebenarnya tidak diperlukan.</p>
+    <h4 class="text-center mt-5">Selamat Datang <strong>Register</strong></h4>
 
     <form action="" method="POST" class="form-login">
         <ul style="list-style: none;" class="p-0">
-            <li><input type="text" class="form-control" placeholder="username atau email" name="username" autofocus required></li><br>
-            <li><input type="password" class="form-control" placeholder="password" name="password" required></li><br>
-            <button name="login" class="btn w-100 mb-3" id="mycolor-bg" type="submit">Login</button>
-            <a href="register">Belum Punya Akun ?</a>
+            <li><input type="text" class="form-control" placeholder="Nama Depan" name="nama_depan" autofocus required></li><br>
+            <li><input type="text" class="form-control" placeholder="Nama Belakang" name="nama_belakang"></li><br>
+            <li><input type="text" class="form-control" placeholder="Username" name="username"></li><br>
+            <li><input type="email" class="form-control" placeholder="Email" name="email"></li><br>
+            <li><input type="text" class="form-control" placeholder="Nomor Hp/WhatsApp" name="nomor_hp"></li><br>
+            <li><input type="text" class="form-control" placeholder="Alamat" name="alamat"></li><br>
+            <li><input type="password" class="form-control" placeholder="password" name="password"></li><br>
+            <li><input type="password" class="form-control" placeholder="Konfirmasi Password" name="konfirm_password"></li><br>
+            <button name="register" class="btn w-100 mb-3" id="mycolor-bg" type="submit">Register</button>
+            <a href="login">Sudah Punya Akun ?</a>
         </ul>
     </form>
 

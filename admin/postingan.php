@@ -4,8 +4,13 @@
 session_start();
 
 if (!isset($_SESSION["login"])) {
-    header("Location: login");
+    header("Location: ../login");
+    return false;
+} elseif ($_SESSION["status"] != "admin") {
+    header("Location: index");
+    return false;
 }
+
 
 $username = $_SESSION["login"];
 
@@ -90,12 +95,8 @@ if ($_SESSION["status"] === "admin") {
                                         <span class="ms-1" id="sebagai"><?= $result["status"]; ?></span>
                                     </div>
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-light text-small shadow">
-                                    <li><a class="dropdown-item" href="#">Profile</a></li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li><a class="dropdown-item" href="logout">Sign out</a></li>
+                                <ul class="dropdown-menu dropdown-menu-light text-small border-0 shadow-sm">
+                                    <li><a class="dropdown-item text-danger" href="logout"> <i class="fa fa-sign-out"></i> Keluar</a></li>
                                 </ul>
                             </div>
                         </li>

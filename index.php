@@ -84,12 +84,13 @@ $result_barang = mysqli_fetch_assoc($barang);
                                     <li class="py-1">
                                         <a class="dropdown-item" href="admin"><i class="fa fa-columns"></i> Dashboard</a>
                                     </li>
-                                    <?php if ($_SESSION["status"] == "user") : ?>
+                                    <?php if ($_SESSION["status"] == "user") :
+                                        $username = $_SESSION['login'];
+                                        $user = mysqli_query($conn, "SELECT *FROM user WHERE username = '$username'");
+                                        $result_user = mysqli_fetch_assoc($user);
+                                    ?>
                                         <li class="py-1">
-                                            <a class="dropdown-item" href="akun"><i class="fa fa-user-circle"></i> Akun</a>
-                                        </li>
-                                        <li class="py-1">
-                                            <a class="dropdown-item" href="edit-akun"><i class="fa fa-edit"></i> Edit Akun</a>
+                                            <a class="dropdown-item" href="admin/akun?id_user=<?= $result_user["id_user"] ?>"><i class="fa fa-user-circle"></i> Akun</a>
                                         </li>
                                     <?php endif; ?>
                                     <li class="py-1">
@@ -152,16 +153,18 @@ $result_barang = mysqli_fetch_assoc($barang);
                 <?php foreach ($barang as $rst_terbaru) : ?>
                     <a href="produk?id=<?= $rst_terbaru['id_barang'] ?>" class="btn shadow-sm col-sm-2">
                         <div class="img-content">
-                            <img class="img-fluid" width="100" src="admin/assets/img/post/<?= $rst_terbaru['gambar1'] ?>" alt="">
+                            <img class="img-fluid" width="120" src="admin/assets/img/post/<?= $rst_terbaru['gambar1'] ?>" alt="">
                         </div>
                         <h6 class="my-3"><?= $rst_terbaru["nama_barang"]; ?></h6>
                         <div class="text-start">
-                            <p class="fw-bold harga mb-2">Rp <?= number_format($rst_terbaru["harga"], 0, ',', '.'); ?></p>
+                            <p class="fw-bold harga">Rp <?= number_format($rst_terbaru["harga"], 0, ',', '.'); ?></p>
                             <?php
                             $id_admin = $rst_terbaru["id_admin"];
-                            $query = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");
+                            $query = mysqli_query($conn, "SELECT *FROM admin WHERE id_admin = '$id_admin'");
                             $result = mysqli_fetch_assoc($query);
                             ?>
+
+                            <p class="stok">Stok : <strong><?= $rst_terbaru["jml_barang"]; ?></strong> </p>
                             <p class="lokasi mb-1"><i class="fa fa-user"></i> <?= $result["username"]; ?></p>
                             <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $result["alamat"]; ?></p>
                         </div>
@@ -176,16 +179,17 @@ $result_barang = mysqli_fetch_assoc($barang);
                 <?php foreach ($kategori_pakaian as $pakaian) : ?>
                     <a href="produk?id=<?= $pakaian['id_barang'] ?>" class="btn shadow-sm col-sm-2">
                         <div class="img-content">
-                            <img class="img-fluid" width="100" src="admin/assets/img/post/<?= $pakaian['gambar1'] ?>" alt="">
+                            <img class="img-fluid" width="120" src="admin/assets/img/post/<?= $pakaian['gambar1'] ?>" alt="">
                         </div>
                         <h6 class="my-3"><?= $pakaian["nama_barang"]; ?></h6>
                         <div class="text-start">
-                            <p class="fw-bold harga mb-2">Rp <?= number_format($pakaian["harga"], 0, ',', '.'); ?></p>
+                            <p class="fw-bold harga">Rp <?= number_format($pakaian["harga"], 0, ',', '.'); ?></p>
                             <?php
                             $id_admin = $pakaian["id_admin"];
                             $query = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");
                             $result = mysqli_fetch_assoc($query);
                             ?>
+                            <p class="stok">Stok : <strong><?= $rst_terbaru["jml_barang"]; ?></strong> </p>
                             <p class="lokasi mb-1"><i class="fa fa-user"></i> <?= $result["username"]; ?></p>
                             <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $result["alamat"]; ?></p>
                         </div>
@@ -200,16 +204,17 @@ $result_barang = mysqli_fetch_assoc($barang);
                 <?php foreach ($kategori_elektro as $elektronik) : ?>
                     <a href="produk?id=<?= $elektronik['id_barang'] ?>" class="btn shadow-sm col-sm-2">
                         <div class="img-content">
-                            <img class="img-fluid" width="100" src="admin/assets/img/post/<?= $elektronik['gambar1'] ?>" alt="">
+                            <img class="img-fluid" width="120" src="admin/assets/img/post/<?= $elektronik['gambar1'] ?>" alt="">
                         </div>
                         <h6 class="my-3"><?= $elektronik["nama_barang"]; ?></h6>
                         <div class="text-start">
-                            <p class="fw-bold harga mb-2">Rp <?= number_format($elektronik["harga"], 0, ',', '.'); ?></p>
+                            <p class="fw-bold harga">Rp <?= number_format($elektronik["harga"], 0, ',', '.'); ?></p>
                             <?php
                             $id_admin = $elektronik["id_admin"];
                             $query = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");
                             $result = mysqli_fetch_assoc($query);
                             ?>
+                            <p class="stok">Stok : <strong><?= $rst_terbaru["jml_barang"]; ?></strong> </p>
                             <p class="lokasi mb-1"><i class="fa fa-user"></i> <?= $result["username"]; ?></p>
                             <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $result["alamat"]; ?></p>
                         </div>
@@ -224,16 +229,17 @@ $result_barang = mysqli_fetch_assoc($barang);
                 <?php foreach ($kategori_otomotif as $otomotif) : ?>
                     <a href="produk?id=<?= $otomotif['id_barang'] ?>" class="btn shadow-sm col-sm-2">
                         <div class="img-content">
-                            <img class="img-fluid" width="100" src="admin/assets/img/post/<?= $otomotif['gambar1'] ?>" alt="">
+                            <img class="img-fluid" width="120" src="admin/assets/img/post/<?= $otomotif['gambar1'] ?>" alt="">
                         </div>
                         <h6 class="my-3"><?= $otomotif["nama_barang"]; ?></h6>
                         <div class="text-start">
-                            <p class="fw-bold harga mb-2">Rp <?= number_format($otomotif["harga"], 0, ',', '.'); ?></p>
+                            <p class="fw-bold harga">Rp <?= number_format($otomotif["harga"], 0, ',', '.'); ?></p>
                             <?php
                             $id_admin = $otomotif["id_admin"];
                             $query = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");
                             $result = mysqli_fetch_assoc($query);
                             ?>
+                            <p class="stok">Stok : <strong><?= $rst_terbaru["jml_barang"]; ?></strong> </p>
                             <p class="lokasi mb-1"><i class="fa fa-user"></i> <?= $result["username"]; ?></p>
                             <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $result["alamat"]; ?></p>
                         </div>

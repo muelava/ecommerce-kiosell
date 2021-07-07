@@ -4,8 +4,13 @@
 session_start();
 
 if (!isset($_SESSION["login"])) {
-    header("Location: login");
+    header("Location: ../login");
+    return false;
+} elseif ($_SESSION["status"] != "admin") {
+    header("Location: index");
+    return false;
 }
+
 
 // ambil id barang
 $id_barang = $_GET["id_post"];
@@ -299,12 +304,8 @@ function upload3()
                                         <span class="ms-1" id="sebagai"><?= $_SESSION["status"] ?></span>
                                     </div>
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-light text-small shadow">
-                                    <li><a class="dropdown-item" href="#">Profile</a></li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li><a class="dropdown-item" href="logout">Sign out</a></li>
+                                <ul class="dropdown-menu dropdown-menu-light text-small border-0 shadow-sm">
+                                    <li><a class="dropdown-item text-danger" href="logout"> <i class="fa fa-sign-out"></i> Keluar</a></li>
                                 </ul>
                             </div>
                         </li>
@@ -403,7 +404,10 @@ function upload3()
                     <input type="hidden" name="gambar3Lama" value="<?= $result_barang['gambar3'] ?>">
                     <!-- end ambil gambar lama -->
 
-                    <button type="submit" class="btn btn-primary w-100" name="Update">Update</button>
+                    <div class="row justify-content-around">
+                        <a href="postingan" class="btn btn-outline-secondary col-md-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary col-md-3" name="Update">Publish</button>
+                    </div>
 
                 </form>
 
