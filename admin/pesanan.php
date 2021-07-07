@@ -105,7 +105,7 @@ if ($_SESSION["status"] === "admin") {
                             </li>
                         <?php else : ?>
                             <li>
-                                <a href="pesanan" class="nav-link px-0 align-middle" style="opacity: .5;">
+                                <a href="pesanan" class="nav-link px-0 align-middle">
                                     <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_shopping_cart_black_24dp.png" class="me-2" width="35" alt=""> Pesanan</span></a>
                             </li>
                         <?php endif; ?>
@@ -120,11 +120,7 @@ if ($_SESSION["status"] === "admin") {
             </span>
 
             <div class="col py-3 mt-5" id="content">
-                <h2 class="pt-5 text-capitalize">Hello, <b><?= $result["username"]; ?>!</b></h2>
-                <br>
-                <p>Ingat! Segudang uang tidak akan mampu membeli kesempatan kedua. <strong>Enjoyy!!</strong></p>
-                <a href="../">get Home</a> for check!
-
+                <h2 class="pt-5 text-capitalize">Belum ada <b>Pesanan!</b></h2>
 
             </div>
         </div>

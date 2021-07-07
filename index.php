@@ -150,7 +150,7 @@ $result_barang = mysqli_fetch_assoc($barang);
             <h5 class="fw-bold mb-4 subheading" id="terbaru">Terbaru</h5>
             <div class="row">
                 <?php foreach ($barang as $rst_terbaru) : ?>
-                    <a href="produk?id=<?= $rst_terbaru['id_barang'] ?>" target="_blank" class="btn shadow-sm col-sm-2">
+                    <a href="produk?id=<?= $rst_terbaru['id_barang'] ?>" class="btn shadow-sm col-sm-2">
                         <div class="img-content">
                             <img class="img-fluid" width="100" src="admin/assets/img/post/<?= $rst_terbaru['gambar1'] ?>" alt="">
                         </div>
@@ -195,7 +195,7 @@ $result_barang = mysqli_fetch_assoc($barang);
         </section>
 
         <section id="section4" class="mt-5">
-            <h5 class="fw-bold mb-4 subheading">Elektronik</h5>
+            <h5 class="fw-bold mb-4 subheading" id="elektronik">Elektronik</h5>
             <div class="row">
                 <?php foreach ($kategori_elektro as $elektronik) : ?>
                     <a href="produk?id=<?= $elektronik['id_barang'] ?>" class="btn shadow-sm col-sm-2">

@@ -5,7 +5,7 @@ $id_barang = $_GET["id"];
 
 $conn = mysqli_connect("localhost", "root", "", "kiosell");
 
-$barang = mysqli_query($conn, "SELECT *FROM barang where id_barang = '$id_barang'");
+$barang = mysqli_query($conn, "SELECT *FROM barang where id_barang = '$id_barang' ORDER BY id_barang DESC");
 
 $result = mysqli_fetch_assoc($barang);
 
@@ -15,6 +15,8 @@ $id_admin = $result["id_admin"];
 // cari data penjual
 $admin = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");
 $result_admin = mysqli_fetch_assoc($admin);
+
+
 
 ?>
 
@@ -34,7 +36,7 @@ $result_admin = mysqli_fetch_assoc($admin);
     <!-- jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-    <title>Kiosell - Tempatnya Belanja Onine</title>
+    <title><?= $result["nama_barang"]; ?></title>
 </head>
 
 <body>
@@ -140,7 +142,9 @@ $result_admin = mysqli_fetch_assoc($admin);
                     <p>0 ulasan</p>
                     <h3 class="fw-bold mb-3">Rp<?= number_format($result["harga"], 0, ',', '.'); ?></h3>
                     <p>Kondisi : <strong><?= $result["kondisi"]; ?></strong></p>
-                    <p class="mb-5">Kategori : <strong><?= $result["kategori"]; ?></strong></p>
+                    <p>Stok : <strong><?= $result["jml_barang"]; ?></strong></p>
+                    <p>Kategori : <strong><?= $result["kategori"]; ?></strong></p>
+                    <p class="mb-5">Di Post. <span><?= $result["wkt_post"]; ?></span></p>
                     <div class="detail-produk" style="max-height: 300px; overflow:hidden; position:relative">
                         <?= $result["deskripsi"]; ?>
                         <p class="tombol-show">Lihat Selengkapnya <i class="fa fa-chevron-down"></i></p>
@@ -160,6 +164,30 @@ $result_admin = mysqli_fetch_assoc($admin);
                 </div>
             </div>
         </div>
+
+        <section id="section2" class="mt-5">
+            <h5 class="fw-bold mb-4 subheading" id="terbaru">Produk Lainnya</h5>
+            <div class="row">
+                <?php foreach ($barang as $rst_terbaru) : ?>
+                    <a href="produk?id=<?= $rst_terbaru['id_barang'] ?>" target="_blank" class="btn shadow-sm col-sm-2">
+                        <div class="img-content">
+                            <img class="img-fluid" width="100" src="admin/assets/img/post/<?= $rst_terbaru['gambar1'] ?>" alt="">
+                        </div>
+                        <h6 class="my-3"><?= $rst_terbaru["nama_barang"]; ?></h6>
+                        <div class="text-start">
+                            <p class="fw-bold harga mb-2">Rp <?= number_format($rst_terbaru["harga"], 0, ',', '.'); ?></p>
+                            <?php
+                            $id_admin = $rst_terbaru["id_admin"];
+                            $query = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");
+                            $result = mysqli_fetch_assoc($query);
+                            ?>
+                            <p class="lokasi mb-1"><i class="fa fa-user"></i> <?= $result["username"]; ?></p>
+                            <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $result["alamat"]; ?></p>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        </section>
 
     </div>
 

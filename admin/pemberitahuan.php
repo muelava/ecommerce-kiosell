@@ -33,7 +33,7 @@ if ($_SESSION["status"] === "admin") {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin</title>
+    <title>Pemberitahuan</title>
 
     <script src="assets/js/main.js"></script>
 
@@ -64,49 +64,34 @@ if ($_SESSION["status"] === "admin") {
                                         <span class="ms-1" id="sebagai"><?= $result["status"]; ?></span>
                                     </div>
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-light text-small border-0 shadow-sm">
-                                    <li class="py-1">
-                                        <a class="dropdown-item" href="admin"><i class="fa fa-columns"></i> Profile</a>
+                                <ul class="dropdown-menu dropdown-menu-light text-small shadow">
+                                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
                                     </li>
-                                    <?php if ($_SESSION["status"] == "user") : ?>
-                                        <li class="py-1">
-                                            <a class="dropdown-item" href="akun"><i class="fa fa-user-circle"></i> Akun</a>
-                                        </li>
-                                        <li class="py-1">
-                                            <a class="dropdown-item" href="edit-akun"><i class="fa fa-edit"></i> Edit Akun</a>
-                                        </li>
-                                    <?php endif; ?>
-                                    <li class="py-1">
-                                        <!-- <hr class="dropdown-divider"> -->
-                                    </li>
-                                    <li><a class="dropdown-item text-danger" href="logout"> <i class="fa fa-sign-out"></i> Keluar</a></li>
+                                    <li><a class="dropdown-item" href="logout">Sign out</a></li>
                                 </ul>
                             </div>
                         </li>
+                        <li>
+                            <a href="post-baru" class="nav-link px-0 align-middle" style="opacity: .5;">
+                                <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_post_add_black_24dp.png" class="me-2" width="35" alt=""> Post Baru</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="postingan" class="nav-link px-0 align-middle" style="opacity: .5;">
+                                <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_fact_check_black_24dp.png" class="me-2" width="35" alt=""> Postingan</span>
+                            </a>
+                        </li>
                         <?php if ($_SESSION["status"] == "admin") : ?>
-                            <li>
-                                <a href="post-baru" class="nav-link px-0 align-middle" style="opacity: .5;">
-                                    <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_post_add_black_24dp.png" class="me-2" width="35" alt=""> Post Baru</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="postingan" class="nav-link px-0 align-middle" style="opacity: .5;">
-                                    <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_fact_check_black_24dp.png" class="me-2" width="35" alt=""> Postingan</span>
-                                </a>
-                            </li>
                             <li>
                                 <a href="daftar-user" class="nav-link px-0 align-middle" style="opacity: .5;">
                                     <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_people_black_24dp.png" class="me-2" width="35" alt=""> Daftar User</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="pemberitahuan" class="nav-link px-0 align-middle" style="opacity: .5;">
+                                <a href="pemberitahuan" class="nav-link px-0 align-middle">
                                     <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_notifications_active_black_24dp.png" class="me-2" width="35" alt=""> Pemberitahuan</span></a>
-                            </li>
-                        <?php else : ?>
-                            <li>
-                                <a href="pesanan" class="nav-link px-0 align-middle" style="opacity: .5;">
-                                    <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_shopping_cart_black_24dp.png" class="me-2" width="35" alt=""> Pesanan</span></a>
                             </li>
                         <?php endif; ?>
                     </ul>
@@ -120,10 +105,7 @@ if ($_SESSION["status"] === "admin") {
             </span>
 
             <div class="col py-3 mt-5" id="content">
-                <h2 class="pt-5 text-capitalize">Hello, <b><?= $result["username"]; ?>!</b></h2>
-                <br>
-                <p>Ingat! Segudang uang tidak akan mampu membeli kesempatan kedua. <strong>Enjoyy!!</strong></p>
-                <a href="../">get Home</a> for check!
+                <h2 class="pt-5 text-capitalize">Belum ada <b>Pemberitahuan!</b></h2>
 
 
             </div>

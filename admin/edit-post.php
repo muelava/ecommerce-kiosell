@@ -7,16 +7,28 @@ if (!isset($_SESSION["login"])) {
     header("Location: login");
 }
 
+// ambil id barang
+$id_barang = $_GET["id_post"];
+
+// ambil id admin
 $username = $_SESSION["login"];
 
 $conn = mysqli_connect('localhost', 'root', '', 'kiosell');
 
+// cari data barang
+$barang = mysqli_query($conn, "SELECT *FROM barang WHERE id_barang = '$id_barang'");
+$result_barang  = mysqli_fetch_assoc($barang);
+
+
+
+// cari data admin
 $admin = mysqli_query($conn, "SELECT *FROM admin WHERE username = '$username'");
 $result  = mysqli_fetch_assoc($admin);
 
 // inisialisasi waktu
 date_default_timezone_set('Asia/Jakarta');
 
+// ambil data hari
 function hari_ini()
 {
     $hari = date("D");
@@ -61,7 +73,8 @@ function hari_ini()
 $waktu = strip_tags(hari_ini() . ", " . date('d/m/Y') . " " . date("H:i:s"));
 
 
-if (isset($_POST['publish'])) {
+// update data
+if (isset($_POST['Update'])) {
     $id_admin = $result["id_admin"];
     $judul = strip_tags($_POST['judul']);
     // $gambar1 = strip_tags($_POST['gambar1']);
@@ -73,22 +86,49 @@ if (isset($_POST['publish'])) {
     $jml_barang = strip_tags($_POST['jml_barang']);
     $deskripsi = $_POST['deskripsi'];
 
-    $gambar1 = upload1();
-    $gambar2 = upload2();
-    $gambar3 = upload3();
+    // ambil data gambar lama
+    $gambar1Lama = strip_tags($_POST['gambar1Lama']);
+    $gambar2Lama = strip_tags($_POST['gambar2Lama']);
+    $gambar3Lama = strip_tags($_POST['gambar3Lama']);
 
+    if ($_FILES["gambar1"]["error"] === 4) {
+        $gambar1 = $gambar1Lama;
+    } else {
+        $gambar1 = upload1();
+    }
+
+    if ($_FILES["gambar2"]["error"] === 4) {
+        $gambar2 = $gambar2Lama;
+    } else {
+        $gambar2 = upload2();
+    }
+
+    if ($_FILES["gambar3"]["error"] === 4) {
+        $gambar3 = $gambar3Lama;
+    } else {
+        $gambar3 = upload3();
+    }
+
+    // jika gambar kosong
     if (!$gambar1) {
         return false;
     }
 
-    $query = "INSERT INTO barang VALUES('','$id_admin','$gambar1','$gambar2','$gambar3','$judul','$harga','$kondisi','$deskripsi','$kategori','$jml_barang','$waktu')";
-    $result = mysqli_query($conn, $query);
-    echo "<script>alert('Publish Successfully!'); document.location.href = 'postingan'</script>";
+    // $query = "INSERT INTO barang VALUES('','$id_admin','$gambar1','$gambar2','$gambar3','$judul','$harga','$kondisi','$deskripsi','$kategori','$jml_barang','$waktu')";
+
+    $query = "UPDATE barang SET id_admin = '$id_admin', gambar1 = '$gambar1', gambar2 = '$gambar2',
+     gambar3 = '$gambar3', nama_barang = '$judul', harga = '$harga', kondisi = '$kondisi', 
+     deskripsi = '$deskripsi', kategori = '$kategori', jml_barang = '$jml_barang', wkt_post = '$waktu' WHERE id_barang = '$id_barang'";
+
+    // $query = "UPDATE barang SET id_admin = '$id_admin', nama_barang = '$judul', harga = '$harga', kategori = '$kategori', kondisi = '$kondisi', jml_barang = '$jml_barang', deskripsi = '$deskripsi' WHERE id_barang = '$id_barang'";
+
+    mysqli_query($conn, $query);
+    echo "<script>alert('Update Successfully!'); document.location.href = 'postingan'</script>";
 
     return mysqli_affected_rows($conn);
 }
 
-
+// upload
 function upload1()
 {
     $nameFile = $_FILES["gambar1"]["name"];
@@ -225,7 +265,7 @@ function upload3()
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Post Baru</title>
+    <title>Edit Post</title>
 
     <script src="assets/js/main.js"></script>
 
@@ -308,23 +348,26 @@ function upload3()
 
                 <form action="" class="" method="POST" enctype="multipart/form-data">
                     <div class="mb-3 form-floating">
-                        <input class="form-control form-control-sm" type="text" name="judul" required>
+                        <input class="form-control form-control-sm" type="text" name="judul" value="<?= $result_barang['nama_barang']; ?>" required>
                         <label for="floatingInputInvalid">Judul atau Nama Produk</label>
                     </div>
-                    <div class="mb-3 form-floating w-50">
-                        <input class="form-control form-control-sm" type="file" name="gambar1" required>
+                    <div class="mb-3 form-floating w-50 ">
+                        <input class="form-control form-control-sm" type="file" name="gambar1">
                         <label for="floatingInputInvalid">Gambar 1</label>
+                        <img src="assets/img/post/<?= $result_barang['gambar1']; ?>" width="70">
                     </div>
                     <div class="mb-3 form-floating w-50">
                         <input class="form-control form-control-sm" type="file" name="gambar2">
                         <label for="floatingInputInvalid">Gambar 2</label>
+                        <img src="assets/img/post/<?= $result_barang['gambar2']; ?>" width="70">
                     </div>
                     <div class="mb-3 form-floating w-50">
                         <input class="form-control form-control-sm" type="file" name="gambar3">
                         <label for="floatingInputInvalid">Gambar 3</label>
+                        <img src="assets/img/post/<?= $result_barang['gambar3']; ?>" width="70">
                     </div>
                     <div class="mb-3 form-floating w-50">
-                        <input class="form-control form-control-sm" type="text" name="harga" required>
+                        <input class="form-control form-control-sm" type="text" name="harga" value="<?= $result_barang['harga']; ?>" required>
                         <label for="floatingInputInvalid">Harga</label>
                     </div>
                     <div class="mb-3 d-flex form-floating w-100">
@@ -343,7 +386,7 @@ function upload3()
                             <label for="floatingInputInvalid">Kondisi</label>
                         </div>
                         <div class="mb-3 form-floating w-100">
-                            <input class="form-control form-control-sm" type="number" name="jml_barang" min="0" required>
+                            <input class="form-control form-control-sm" type="number" name="jml_barang" min="0" value="<?= $result_barang['jml_barang']; ?>" required>
                             <label for="floatingInputInvalid">Jumlah</label>
                         </div>
                     </div>
@@ -351,9 +394,16 @@ function upload3()
                         <div class="form-text">
                             Deskrpsi Produk
                         </div>
-                        <textarea class="form-control ckeditor" id="floatingTextarea2" style="height: 200px" placeholder="Deskripsi" name="deskripsi"></textarea>
+                        <textarea class="form-control ckeditor" id="floatingTextarea2" style="height: 200px" placeholder="Deskripsi" name="deskripsi"><?= $result_barang['deskripsi']; ?></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100" name="publish">publish</button>
+
+                    <!-- ambil gambar lama -->
+                    <input type="hidden" name="gambar1Lama" value="<?= $result_barang['gambar1'] ?>">
+                    <input type="hidden" name="gambar2Lama" value="<?= $result_barang['gambar2'] ?>">
+                    <input type="hidden" name="gambar3Lama" value="<?= $result_barang['gambar3'] ?>">
+                    <!-- end ambil gambar lama -->
+
+                    <button type="submit" class="btn btn-primary w-100" name="Update">Update</button>
 
                 </form>
 
