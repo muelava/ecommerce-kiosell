@@ -9,11 +9,13 @@ if (isset($_SESSION["login"])) {
 $conn = mysqli_connect("localhost", "root", "", "kiosell");
 
 
+
+
 if (isset($_POST["login"])) {
     $username = $_POST["username"];
     $password = $_POST["password"];
 
-    $result = mysqli_query($conn, "SELECT * FROM admin WHERE username = '$username' or email = '$username'");
+    $result = mysqli_query($conn, "SELECT * FROM admin WHERE username = '$username'");
 
     if (mysqli_num_rows($result) === 1) {
         $row = mysqli_fetch_assoc($result);
@@ -25,12 +27,12 @@ if (isset($_POST["login"])) {
             exit;
         }
     } else {
-        $result = mysqli_query($conn, "SELECT * FROM user WHERE username = '$username' or email = '$username'");
+        $result = mysqli_query($conn, "SELECT * FROM user WHERE username = '$username'");
 
         if (mysqli_num_rows($result) === 1) {
             $row = mysqli_fetch_assoc($result);
 
-            if ($password === $row["password"]) {
+            if (password_verify($password, $row["password"])) {
                 header("Location: admin");
                 $_SESSION["login"] = $username;
                 $_SESSION["status"] = $row["status"];
@@ -132,7 +134,7 @@ if (isset($_POST["login"])) {
 
     <form action="" method="POST" class="form-login">
         <ul style="list-style: none;" class="p-0">
-            <li><input type="text" class="form-control" placeholder="username atau email" name="username" autofocus required></li><br>
+            <li><input type="text" class="form-control" placeholder="username" name="username" autofocus required></li><br>
             <li><input type="password" class="form-control" placeholder="password" name="password" required></li><br>
             <button name="login" class="btn w-100 mb-3" id="mycolor-bg" type="submit">Login</button>
             <a href="register">Belum Punya Akun ?</a>

@@ -20,7 +20,12 @@ if (isset($_POST["register"])) {
 
     $result = mysqli_query($conn, "SELECT username FROM user WHERE username = '$username'");
 
+    $result2 = mysqli_query($conn, "SELECT username FROM admin WHERE username = '$username'");
+
     if (mysqli_fetch_assoc($result)) {
+        echo "<script>alert('Username telah digunakan'); document.location.href = 'register'</script>";
+        return false;
+    } elseif (mysqli_fetch_assoc($result2)) {
         echo "<script>alert('Username telah digunakan'); document.location.href = 'register'</script>";
         return false;
     }
@@ -29,6 +34,7 @@ if (isset($_POST["register"])) {
         echo "<script>alert('Password tidak sesuai'); document.location.href = 'register'</script>";
         return false;
     }
+
 
     $password = password_hash($password, PASSWORD_DEFAULT);
 
