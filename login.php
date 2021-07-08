@@ -12,8 +12,8 @@ $conn = mysqli_connect("localhost", "root", "", "kiosell");
 
 
 if (isset($_POST["login"])) {
-    $username = $_POST["username"];
-    $password = $_POST["password"];
+    $username = strtolower(stripslashes($_POST["username"]));
+    $password = mysqli_real_escape_string($conn, $_POST["password"]);
 
     $result = mysqli_query($conn, "SELECT * FROM admin WHERE username = '$username'");
 

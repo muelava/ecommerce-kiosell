@@ -71,7 +71,7 @@ if (isset($_POST['publish'])) {
     // $gambar1 = strip_tags($_POST['gambar1']);
     // $gambar2 = strip_tags($_POST['gambar2']);
     // $gambar3 = strip_tags($_POST['gambar3']);
-    $harga = strip_tags($_POST['harga']);
+    $harga = strip_tags(intval($_POST['harga']));
     $kategori = strip_tags($_POST['kategori']);
     $kondisi = strip_tags($_POST['kondisi']);
     $jml_barang = strip_tags($_POST['jml_barang']);
@@ -293,6 +293,7 @@ function upload3()
                     <hr>
                 </div>
             </div>
+
             <span class="text-dark position-relative" style="width: 0!important; top:2em; cursor:pointer" id="btn-burger" onclick="btnBurger()">
                 <div class="humberger"></div>
                 <div class="humberger"></div>

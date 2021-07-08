@@ -11,11 +11,11 @@ $conn = mysqli_connect("localhost", "root", "", "kiosell");
 
 if (isset($_POST["register"])) {
     $nama_user = $_POST["nama_depan"] . " " . $_POST["nama_belakang"];
-    $username = $_POST["username"];
+    $username = strtolower(stripslashes($_POST["username"]));
     $email = $_POST["email"];
     $nomor_hp = $_POST["nomor_hp"];
     $alamat = $_POST["alamat"];
-    $password = $_POST["password"];
+    $password = mysqli_real_escape_string($conn, $_POST["password"]);
     $konfirm_password = $_POST["konfirm_password"];
 
     $result = mysqli_query($conn, "SELECT username FROM user WHERE username = '$username'");

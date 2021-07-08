@@ -9,6 +9,7 @@ $conn = mysqli_connect("localhost", "root", "", "kiosell");
 $barang = mysqli_query($conn, "SELECT *FROM barang where id_barang = '$id_barang' ORDER BY id_barang DESC");
 $result = mysqli_fetch_assoc($barang);
 
+
 // dapatkan kategori barang
 $kategori = $result["kategori"];
 $barang_ktgr = mysqli_query($conn, "SELECT *FROM barang where kategori = '$kategori' ORDER BY id_barang DESC");
