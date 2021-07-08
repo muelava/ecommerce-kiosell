@@ -1,5 +1,12 @@
 <?php
+
 session_start();
+
+if (!isset($_SESSION["login"])) {
+    echo "<script>alert('Silakan masuk ke akun dalam Kamu.'); document.location.href = 'login'</script>";
+    return false;
+}
+
 
 $id_barang = $_GET["id"];
 
@@ -24,6 +31,32 @@ $result_admin = mysqli_fetch_assoc($admin);
 
 
 
+
+// ongkir 
+
+//Get Data Provinsi
+$curl = curl_init();
+
+curl_setopt_array($curl, array(
+    CURLOPT_URL => "https://api.rajaongkir.com/starter/province",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => "",
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 30,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => "GET",
+    CURLOPT_HTTPHEADER => array(
+        "key:a811c39e49be496c9199690a1053a049"
+    ),
+));
+
+$response = curl_exec($curl);
+$err = curl_error($curl);
+
+
+
+
+
 ?>
 
 <!doctype html>
@@ -42,10 +75,18 @@ $result_admin = mysqli_fetch_assoc($admin);
     <!-- jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-    <title><?= $result["nama_barang"]; ?></title>
+    <style>
+        #subtotal::before {
+            content: "Rp. ";
+        }
+    </style>
+
+    <title>Checkout</title>
 </head>
 
 <body>
+
+
 
     <button class="btn shadow-sm" id="btnTop">
         <i class="fa fa-chevron-up"></i>
@@ -115,88 +156,98 @@ $result_admin = mysqli_fetch_assoc($admin);
     <!-- container -->
     <div class="container" id="container-produk">
 
-        <div class="row mt-5">
-            <div class="kiri col-md">
-                <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-indicators">
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                    </div>
-                    <div class="carousel-inner bg-light d-flex align-items-center" style="height: 500px;">
-                        <div class="carousel-item active">
-                            <img src="admin/assets/img/post/<?= $result['gambar1'] ?>" class="d-block w-100 img-fluid" alt="...">
-                        </div>
-                        <div class="carousel-item">
-                            <img src="admin/assets/img/post/<?= $result['gambar2'] ?>" class="d-block w-100 img-fluid" alt="...">
-                        </div>
-                        <div class="carousel-item">
-                            <img src="admin/assets/img/post/<?= $result['gambar3'] ?>" class="d-block w-100 img-fluid" alt="...">
-                        </div>
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-            </div>
-            <div class="kanan col-md">
-                <div class="detail">
-                    <h3 class="fw-bold"><?= $result["nama_barang"]; ?></h3>
-                    <p>0 ulasan</p>
-                    <h3 class="fw-bold mb-3">Rp<?= number_format($result["harga"], 0, ',', '.'); ?></h3>
-                    <p>Kondisi : <strong><?= $result["kondisi"]; ?></strong></p>
-                    <p>Stok : <strong><?= $result["jml_barang"]; ?></strong></p>
-                    <p>Kategori : <strong><?= $result["kategori"]; ?></strong></p>
-                    <p class="mb-5 text-secondary">Di Post. <span><?= $result["wkt_post"]; ?></span></p>
-                    <div class="detail-produk" style="max-height: 300px; overflow:hidden; position:relative">
-                        <?= $result["deskripsi"]; ?>
-                        <p class="tombol-show">Lihat Selengkapnya <i class="fa fa-chevron-down"></i></p>
-                    </div>
-                </div>
-                <hr class="mb-4">
-                <div class="info-penjual bg-light row align-items-center">
-                    <div class="penjual shadow-sm col-sm p-3">
-                        <p><i class="fa fa-user"></i> <?= $result_admin["username"]; ?></p>
-                        <small><?= $result_admin["status"]; ?> <img src="admin/assets/img/check-verifed.png" alt="" width="14"></small>
-                        <h6 class="mt-3 fw-bold">Pengiriman :</h6>
-                        <p>Dikirim Dari <strong><?= $result_admin["alamat"]; ?></strong></p>
-                    </div>
-                    <div class="beli text-center col-sm p-3">
-                        <a href="checkout?id=<?= $result["id_barang"] ?>" class="btn btn-outline-danger tombol-beli">Beli Sekarang</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div class="row justify-content-center mt-3">
 
-        <section id="section2" class="mt-5">
-            <h5 class="fw-bold mb-4 subheading" id="terbaru">Produk Lainnya</h5>
-            <div class="row">
-                <?php foreach ($barang_ktgr as $rst_terbaru) : ?>
-                    <a href="produk?id=<?= $rst_terbaru['id_barang'] ?>" target="_blank" class="btn shadow-sm col-sm-2">
-                        <div class="img-content">
-                            <img class="img-fluid" width="100" src="admin/assets/img/post/<?= $rst_terbaru['gambar1'] ?>" alt="">
+            <div class="kanan col-md-8">
+                <div class="info-penjual bg-light row align-items-center">
+                    <div class="penjual shadow-sm row col-sm p-3">
+                        <table class="table caption-top">
+                            <caption>
+                                <p><i class="fa fa-user"></i> <?= $result_admin["username"]; ?> <img src="admin/assets/img/check-verifed.png" alt="" width="14"></p>
+                                <p>Dikirim Dari <strong><?= $result_admin["alamat"]; ?></strong></p>
+                            </caption>
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <img src="admin/assets/img/post/<?= $result['gambar1'] ?>" width="50" alt="">
+                                    </th>
+                                    <th>
+                                        <h5 class="fw-bold">
+                                            <?= $result["nama_barang"]; ?><br>
+                                        </h5>
+                                        <p id="mycolor-text">Rp. <?= $result["harga"]; ?></p>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Berat </td>
+                                    <td class="text-end"><?= $result["jml_barang"]; ?>Kg</td>
+                                </tr>
+                                <tr>
+                                    <td>Quantity </td>
+                                    <td class="text-end"><input type="number" min="1" max="<?= $result["jml_barang"]; ?>" value="1" style="border:none; max-width:15%" id="quantity"></td>
+                                </tr>
+                                <tr>
+                                    <td>Subtotal </td>
+                                    <td class="text-end" id="subtotal"><?= $result["harga"]; ?></td>
+                                </tr>
+                                <tr>
+                                    <td>Catatan </td>
+                                    <td class="text-end">
+                                        <textarea class="form-control" name="catatan" id="" rows="5"></textarea>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                        <div class="col" style="font-size: 14px;">
+                            <h5 class="mt-3 fw-bold">Pengiriman :</h5>
+
+                            <!-- ongkir break point-->
+
+                            <label>Provinsi</label><br>
+                            <select class="form-control form-control-sm" name='provinsi' id='provinsi'>";
+                                <option>Pilih Provinsi</option>
+                                <?php
+                                $get = json_decode($response, true);
+                                for ($i = 0; $i < count($get['rajaongkir']['results']); $i++) :
+                                ?>
+                                    <option value="<?php echo $get['rajaongkir']['results'][$i]['province_id']; ?>"><?php echo $get['rajaongkir']['results'][$i]['province']; ?></option>
+                                <?php endfor; ?>
+                            </select><br>
+
+                            <label>Kabupaten</label><br>
+                            <select class="form-control form-control-sm" id="kabupaten" name="kabupaten">
+
+                                <!-- Data kabupaten akan diload menggunakan AJAX -->
+                            </select> <br>
+
+                            <label>Kurir</label><br>
+                            <select class="form-control form-control-sm" id="kurir" name="kurir">
+                                <option value="">Pilih Kurir</option>
+                                <option value="jne">JNE</option>
+                                <option value="tiki">TIKI</option>
+                                <option value="pos">POS INDONESIA</option>
+                            </select>
+
+
+
                         </div>
-                        <h6 class="my-3"><?= $rst_terbaru["nama_barang"]; ?></h6>
-                        <div class="text-start">
-                            <p class="fw-bold harga">Rp <?= number_format($rst_terbaru["harga"], 0, ',', '.'); ?></p>
-                            <?php
-                            $id_admin = $rst_terbaru["id_admin"];
-                            $query = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");
-                            $result = mysqli_fetch_assoc($query);
-                            ?>
-                            <p class="stok">Stok : <strong><?= $rst_terbaru["jml_barang"]; ?></strong> </p>
-                            <p class="lokasi mb-1"><i class="fa fa-user"></i> <?= $result["username"]; ?></p>
-                            <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $result["alamat"]; ?></p>
+                        <div class="col">
+                            <div id="tampil_ongkir"></div>
+
                         </div>
-                    </a>
-                <?php endforeach; ?>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-danger tombol-beli" id="mycolor-bg">Checkout</button>
+                        </div>
+
+                    </div>
+
+                </div>
             </div>
-        </section>
+
+        </div>
 
     </div>
 
@@ -273,6 +324,55 @@ $result_admin = mysqli_fetch_assoc($admin);
             $(this).hide();
             $(".detail-produk").css("maxHeight", "initial");
         })
+
+        $('#quantity').on('click', function() {
+            var q = $(this).val();
+            var j = <?= $result["harga"]; ?>;
+            var jml = q * j;
+            $('#subtotal').html(jml);
+        });
+
+
+        // ongkir breakpoint
+
+        $('#provinsi').change(function() {
+            //Mengambil value dari option select provinsi kemudian parameternya dikirim menggunakan ajax
+            var prov = $('#provinsi').val();
+            var nama_provinsi = $(this).attr("nama_provinsi");
+            $.ajax({
+                type: 'GET',
+                url: 'fitur-ongkir/ambil-kabupaten.php',
+                data: 'prov_id=' + prov,
+                success: function(data) {
+                    //jika data berhasil didapatkan, tampilkan ke dalam option select kabupaten
+                    $("#kabupaten").html(data);
+                }
+            });
+        });
+
+        $('#kurir').change(function() {
+
+            //Mengambil value dari option select provinsi asal, kabupaten, kurir kemudian parameternya dikirim menggunakan ajax
+            var kab = $('#kabupaten').val();
+            var kurir = $('#kurir').val();
+            var subtotal = parseInt($('#subtotal').text());
+            var asal_distrik = <?= $result_admin['distrik'] ?>
+
+            $.ajax({
+                type: 'POST',
+                url: 'fitur-ongkir/tabel-ongkir.php',
+                data: {
+                    'kab_id': kab,
+                    'kurir': kurir,
+                    'asal_distrik': asal_distrik,
+                    'harga_barang': subtotal
+                },
+                success: function(data) {
+                    //jika data berhasil didapatkan, tampilkan ke dalam element div tampil_ongkir
+                    $("#tampil_ongkir").html(data);
+                }
+            });
+        });
     </script>
 
 

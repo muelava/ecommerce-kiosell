@@ -60,6 +60,8 @@ if (isset($_POST["register"])) {
 
     <link rel="stylesheet" href="assets/css/main.css">
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 
 
@@ -140,12 +142,23 @@ if (isset($_POST["register"])) {
             <li><input type="email" class="form-control" placeholder="Email" name="email"></li><br>
             <li><input type="text" class="form-control" placeholder="Nomor Hp/WhatsApp" name="nomor_hp"></li><br>
             <li><input type="text" class="form-control" placeholder="Alamat" name="alamat"></li><br>
-            <li><input type="password" class="form-control" placeholder="password" name="password"></li><br>
-            <li><input type="password" class="form-control" placeholder="Konfirmasi Password" name="konfirm_password"></li><br>
-            <button name="register" class="btn w-100 mb-3" id="mycolor-bg" type="submit">Register</button>
+            <li><input type="password" class="form-control" placeholder="password" id="password" name="password" required></li><br>
+            <li><input type="password" class="form-control" placeholder="Konfirmasi Password" id="konfirm_password" name="konfirm_password" required></li>
+            <small id="message"></small><br>
+            <button name="register" class="btn w-100 my-3" id="mycolor-bg" type="submit">Register</button>
             <a href="login">Sudah Punya Akun ?</a>
         </ul>
     </form>
+
+
+    <script>
+        $('#password, #konfirm_password').on('keyup', function() {
+            if ($('#password').val() == $('#konfirm_password').val()) {
+                $('#message').html('password sesuai').css('color', 'green');
+            } else
+                $('#message').html('password tidak sesuai').css('color', 'red');
+        });
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
 

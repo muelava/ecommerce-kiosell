@@ -10,7 +10,6 @@ $conn = mysqli_connect("localhost", "root", "", "kiosell");
 
 
 
-
 if (isset($_POST["login"])) {
     $username = strtolower(stripslashes($_POST["username"]));
     $password = mysqli_real_escape_string($conn, $_POST["password"]);
