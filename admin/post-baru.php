@@ -72,6 +72,7 @@ if (isset($_POST['publish'])) {
     // $gambar2 = strip_tags($_POST['gambar2']);
     // $gambar3 = strip_tags($_POST['gambar3']);
     $harga = strip_tags(intval($_POST['harga']));
+    $berat = strip_tags(intval($_POST['berat']));
     $kategori = strip_tags($_POST['kategori']);
     $kondisi = strip_tags($_POST['kondisi']);
     $jml_barang = strip_tags($_POST['jml_barang']);
@@ -85,7 +86,7 @@ if (isset($_POST['publish'])) {
         return false;
     }
 
-    $query = "INSERT INTO barang VALUES('','$id_admin','$gambar1','$gambar2','$gambar3','$judul','$harga','$kondisi','$deskripsi','$kategori','$jml_barang','$waktu')";
+    $query = "INSERT INTO barang VALUES('','$id_admin','$gambar1','$gambar2','$gambar3','$judul','$harga','$berat','$kondisi','$deskripsi','$kategori','$jml_barang','$waktu')";
     $result = mysqli_query($conn, $query);
     echo "<script>alert('Publish Successfully!'); document.location.href = 'postingan'</script>";
 
@@ -327,6 +328,10 @@ function upload3()
                     <div class="mb-3 form-floating w-50">
                         <input class="form-control form-control-sm" type="text" name="harga" required>
                         <label for="floatingInputInvalid">Harga</label>
+                    </div>
+                    <div class="mb-3 form-floating w-50">
+                        <input class="form-control form-control-sm" type="number" min="1" value="100" name="berat" required>
+                        <label for="floatingInputInvalid">Berat(gram)</label>
                     </div>
                     <div class="mb-3 d-flex form-floating w-100">
                         <select class="form-select form-select-sm" aria-label="Default select example" name="kategori">

@@ -151,6 +151,7 @@ $result_admin = mysqli_fetch_assoc($admin);
                     <h3 class="fw-bold mb-3">Rp<?= number_format($result["harga"], 0, ',', '.'); ?></h3>
                     <p>Kondisi : <strong><?= $result["kondisi"]; ?></strong></p>
                     <p>Stok : <strong><?= $result["jml_barang"]; ?></strong></p>
+                    <p>Berat : <strong><?= number_format($result["berat"], '0', ',', '.'); ?></strong><sub>gram</sub></p>
                     <p>Kategori : <strong><?= $result["kategori"]; ?></strong></p>
                     <p class="mb-5 text-secondary">Di Post. <span><?= $result["wkt_post"]; ?></span></p>
                     <div class="detail-produk" style="max-height: 300px; overflow:hidden; position:relative">

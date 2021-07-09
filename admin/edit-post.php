@@ -86,6 +86,7 @@ if (isset($_POST['Update'])) {
     // $gambar2 = strip_tags($_POST['gambar2']);
     // $gambar3 = strip_tags($_POST['gambar3']);
     $harga = strip_tags(intval($_POST['harga']));
+    $berat = strip_tags(intval($_POST['berat']));
     $kategori = strip_tags($_POST['kategori']);
     $kondisi = strip_tags($_POST['kondisi']);
     $jml_barang = strip_tags($_POST['jml_barang']);
@@ -122,7 +123,7 @@ if (isset($_POST['Update'])) {
     // $query = "INSERT INTO barang VALUES('','$id_admin','$gambar1','$gambar2','$gambar3','$judul','$harga','$kondisi','$deskripsi','$kategori','$jml_barang','$waktu')";
 
     $query = "UPDATE barang SET id_admin = '$id_admin', gambar1 = '$gambar1', gambar2 = '$gambar2',
-     gambar3 = '$gambar3', nama_barang = '$judul', harga = '$harga', kondisi = '$kondisi', 
+     gambar3 = '$gambar3', nama_barang = '$judul', harga = '$harga', berat = '$berat', kondisi = '$kondisi', 
      deskripsi = '$deskripsi', kategori = '$kategori', jml_barang = '$jml_barang', wkt_post = '$waktu' WHERE id_barang = '$id_barang'";
 
     // $query = "UPDATE barang SET id_admin = '$id_admin', nama_barang = '$judul', harga = '$harga', kategori = '$kategori', kondisi = '$kondisi', jml_barang = '$jml_barang', deskripsi = '$deskripsi' WHERE id_barang = '$id_barang'";
@@ -371,6 +372,10 @@ function upload3()
                         <input class="form-control form-control-sm" type="text" name="harga" value="<?= $result_barang['harga']; ?>" required>
                         <label for="floatingInputInvalid">Harga</label>
                     </div>
+                    <div class="mb-3 form-floating w-50">
+                        <input class="form-control form-control-sm" type="number" min="1" value="<?= $result_barang['berat'] ?>" name="berat" required>
+                        <label for="floatingInputInvalid">Berat(gram)</label>
+                    </div>
                     <div class="mb-3 d-flex form-floating w-100">
                         <select class="form-select form-select-sm" aria-label="Default select example" name="kategori">
                             <option value="Elektronik">Elektronik</option>
@@ -406,7 +411,7 @@ function upload3()
 
                     <div class="row justify-content-around">
                         <a href="postingan" class="btn btn-outline-secondary col-md-2">Cancel</a>
-                        <button type="submit" class="btn btn-primary col-md-3" name="Update">Publish</button>
+                        <button type="submit" class="btn btn-primary col-md-3" name="Update">Update</button>
                     </div>
 
                 </form>

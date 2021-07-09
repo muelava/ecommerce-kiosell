@@ -46,7 +46,7 @@ curl_setopt_array($curl, array(
     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
     CURLOPT_CUSTOMREQUEST => "GET",
     CURLOPT_HTTPHEADER => array(
-        "key:a811c39e49be496c9199690a1053a049"
+        "key:81d4424e2b099f8b8ea33708087f4b8c"
     ),
 ));
 
@@ -176,13 +176,20 @@ $err = curl_error($curl);
                                             <?= $result["nama_barang"]; ?><br>
                                         </h5>
                                         <p id="mycolor-text">Rp. <?= $result["harga"]; ?></p>
+                                        <small>Stok : <?= $result["jml_barang"]; ?></small>
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
+                                    <td>Catatan </td>
+                                    <td class="text-end">
+                                        <textarea class="form-control" name="catatan" id="catatan" rows="3"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
                                     <td>Berat </td>
-                                    <td class="text-end"><?= $result["jml_barang"]; ?>Kg</td>
+                                    <td class="text-end"><?= number_format($result["berat"], '0', ',', '.'); ?> <sub>gram</sub></td>
                                 </tr>
                                 <tr>
                                     <td>Quantity </td>
@@ -192,13 +199,6 @@ $err = curl_error($curl);
                                     <td>Subtotal </td>
                                     <td class="text-end" id="subtotal"><?= $result["harga"]; ?></td>
                                 </tr>
-                                <tr>
-                                    <td>Catatan </td>
-                                    <td class="text-end">
-                                        <textarea class="form-control" name="catatan" id="" rows="5"></textarea>
-                                    </td>
-                                </tr>
-
                             </tbody>
                         </table>
                         <div class="col" style="font-size: 14px;">
@@ -224,7 +224,7 @@ $err = curl_error($curl);
                             </select> <br>
 
                             <label>Kurir</label><br>
-                            <select class="form-control form-control-sm" id="kurir" name="kurir">
+                            <select class="form-control form-control-sm" id="kurir" name="kurir" disabled>
                                 <option value="">Pilih Kurir</option>
                                 <option value="jne">JNE</option>
                                 <option value="tiki">TIKI</option>
@@ -239,7 +239,7 @@ $err = curl_error($curl);
 
                         </div>
                         <div class="text-end">
-                            <button type="submit" class="btn btn-danger tombol-beli" id="mycolor-bg">Checkout</button>
+                            <button class="btn btn-danger tombol-beli" id="mycolor-bg" data-bs-toggle="modal" data-bs-target="#exampleModal">Lanjutkan</button>
                         </div>
 
                     </div>
@@ -251,6 +251,47 @@ $err = curl_error($curl);
 
     </div>
 
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Konfirmasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Apakah sudah yakin ?
+                    <div id="tes"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" id="mycolor-bg" class="btn btn-primary Bayar">Bayar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end modal -->
+
+
+    <script>
+        $(".tombol-beli").on("click", function() {
+            var aaku = "coba";
+
+            $.ajax({
+                type: 'POST',
+                url: 'pembayaran.php',
+                data: {
+                    'coba': aaku
+                },
+                success: function(data) {
+                    $("#tes").html(data);
+                }
+            });
+        })
+    </script>
 
     <!-- Footer -->
     <footer class="text-center text-lg-start bg-light text-muted">
@@ -325,7 +366,7 @@ $err = curl_error($curl);
             $(".detail-produk").css("maxHeight", "initial");
         })
 
-        $('#quantity').on('click', function() {
+        $('#quantity').on('click keyup', function() {
             var q = $(this).val();
             var j = <?= $result["harga"]; ?>;
             var jml = q * j;
@@ -336,6 +377,7 @@ $err = curl_error($curl);
         // ongkir breakpoint
 
         $('#provinsi').change(function() {
+            $('#kurir').prop("disabled", false);
             //Mengambil value dari option select provinsi kemudian parameternya dikirim menggunakan ajax
             var prov = $('#provinsi').val();
             var nama_provinsi = $(this).attr("nama_provinsi");
@@ -350,28 +392,38 @@ $err = curl_error($curl);
             });
         });
 
-        $('#kurir').change(function() {
+        $('#kurir, #kabupaten').on("change", function() {
 
             //Mengambil value dari option select provinsi asal, kabupaten, kurir kemudian parameternya dikirim menggunakan ajax
             var kab = $('#kabupaten').val();
             var kurir = $('#kurir').val();
-            var subtotal = parseInt($('#subtotal').text());
-            var asal_distrik = <?= $result_admin['distrik'] ?>
 
-            $.ajax({
-                type: 'POST',
-                url: 'fitur-ongkir/tabel-ongkir.php',
-                data: {
-                    'kab_id': kab,
-                    'kurir': kurir,
-                    'asal_distrik': asal_distrik,
-                    'harga_barang': subtotal
-                },
-                success: function(data) {
-                    //jika data berhasil didapatkan, tampilkan ke dalam element div tampil_ongkir
-                    $("#tampil_ongkir").html(data);
-                }
-            });
+            if (kurir == "") {
+                $('#tampil_ongkir').text("");
+            } else {
+
+                var subtotal = parseInt($('#subtotal').text());
+                var asal_distrik = <?= $result_admin['distrik'] ?>;
+                var berat = <?= $result['berat'] ?>;
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'fitur-ongkir/tabel-ongkir.php',
+                    data: {
+                        'kab_id': kab,
+                        'kurir': kurir,
+                        'asal_distrik': asal_distrik,
+                        'harga_barang': subtotal,
+                        'berat': berat
+                    },
+                    success: function(data) {
+                        //jika data berhasil didapatkan, tampilkan ke dalam element div tampil_ongkir
+                        $("#tampil_ongkir").html(data);
+                    }
+                });
+            }
+
+
         });
     </script>
 
