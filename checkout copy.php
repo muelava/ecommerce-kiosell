@@ -98,9 +98,32 @@ if ($_SESSION["status"] == "user") {
     $err = curl_error($curl);
     curl_close($curl);
     $data = json_decode($response, true);
-    $kotaAsalPembeli = $data['rajaongkir']['origin_details']['city_name'];
-    $provinsiAsalPembeli = $data['rajaongkir']['origin_details']['province'];
+    echo $kotaAsalPembeli = $data['rajaongkir']['origin_details']['city_name'];
+    echo $provinsiAsalPembeli = $data['rajaongkir']['origin_details']['province'];
 }
+
+
+
+// ongkir break point
+//Get Data Provinsi
+$curl = curl_init();
+
+curl_setopt_array($curl, array(
+    CURLOPT_URL => "https://api.rajaongkir.com/starter/province",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => "",
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 30,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => "GET",
+    CURLOPT_HTTPHEADER => array(
+        "key:81d4424e2b099f8b8ea33708087f4b8c"
+    ),
+));
+
+$response = curl_exec($curl);
+$err = curl_error($curl);
+
 
 
 
@@ -245,41 +268,46 @@ if ($_SESSION["status"] == "user") {
                                 </tr>
                             </tbody>
                         </table>
+                        <div class="col" style="font-size: 14px;">
+                            <h5 class="mt-3 fw-bold">Pengiriman :</h5>
 
-                        <?php if ($_SESSION["status"] == "user") : ?>
-                            <div class="col" style="font-size: 14px;">
+                            <!-- ongkir break point-->
 
-                                <h5 class="mt-3 mb-2 fw-bold" id="mycolor-text">Pengiriman :</h5>
+                            <label>Provinsi</label><br>
+                            <select class="form-control form-control-sm" name='provinsi' id='provinsi'>";
+                                <option>Pilih Provinsi</option>
+                                <?php
+                                $get = json_decode($response, true);
+                                for ($i = 0; $i < count($get['rajaongkir']['results']); $i++) :
+                                ?>
+                                    <option value="<?php echo $get['rajaongkir']['results'][$i]['province_id']; ?>"><?php echo $get['rajaongkir']['results'][$i]['province']; ?></option>
+                                <?php endfor; ?>
+                            </select><br>
 
-                                <p class="fw-bold" style="font-size: 12px;">Alamat</p>
-                                <p class="mb-3" style="font-size: 14px;"><?= $result_user['alamat']; ?></p>
+                            <label>Kabupaten</label><br>
+                            <select class="form-control form-control-sm" id="kabupaten" name="kabupaten">
 
-                                <p class="fw-bold" style="font-size: 12px;">Kode Pos</p>
-                                <h6 class="mb-3"><?= $result_user['kode_pos']; ?></h6>
+                                <!-- Data kabupaten akan diload menggunakan AJAX -->
+                            </select> <br>
 
-                                <p class="fw-bold" style="font-size: 12px;">Kota / Kabupaten</p>
-                                <h6 class="mb-3"><?= $kotaAsalPembeli; ?></h6>
+                            <label>Kurir</label><br>
+                            <select class="form-control form-control-sm" id="kurir" name="kurir" disabled>
+                                <option value="">Pilih Kurir</option>
+                                <option value="jne">JNE</option>
+                                <option value="tiki">TIKI</option>
+                                <option value="pos">POS INDONESIA</option>
+                            </select>
 
-                                <p class="fw-bold">Provinsi</p>
-                                <h6><?= $provinsiAsalPembeli; ?></h6>
 
-                            </div>
-                            <div class="col">
-                                <label>Kurir</label><br>
-                                <select class="form-control form-control-sm" id="kurir" name="kurir">
-                                    <option value="">Pilih Kurir</option>
-                                    <option value="jne">JNE</option>
-                                    <option value="tiki">TIKI</option>
-                                    <option value="pos">POS INDONESIA</option>
-                                </select>
-                                <div id="tampil_ongkir"></div>
-                            </div>
 
-                            <div class="text-end">
-                                <button class="btn btn-danger tombol-beli" id="mycolor-bg" data-bs-toggle="modal" data-bs-target="#exampleModal">Lanjutkan</button>
-                            </div>
-                        <?php else : echo "<script> alert('Kamu masuk sebagai admin');</script> " ?>
-                        <?php endif; ?>
+                        </div>
+                        <div class="col">
+                            <div id="tampil_ongkir"></div>
+
+                        </div>
+                        <div class="text-end">
+                            <button class="btn btn-danger tombol-beli" id="mycolor-bg" data-bs-toggle="modal" data-bs-target="#exampleModal">Lanjutkan</button>
+                        </div>
 
                     </div>
 
@@ -420,10 +448,26 @@ if ($_SESSION["status"] == "user") {
 
         // ongkir breakpoint
 
-        $('#kurir').on("change", function() {
+        $('#provinsi').change(function() {
+            $('#kurir').prop("disabled", false);
+            //Mengambil value dari option select provinsi kemudian parameternya dikirim menggunakan ajax
+            var prov = $('#provinsi').val();
+            var nama_provinsi = $(this).attr("nama_provinsi");
+            $.ajax({
+                type: 'GET',
+                url: 'fitur-ongkir/ambil-kabupaten.php',
+                data: 'prov_id=' + prov,
+                success: function(data) {
+                    //jika data berhasil didapatkan, tampilkan ke dalam option select kabupaten
+                    $("#kabupaten").html(data);
+                }
+            });
+        });
+
+        $('#kurir, #kabupaten').on("change", function() {
 
             //Mengambil value dari option select provinsi asal, kabupaten, kurir kemudian parameternya dikirim menggunakan ajax
-            var kab = <?= $kota_pembeli; ?>;
+            var kab = $('#kabupaten').val();
             var kurir = $('#kurir').val();
 
             if (kurir == "") {
@@ -450,6 +494,7 @@ if ($_SESSION["status"] == "user") {
                     }
                 });
             }
+
         });
     </script>
 

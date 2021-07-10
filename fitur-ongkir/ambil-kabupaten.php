@@ -2,6 +2,7 @@
 
 $provinsi_id = $_GET['prov_id'];
 
+
 session_start();
 
 if (!isset($_SESSION["login"]) && !$provinsi_id) {
@@ -39,3 +40,14 @@ $data = json_decode($response, true);
 for ($i = 0; $i < count($data['rajaongkir']['results']); $i++) {
     echo "<option value='" . $data['rajaongkir']['results'][$i]['city_id'] . "'>" . $data['rajaongkir']['results'][$i]['city_name'] . "</option>";
 }
+?>
+
+
+<!-- kondisi jika melakukan edit akun user -->
+<?php
+if (isset($_GET['kab_id'])) : $kab_id = $_GET['kab_id']; ?>
+    <script>
+        $('#kabupaten').val(<?= $kab_id ?>).change();
+    </script>
+<?php endif; ?>
+<!-- end kondisi -->

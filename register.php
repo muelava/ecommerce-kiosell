@@ -85,8 +85,8 @@ if (isset($_POST["register"])) {
     $nomor_hp = $_POST["nomor_hp"];
     $provinsi = $_POST["provinsi"];
     $distrik = $_POST["kabupaten"];
-    $kode_pos = $_POST["kode_pos"];
-    $alamat = $_POST["alamat"];
+    $kode_pos = strip_tags($_POST["kode_pos"]);
+    $alamat = strip_tags($_POST["alamat"]);
     $password = mysqli_real_escape_string($conn, $_POST["password"]);
     $konfirm_password = $_POST["konfirm_password"];
 

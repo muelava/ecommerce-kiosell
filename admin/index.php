@@ -70,7 +70,7 @@ if ($_SESSION["status"] === "admin") {
                                             <a class="dropdown-item" href="akun?id_user=<?= $result['id_user'] ?>"><i class="fa fa-user-circle"></i> Akun</a>
                                         </li>
                                         <li class="py-1">
-                                            <a class="dropdown-item" href="edit-akun"><i class="fa fa-edit"></i> Edit Akun</a>
+                                            <a class="dropdown-item" href="edit-akun?id_user=<?= $result['id_user'] ?>"><i class="fa fa-edit"></i> Edit Akun</a>
                                         </li>
                                     <?php endif; ?>
                                     <li class="py-1">

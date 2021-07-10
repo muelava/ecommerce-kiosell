@@ -17,7 +17,28 @@ if (!$id_user) {
     return false;
 }
 
-// ambil id use dari session
+// ambil data provinsi api rajaongkir
+$curl = curl_init();
+
+curl_setopt_array($curl, array(
+    CURLOPT_URL => "https://api.rajaongkir.com/starter/province",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => "",
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 30,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => "GET",
+    CURLOPT_HTTPHEADER => array(
+        "key:81d4424e2b099f8b8ea33708087f4b8c"
+    ),
+));
+
+$response = curl_exec($curl);
+$err = curl_error($curl);
+// /ambil data provinsi api rajaongkir
+
+
+// ambil id user dari session
 $username = $_SESSION["login"];
 
 
@@ -38,8 +59,8 @@ if (mysqli_num_rows($user) === 0) {
 // cari kota dan provinsi user
 $distrik_user = $result["distrik"];
 
-$curl = curl_init();
-curl_setopt_array($curl, array(
+$cur2 = curl_init();
+curl_setopt_array($cur2, array(
     CURLOPT_URL => "http://api.rajaongkir.com/starter/cost",
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_ENCODING => "",
@@ -53,12 +74,29 @@ curl_setopt_array($curl, array(
         "key: 81d4424e2b099f8b8ea33708087f4b8c"
     ),
 ));
-$response = curl_exec($curl);
-$err = curl_error($curl);
-curl_close($curl);
-$data = json_decode($response, true);
+$response2 = curl_exec($cur2);
+$err = curl_error($cur2);
+curl_close($cur2);
+$data = json_decode($response2, true);
 $distrikUser = $data['rajaongkir']['origin_details']['city_name'];
 $provinsiUser = $data['rajaongkir']['origin_details']['province'];
+
+
+// tombol update di tekan
+if (isset($_POST["update"])) {
+    $nama_user = strip_tags($_POST["nama_lengkap"]);
+    $email = strip_tags($_POST["email"]);
+    $nomor_hp = strip_tags($_POST["nomor_hp"]);
+    $provinsi = $_POST["provinsi"];
+    $distrik = $_POST["kabupaten"];
+    $alamat = strip_tags($_POST["alamat"]);
+    $kode_pos = strip_tags($_POST["kode_pos"]);
+
+    mysqli_query($conn, "UPDATE user SET nama_user = '$nama_user', email = '$email', nomor_hp = '$nomor_hp', provinsi = '$provinsi', distrik = '$distrik', alamat = '$alamat', kode_pos = '$kode_pos' WHERE id_user = '$id_user';");
+
+    echo "<script>alert('Berhasil Diubah!'); window.location.href='index'</script>";
+    return mysqli_affected_rows($conn);
+}
 
 ?>
 
@@ -105,9 +143,6 @@ $provinsiUser = $data['rajaongkir']['origin_details']['province'];
                                         <li class="py-1">
                                             <a class="dropdown-item" href="akun?id_user=<?= $result["id_user"] ?>"><i class="fa fa-user-circle"></i> Akun</a>
                                         </li>
-                                        <li class="py-1">
-                                            <a class="dropdown-item" href="edit-akun?id_user=<?= $result["id_user"] ?>"><i class="fa fa-edit"></i> Edit Akun</a>
-                                        </li>
                                     <?php endif; ?>
                                     <li class="py-1">
                                         <!-- <hr class="dropdown-divider"> -->
@@ -152,69 +187,59 @@ $provinsiUser = $data['rajaongkir']['origin_details']['province'];
                 <div class="humberger"></div>
             </span>
 
-            <div class="col py-3 mt-5" id="content">
+            <div class="col-md-5 py-3 mt-5" id="content">
 
-                <h2 class="py-5 text-capitalize">Data <b><?= $result["status"]; ?></b></h2>
+                <h2 class="py-5 text-capitalize">Edit <b><?= $result["status"]; ?></b></h2>
 
-                <table class="table table-borderless">
-                    <thead>
-                        <tr>
-                            <td>Nama</td>
-                            <td>:</td>
-                            <td>
-                                <h5 class="text-capitalize fw-bold mb-0"><?= $result["nama_user"]; ?></h5>
-                            </td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Username</td>
-                            <td>:</td>
-                            <td><?= $result["username"]; ?></td>
-                        </tr>
-                        <tr>
-                            <td>Email</td>
-                            <td>:</td>
-                            <td class="fw-bold"><?= $result["email"]; ?></td>
-                        </tr>
-                        <tr>
-                            <td>Nomor Hp</td>
-                            <td>:</td>
-                            <td class="fw-bold"><?= $result["nomor_hp"]; ?></td>
-                        </tr>
-                        <tr>
-                            <td>Alamat</td>
-                            <td>:</td>
-                            <td class="text-capitalize"><?= $result["alamat"]; ?></td>
-                        </tr>
-                        <tr>
-                            <td>Kode Pos</td>
-                            <td>:</td>
-                            <td><?= $result["kode_pos"]; ?></td>
-                        </tr>
-                        <tr>
-                            <td>Kota/Kabupaten</td>
-                            <td>:</td>
-                            <td class="fw-bold"><?= $distrikUser; ?></td>
-                        </tr>
-                        <tr>
-                            <td>Provinsi</td>
-                            <td>:</td>
-                            <td class="fw-bold"><?= $provinsiUser; ?></td>
-                        </tr>
-                        <tr>
-                            <td>Waktu Registrasi</td>
-                            <td>:</td>
-                            <td><?= $result["wkt_register"]; ?></td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <?php if ($_SESSION["status"] == "admin") : ?>
-                    <a class="btn btn-danger text-" href="hapus-user?id_user=<?= $result['id_user']; ?>" title="Hapus <?= $result['id_user']; ?>" onclick=" return confirm('Yakin Ingin Menghapus <?= $result["nama_user"] ?> ')">Hapus</a>
-                <?php else : ?>
-                    <a class="btn btn-primary text-" href="edit-akun?id_user=<?= $result['id_user']; ?>" title="Edit <?= $result['id_user']; ?>">Edit</a>
-                <?php endif; ?>
+                <form action="" method="POST">
+                    <ul style="list-style: none;" class="p-0">
+                        <div class="mb-3 form-floating">
+                            <input class="form-control form-control-sm" type="text" name="nama_lengkap" value="<?= $result['nama_user']; ?>" required>
+                            <label for="floatingInputInvalid">Nama Lengkap</label>
+                        </div>
+                        <div class="mb-3 form-floating">
+                            <input class="form-control form-control-sm" type="text" name="username" value="<?= $result['username']; ?>" disabled required>
+                            <label for="floatingInputInvalid">Username</label>
+                        </div>
+                        <div class="mb-3 form-floating">
+                            <input class="form-control form-control-sm" type="email" name="email" value="<?= $result['email']; ?>" required>
+                            <label for="floatingInputInvalid">Email</label>
+                        </div>
+                        <div class="mb-3 form-floating">
+                            <input class="form-control form-control-sm" type="text" name="nomor_hp" value="<?= $result['nomor_hp']; ?>" required>
+                            <label for="floatingInputInvalid">Nomor Hp/WhatsApp</label>
+                        </div>
+                        <div class="mb-3 form-floating">
+                            <select class="form-select form-select-sm" aria-label="Default select example" name='provinsi' id='provinsi'>";
+                                <?php
+                                $get = json_decode($response, true);
+                                for ($i = 0; $i < count($get['rajaongkir']['results']); $i++) :
+                                ?>
+                                    <option value="<?php echo $get['rajaongkir']['results'][$i]['province_id']; ?>"><?php echo $get['rajaongkir']['results'][$i]['province']; ?></option>
+                                <?php endfor; ?>
+                            </select>
+                            <label for="floatingInputInvalid">Provinsi</label>
+                        </div>
+                        <div class="mb-3 form-floating">
+                            <select class="form-select form-select-sm" id="kabupaten" name="kabupaten" required>
+                                <!-- Data kabupaten akan diload menggunakan AJAX -->
+                            </select>
+                            <label for="floatingInputInvalid">Kota/Kabupaten</label>
+                        </div>
+                        <div class="mb-3 form-floating">
+                            <textarea class="form-control form-control-sm" name="alamat" style="height: 150px;"> <?= $result['alamat']; ?></textarea>
+                            <label for="floatingInputInvalid">Alamat Lengkap</label>
+                        </div>
+                        <div class="mb-3 form-floating w-50">
+                            <input class="form-control form-control-sm" type="text" name="kode_pos" value="<?= $result['kode_pos']; ?>" required>
+                            <label for="floatingInputInvalid">Kode Pos</label>
+                        </div>
+                    </ul>
+                    <div class="row justify-content-around">
+                        <a href="index" class="btn btn-outline-secondary col-md-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary col-md-3" name="update">Update</button>
+                    </div>
+                </form>
 
             </div>
         </div>
@@ -223,6 +248,40 @@ $provinsiUser = $data['rajaongkir']['origin_details']['province'];
             $(document).ready(function() {
                 $("#btn-burger").click(function() {
                     $(".sidebar").toggle(250);
+                });
+            });
+
+            // ambil data provinsi lama
+            $('#provinsi').val(<?= $result["provinsi"] ?>).change();
+
+            // ambil data kabupaten lama
+            $(document).ready(function() {
+
+                var prov = $('#provinsi').val();
+                var kab_id = <?= $result["distrik"] ?>;
+                $.ajax({
+                    type: 'GET',
+                    url: '../fitur-ongkir/ambil-kabupaten.php',
+                    data: 'prov_id=' + prov + '&kab_id=' + kab_id,
+                    success: function(data) {
+                        //jika data berhasil didapatkan, tampilkan ke dalam option select kabupaten
+                        $("#kabupaten").html(data);
+                    }
+                });
+            });
+
+            $('#provinsi').change(function() {
+
+                //Mengambil value dari option select provinsi kemudian parameternya dikirim menggunakan ajax
+                var prov = $('#provinsi').val();
+                $.ajax({
+                    type: 'GET',
+                    url: '../fitur-ongkir/ambil-kabupaten.php',
+                    data: 'prov_id=' + prov,
+                    success: function(data) {
+                        //jika data berhasil didapatkan, tampilkan ke dalam option select kabupaten
+                        $("#kabupaten").html(data);
+                    }
                 });
             });
         </script>
