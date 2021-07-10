@@ -3,18 +3,30 @@
 session_start();
 
 if (!isset($_SESSION["login"])) {
-    echo "<script>alert('Silakan masuk ke akun dalam Kamu.'); document.location.href = 'login'</script>";
+    echo "<script>alert('Silakan masuk ke dalam akun Kamu.'); document.location.href = 'login'</script>";
     return false;
 }
 
 
 $id_barang = $_GET["id"];
 
+
+if (!$id_barang) {
+    header("Location:index");
+    return false;
+}
+
 $conn = mysqli_connect("localhost", "root", "", "kiosell");
 
 // cari barang
 $barang = mysqli_query($conn, "SELECT *FROM barang where id_barang = '$id_barang' ORDER BY id_barang DESC");
 $result = mysqli_fetch_assoc($barang);
+
+// cek apakah tidak menemukan id_barang
+if (mysqli_num_rows($barang) === 0) {
+    header("Location:index");
+    return false;
+}
 
 
 // dapatkan kategori barang
@@ -28,12 +40,71 @@ $id_admin = $result["id_admin"];
 // cari data penjual
 $admin = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");
 $result_admin = mysqli_fetch_assoc($admin);
+$kota_asal = $result_admin["distrik"];
+
+
+// data api rajongkir
+// cari kota tujuan
+$curl = curl_init();
+curl_setopt_array($curl, array(
+    CURLOPT_URL => "http://api.rajaongkir.com/starter/cost",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => "",
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 30,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => "POST",
+    CURLOPT_POSTFIELDS => "origin=" . $kota_asal . "&destination=" . $kota_asal . "&weight=500" . "&courier=jne",
+    CURLOPT_HTTPHEADER => array(
+        "content-type: application/x-www-form-urlencoded",
+        "key: 81d4424e2b099f8b8ea33708087f4b8c"
+    ),
+));
+$response = curl_exec($curl);
+$err = curl_error($curl);
+curl_close($curl);
+$data = json_decode($response, true);
+$kotaAsalPenjual = $data['rajaongkir']['origin_details']['city_name'];
+$provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
 
 
 
+// cari data user(pembeli) / data rajaongkir
+if ($_SESSION["status"] == "user") {
+    $username = $_SESSION["login"];
+    $user = mysqli_query($conn, "SELECT  *FROM user where username = '$username'");
+    $result_user = mysqli_fetch_assoc($user);
 
-// ongkir 
+    $kota_pembeli = $result_user['distrik'];
 
+
+    // cari kota tujuan
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => "http://api.rajaongkir.com/starter/cost",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => "origin=" . $kota_pembeli . "&destination=" . $kota_pembeli . "&weight=500" . "&courier=jne",
+        CURLOPT_HTTPHEADER => array(
+            "content-type: application/x-www-form-urlencoded",
+            "key: 81d4424e2b099f8b8ea33708087f4b8c"
+        ),
+    ));
+    $response = curl_exec($curl);
+    $err = curl_error($curl);
+    curl_close($curl);
+    $data = json_decode($response, true);
+    echo $kotaAsalPembeli = $data['rajaongkir']['origin_details']['city_name'];
+    echo $provinsiAsalPembeli = $data['rajaongkir']['origin_details']['province'];
+}
+
+
+
+// ongkir break point
 //Get Data Provinsi
 $curl = curl_init();
 
@@ -130,11 +201,7 @@ $err = curl_error($curl);
                                     <li class="py-1">
                                         <a class="dropdown-item" href="admin"><i class="fa fa-columns"></i> Dashboard</a>
                                     </li>
-                                    <?php if ($_SESSION["status"] == "user") :
-                                        $username = $_SESSION['login'];
-                                        $user = mysqli_query($conn, "SELECT *FROM user WHERE username = '$username'");
-                                        $result_user = mysqli_fetch_assoc($user);
-                                    ?>
+                                    <?php if ($_SESSION["status"] == "user") : ?>
                                         <li class="py-1">
                                             <a class="dropdown-item" href="admin/akun?id_user=<?= $result_user["id_user"] ?>"><i class="fa fa-user-circle"></i> Akun</a>
 
@@ -164,7 +231,7 @@ $err = curl_error($curl);
                         <table class="table caption-top">
                             <caption>
                                 <p><i class="fa fa-user"></i> <?= $result_admin["username"]; ?> <img src="admin/assets/img/check-verifed.png" alt="" width="14"></p>
-                                <p>Dikirim Dari <strong><?= $result_admin["alamat"]; ?></strong></p>
+                                <p>Dikirim Dari : <i class="fa fa-map-marker"></i> <strong><?= $kotaAsalPenjual . ", " . $provinsiAsalPenjual; ?></strong></p>
                             </caption>
                             <thead>
                                 <tr>
@@ -278,6 +345,11 @@ $err = curl_error($curl);
 
     <script>
         $(".tombol-beli").on("click", function() {
+
+            // if ($(this).find('option:selected').length == 0) {
+            //     //some code 
+            // }
+
             var aaku = "coba";
 
             $.ajax({
@@ -335,10 +407,10 @@ $err = curl_error($curl);
                         <h6 class="text-capitalize fw-bold mb-4">
                             Sosial Media
                         </h6>
-                        <p><i class="fa fa-facebook me-3 fa-2x text-primary"></i>Hokisell
+                        <p><i class="fa fa-facebook me-3 fa-2x text-primary"></i>Kiosell
                         </p>
                         <p>
-                            <i class="fa fa-instagram fa-2x me-3 text-danger"></i>Hokisell
+                            <i class="fa fa-instagram fa-2x me-3 text-danger"></i>Kiosell
                         </p>
                         <p><i class="fa fa-whatsapp me-3 fa-2x text-success"></i>082115100979</p>
                     </div>

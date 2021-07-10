@@ -1,14 +1,15 @@
 <?php
 
+$provinsi_id = $_GET['prov_id'];
+
 session_start();
 
-if (!isset($_SESSION["login"])) {
+if (!isset($_SESSION["login"]) && !$provinsi_id) {
     echo "<script>document.location.href = '../login'</script>";
     return false;
 }
 
 
-$provinsi_id = $_GET['prov_id'];
 $curl = curl_init();
 curl_setopt_array($curl, array(
     CURLOPT_URL => "http://api.rajaongkir.com/starter/city?province=$provinsi_id",

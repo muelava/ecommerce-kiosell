@@ -2,6 +2,13 @@
 session_start();
 
 $id_barang = $_GET["id"];
+if (!$id_barang) {
+
+    header("Location:index");
+    return false;
+}
+
+
 
 $conn = mysqli_connect("localhost", "root", "", "kiosell");
 
@@ -9,6 +16,11 @@ $conn = mysqli_connect("localhost", "root", "", "kiosell");
 $barang = mysqli_query($conn, "SELECT *FROM barang where id_barang = '$id_barang' ORDER BY id_barang DESC");
 $result = mysqli_fetch_assoc($barang);
 
+// cek apakah tidak menemukan id_barang
+if (mysqli_num_rows($barang) === 0) {
+    header("Location:index");
+    return false;
+}
 
 // dapatkan kategori barang
 $kategori = $result["kategori"];
@@ -162,10 +174,10 @@ $result_admin = mysqli_fetch_assoc($admin);
                 <hr class="mb-4">
                 <div class="info-penjual bg-light row align-items-center">
                     <div class="penjual shadow-sm col-sm p-3">
+                        <h6 class="mt-3 fw-bold">Penjual :</h6>
                         <p><i class="fa fa-user"></i> <?= $result_admin["username"]; ?></p>
                         <small><?= $result_admin["status"]; ?> <img src="admin/assets/img/check-verifed.png" alt="" width="14"></small>
-                        <h6 class="mt-3 fw-bold">Pengiriman :</h6>
-                        <p>Dikirim Dari <strong><?= $result_admin["alamat"]; ?></strong></p>
+                        <p>Kontak : <strong><a href="https://wa.me/<?= $result_admin["nomor_hp"]; ?>" id="mycolor-text" style="text-decoration:none" target="_blank"><?= $result_admin["nomor_hp"]; ?></a></strong></p>
                     </div>
                     <div class="beli text-center col-sm p-3">
                         <a href="checkout?id=<?= $result["id_barang"] ?>" class="btn btn-outline-danger tombol-beli">Beli Sekarang</a>
@@ -244,10 +256,10 @@ $result_admin = mysqli_fetch_assoc($admin);
                         <h6 class="text-capitalize fw-bold mb-4">
                             Sosial Media
                         </h6>
-                        <p><i class="fa fa-facebook me-3 fa-2x text-primary"></i>Hokisell
+                        <p><i class="fa fa-facebook me-3 fa-2x text-primary"></i>Kiosell
                         </p>
                         <p>
-                            <i class="fa fa-instagram fa-2x me-3 text-danger"></i>Hokisell
+                            <i class="fa fa-instagram fa-2x me-3 text-danger"></i>Kiosell
                         </p>
                         <p><i class="fa fa-whatsapp me-3 fa-2x text-success"></i>082115100979</p>
                     </div>

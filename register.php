@@ -6,14 +6,86 @@ if (isset($_SESSION["login"])) {
     header("Location: admin");
 }
 
+
+// ambil data provinsi api rajaongkir
+$curl = curl_init();
+
+curl_setopt_array($curl, array(
+    CURLOPT_URL => "https://api.rajaongkir.com/starter/province",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => "",
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 30,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => "GET",
+    CURLOPT_HTTPHEADER => array(
+        "key:81d4424e2b099f8b8ea33708087f4b8c"
+    ),
+));
+
+$response = curl_exec($curl);
+$err = curl_error($curl);
+// /ambil data provinsi api rajaongkir
+
+// inisialisasi waktu
+date_default_timezone_set('Asia/Jakarta');
+
+function hari_ini()
+{
+    $hari = date("D");
+
+    switch ($hari) {
+        case 'Sun':
+            $hari_ini = "Minggu";
+            break;
+
+        case 'Mon':
+            $hari_ini = "Senin";
+            break;
+
+        case 'Tue':
+            $hari_ini = "Selasa";
+            break;
+
+        case 'Wed':
+            $hari_ini = "Rabu";
+            break;
+
+        case 'Thu':
+            $hari_ini = "Kamis";
+            break;
+
+        case 'Fri':
+            $hari_ini = "Jumat";
+            break;
+
+        case 'Sat':
+            $hari_ini = "Sabtu";
+            break;
+
+        default:
+            $hari_ini = "Tidak di ketahui";
+            break;
+    }
+
+    return "<b>" . $hari_ini . "</b>";
+}
+
+$waktu = strip_tags(hari_ini() . ", " . date('d/m/Y') . " " . date("H:i:s"));
+
+
 $conn = mysqli_connect("localhost", "root", "", "kiosell");
 
 
 if (isset($_POST["register"])) {
+
     $nama_user = $_POST["nama_depan"] . " " . $_POST["nama_belakang"];
     $username = strtolower(stripslashes($_POST["username"]));
     $email = $_POST["email"];
     $nomor_hp = $_POST["nomor_hp"];
+    $provinsi = $_POST["provinsi"];
+    $distrik = $_POST["kabupaten"];
+    $kode_pos = $_POST["kode_pos"];
     $alamat = $_POST["alamat"];
     $password = mysqli_real_escape_string($conn, $_POST["password"]);
     $konfirm_password = $_POST["konfirm_password"];
@@ -38,7 +110,7 @@ if (isset($_POST["register"])) {
 
     $password = password_hash($password, PASSWORD_DEFAULT);
 
-    mysqli_query($conn, "INSERT INTO user VALUES('','$nama_user','$username','$email','$nomor_hp',' ','$alamat','$password','user','sekarang')");
+    mysqli_query($conn, "INSERT INTO user VALUES('','$nama_user','$username','$email','$nomor_hp','$provinsi','$distrik','$kode_pos','$alamat','$password','user','$waktu')");
 
     echo "<script>alert('Berhasil Regitrasi. Silakan Login!'); document.location.href = 'login'</script>";
     return mysqli_affected_rows($conn);
@@ -141,7 +213,25 @@ if (isset($_POST["register"])) {
             <li><input type="text" class="form-control" placeholder="Username" name="username"></li><br>
             <li><input type="email" class="form-control" placeholder="Email" name="email"></li><br>
             <li><input type="text" class="form-control" placeholder="Nomor Hp/WhatsApp" name="nomor_hp"></li><br>
-            <li><input type="text" class="form-control" placeholder="Alamat" name="alamat"></li><br>
+            <li>
+                <select class="form-control" name='provinsi' id='provinsi'>";
+                    <option>Pilih Provinsi</option>
+                    <?php
+                    $get = json_decode($response, true);
+                    for ($i = 0; $i < count($get['rajaongkir']['results']); $i++) :
+                    ?>
+                        <option value="<?php echo $get['rajaongkir']['results'][$i]['province_id']; ?>"><?php echo $get['rajaongkir']['results'][$i]['province']; ?></option>
+                    <?php endfor; ?>
+                </select>
+            </li><br>
+            <li>
+                <label>Kabupaten</label><br>
+                <select class="form-control form-control-sm" id="kabupaten" name="kabupaten" disabled="true" required>
+                    <!-- Data kabupaten akan diload menggunakan AJAX -->
+                </select> <br>
+            </li><br>
+            <li><input type="text" class="form-control" placeholder="Alamat Lengkap" name="alamat"></li><br>
+            <li><input type="text" class="form-control w-50" placeholder="Kode Pos" name="kode_pos" required></li><br>
             <li><input type="password" class="form-control" placeholder="password" id="password" name="password" required></li><br>
             <li><input type="password" class="form-control" placeholder="Konfirmasi Password" id="konfirm_password" name="konfirm_password" required></li>
             <small id="message"></small><br>
@@ -157,6 +247,26 @@ if (isset($_POST["register"])) {
                 $('#message').html('password sesuai').css('color', 'green');
             } else
                 $('#message').html('password tidak sesuai').css('color', 'red');
+        });
+
+
+
+        // ongkir break point
+
+        $('#provinsi').change(function() {
+            $("#kabupaten").prop("disabled", false);
+            //Mengambil value dari option select provinsi kemudian parameternya dikirim menggunakan ajax
+            var prov = $('#provinsi').val();
+            var nama_provinsi = $(this).attr("nama_provinsi");
+            $.ajax({
+                type: 'GET',
+                url: 'fitur-ongkir/ambil-kabupaten.php',
+                data: 'prov_id=' + prov,
+                success: function(data) {
+                    //jika data berhasil didapatkan, tampilkan ke dalam option select kabupaten
+                    $("#kabupaten").html(data);
+                }
+            });
         });
     </script>
 

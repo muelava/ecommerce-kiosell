@@ -15,6 +15,11 @@ if (!isset($_SESSION["login"])) {
 // ambil id barang
 $id_barang = $_GET["id_post"];
 
+if (!$id_barang) {
+    header("Location:postingan");
+    return false;
+}
+
 // ambil id admin
 $username = $_SESSION["login"];
 
@@ -23,6 +28,12 @@ $conn = mysqli_connect('localhost', 'root', '', 'kiosell');
 // cari data barang
 $barang = mysqli_query($conn, "SELECT *FROM barang WHERE id_barang = '$id_barang'");
 $result_barang  = mysqli_fetch_assoc($barang);
+
+// cek apakah tidak menemukan id_user
+if (mysqli_num_rows($barang) === 0) {
+    echo "<script>  alert('postingan tidak ditemukan'); window.location.href='postingan'</script>";
+    return false;
+}
 
 
 
@@ -377,7 +388,8 @@ function upload3()
                         <label for="floatingInputInvalid">Berat(gram)</label>
                     </div>
                     <div class="mb-3 d-flex form-floating w-100">
-                        <select class="form-select form-select-sm" aria-label="Default select example" name="kategori">
+                        <select class="form-select form-select-sm" aria-label="Default select example" name="kategori" required>
+                            <option></option>
                             <option value="Elektronik">Elektronik</option>
                             <option value="Pakaian">Pakaian</option>
                             <option value="Otomotif">Otomotif</option>
@@ -393,7 +405,7 @@ function upload3()
                         </div>
                         <div class="mb-3 form-floating w-100">
                             <input class="form-control form-control-sm" type="number" name="jml_barang" min="0" value="<?= $result_barang['jml_barang']; ?>" required>
-                            <label for="floatingInputInvalid">Jumlah</label>
+                            <label for="floatingInputInvalid">Stok</label>
                         </div>
                     </div>
                     <div class="mb-3 form-floating">

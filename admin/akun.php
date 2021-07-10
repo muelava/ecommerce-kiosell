@@ -12,6 +12,11 @@ if (!isset($_SESSION["login"])) {
 // ambil id user dari get
 $id_user = $_GET["id_user"];
 
+if (!$id_user) {
+    header("Location:daftar-user");
+    return false;
+}
+
 // ambil id use dari session
 $username = $_SESSION["login"];
 
@@ -23,6 +28,37 @@ $conn = mysqli_connect("localhost", "root", "", "kiosell");
 $user = mysqli_query($conn, "SELECT *FROM user WHERE id_user = '$id_user'");
 $result = mysqli_fetch_assoc($user);
 
+// cek apakah tidak menemukan id_user
+if (mysqli_num_rows($user) === 0) {
+    echo "<script>  alert('user tidak ditemukan'); window.location.href='daftar-user'</script>";
+    return false;
+}
+
+// data api rajongkir
+// cari kota dan provinsi user
+$distrik_user = $result["distrik"];
+
+$curl = curl_init();
+curl_setopt_array($curl, array(
+    CURLOPT_URL => "http://api.rajaongkir.com/starter/cost",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => "",
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 30,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => "POST",
+    CURLOPT_POSTFIELDS => "origin=" . $distrik_user . "&destination=" . $distrik_user . "&weight=500" . "&courier=jne",
+    CURLOPT_HTTPHEADER => array(
+        "content-type: application/x-www-form-urlencoded",
+        "key: 81d4424e2b099f8b8ea33708087f4b8c"
+    ),
+));
+$response = curl_exec($curl);
+$err = curl_error($curl);
+curl_close($curl);
+$data = json_decode($response, true);
+$distrikUser = $data['rajaongkir']['origin_details']['city_name'];
+$provinsiUser = $data['rajaongkir']['origin_details']['province'];
 
 ?>
 
@@ -33,7 +69,7 @@ $result = mysqli_fetch_assoc($user);
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pemberitahuan</title>
+    <title><?= $result["nama_user"]; ?></title>
 
     <script src="assets/js/main.js"></script>
 
@@ -61,7 +97,7 @@ $result = mysqli_fetch_assoc($user);
                                     </span>
                                     <div class="row">
                                         <span class="ms-1 fw-bold text-capitalize" id="nama"><?= $_SESSION["login"]; ?> <?php if ($_SESSION["status"] == "admin") : ?> <img src="assets/img/check-verifed.png" alt="" width="16"><?php endif; ?> </span>
-                                        <span class="ms-1" id="sebagai"><?= $result["status"]; ?></span>
+                                        <span class="ms-1" id="sebagai"><?= $_SESSION["status"] ?></span>
                                     </div>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-light text-small border-0 shadow-sm">
@@ -125,7 +161,9 @@ $result = mysqli_fetch_assoc($user);
                         <tr>
                             <td>Nama</td>
                             <td>:</td>
-                            <td class="text-capitalize fw-bold"><?= $result["nama_user"]; ?></td>
+                            <td>
+                                <h5 class="text-capitalize fw-bold mb-0"><?= $result["nama_user"]; ?></h5>
+                            </td>
                         </tr>
                     </thead>
                     <tbody>
@@ -147,12 +185,22 @@ $result = mysqli_fetch_assoc($user);
                         <tr>
                             <td>Alamat</td>
                             <td>:</td>
-                            <td class="text-capitalize fw-bold"><?= $result["alamat"]; ?></td>
+                            <td class="text-capitalize"><?= $result["alamat"]; ?></td>
                         </tr>
                         <tr>
-                            <td>Status</td>
+                            <td>Kode Pos</td>
                             <td>:</td>
-                            <td class="text-capitalize"><?= $result["status"]; ?></td>
+                            <td><?= $result["kode_pos"]; ?></td>
+                        </tr>
+                        <tr>
+                            <td>Kota/Kabupaten</td>
+                            <td>:</td>
+                            <td class="fw-bold"><?= $distrikUser; ?></td>
+                        </tr>
+                        <tr>
+                            <td>Provinsi</td>
+                            <td>:</td>
+                            <td class="fw-bold"><?= $provinsiUser; ?></td>
                         </tr>
                         <tr>
                             <td>Waktu Registrasi</td>
