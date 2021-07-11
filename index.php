@@ -14,6 +14,38 @@ $kategori_otomotif = mysqli_query($conn, "SELECT *FROM barang where kategori='ot
 $result_barang = mysqli_fetch_assoc($barang);
 
 
+// cari data penjual dulu
+$id_adm = $result_barang["id_admin"];
+$admn = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_adm'");
+$result_adm = mysqli_fetch_assoc($admn);
+$kota_asal = $result_adm["distrik"];
+
+
+// data api rajongkir
+// cari kota tujuan
+$curl = curl_init();
+curl_setopt_array($curl, array(
+    CURLOPT_URL => "http://api.rajaongkir.com/starter/cost",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => "",
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 30,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => "POST",
+    CURLOPT_POSTFIELDS => "origin=" . $kota_asal . "&destination=" . $kota_asal . "&weight=500" . "&courier=jne",
+    CURLOPT_HTTPHEADER => array(
+        "content-type: application/x-www-form-urlencoded",
+        "key: 81d4424e2b099f8b8ea33708087f4b8c"
+    ),
+));
+$response = curl_exec($curl);
+$err = curl_error($curl);
+curl_close($curl);
+$data = json_decode($response, true);
+$kotaAsalPenjual = $data['rajaongkir']['origin_details']['city_name'];
+$provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
+
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -31,7 +63,7 @@ $result_barang = mysqli_fetch_assoc($barang);
     <!-- jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-    <title>Kiosell - Tempatnya Belanja Onine</title>
+    <title>Kiosell - Tempatnya Belanja Online</title>
 </head>
 
 <body>
@@ -166,7 +198,7 @@ $result_barang = mysqli_fetch_assoc($barang);
 
                             <p class="stok">Stok : <strong><?= $rst_terbaru["jml_barang"]; ?></strong> </p>
                             <p class="lokasi mb-1"><i class="fa fa-user"></i> <?= $result["username"]; ?></p>
-                            <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $result["alamat"]; ?></p>
+                            <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $kotaAsalPenjual . ", " . $provinsiAsalPenjual; ?></p>
                         </div>
                     </a>
                 <?php endforeach; ?>
@@ -191,7 +223,7 @@ $result_barang = mysqli_fetch_assoc($barang);
                             ?>
                             <p class="stok">Stok : <strong><?= $rst_terbaru["jml_barang"]; ?></strong> </p>
                             <p class="lokasi mb-1"><i class="fa fa-user"></i> <?= $result["username"]; ?></p>
-                            <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $result["alamat"]; ?></p>
+                            <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $kotaAsalPenjual . ", " . $provinsiAsalPenjual; ?></p>
                         </div>
                     </a>
                 <?php endforeach; ?>
@@ -216,7 +248,7 @@ $result_barang = mysqli_fetch_assoc($barang);
                             ?>
                             <p class="stok">Stok : <strong><?= $rst_terbaru["jml_barang"]; ?></strong> </p>
                             <p class="lokasi mb-1"><i class="fa fa-user"></i> <?= $result["username"]; ?></p>
-                            <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $result["alamat"]; ?></p>
+                            <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $kotaAsalPenjual . ", " . $provinsiAsalPenjual; ?></p>
                         </div>
                     </a>
                 <?php endforeach; ?>
@@ -241,7 +273,7 @@ $result_barang = mysqli_fetch_assoc($barang);
                             ?>
                             <p class="stok">Stok : <strong><?= $rst_terbaru["jml_barang"]; ?></strong> </p>
                             <p class="lokasi mb-1"><i class="fa fa-user"></i> <?= $result["username"]; ?></p>
-                            <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $result["alamat"]; ?></p>
+                            <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $kotaAsalPenjual . ", " . $provinsiAsalPenjual; ?></p>
                         </div>
                     </a>
                 <?php endforeach; ?>

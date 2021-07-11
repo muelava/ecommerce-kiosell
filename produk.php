@@ -29,9 +29,37 @@ $barang_ktgr = mysqli_query($conn, "SELECT *FROM barang where kategori = '$kateg
 $id_admin = $result["id_admin"];
 
 
-// cari data penjual
+// cari data penjual dulu
 $admin = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");
 $result_admin = mysqli_fetch_assoc($admin);
+
+$kota_asal = $result_admin["distrik"];
+
+// data api rajongkir
+// cari kota tujuan
+$curl = curl_init();
+curl_setopt_array($curl, array(
+    CURLOPT_URL => "http://api.rajaongkir.com/starter/cost",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => "",
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 30,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => "POST",
+    CURLOPT_POSTFIELDS => "origin=" . $kota_asal . "&destination=" . $kota_asal . "&weight=500" . "&courier=jne",
+    CURLOPT_HTTPHEADER => array(
+        "content-type: application/x-www-form-urlencoded",
+        "key: 81d4424e2b099f8b8ea33708087f4b8c"
+    ),
+));
+$response = curl_exec($curl);
+$err = curl_error($curl);
+curl_close($curl);
+$data = json_decode($response, true);
+$kotaAsalPenjual = $data['rajaongkir']['origin_details']['city_name'];
+$provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
+
+
 
 
 
@@ -176,10 +204,10 @@ $result_admin = mysqli_fetch_assoc($admin);
                         <h6 class="mt-3 fw-bold">Penjual :</h6>
                         <p><i class="fa fa-user"></i> <?= $result_admin["username"]; ?></p>
                         <small><?= $result_admin["status"]; ?> <img src="admin/assets/img/check-verifed.png" alt="" width="14"></small>
-                        <p>Kontak : <strong><a href="https://wa.me/<?= $result_admin["nomor_hp"]; ?>" id="mycolor-text" style="text-decoration:none" target="_blank"><?= $result_admin["nomor_hp"]; ?></a></strong></p>
+                        <p class="my-1">Dikirim dari <strong><?= $kotaAsalPenjual . ", " . $provinsiAsalPenjual; ?></strong></p>
                     </div>
                     <div class="beli text-center col-sm p-3">
-                        <a href="checkout?id=<?= $result["id_barang"] ?>" class="btn btn-outline-danger tombol-beli">Beli Sekarang</a>
+                        <a href="pembelian?id=<?= $result["id_barang"] ?>" class="btn btn-outline-danger tombol-beli">Beli Sekarang</a>
                     </div>
                 </div>
             </div>
@@ -203,7 +231,8 @@ $result_admin = mysqli_fetch_assoc($admin);
                             ?>
                             <p class="stok">Stok : <strong><?= $rst_terbaru["jml_barang"]; ?></strong> </p>
                             <p class="lokasi mb-1"><i class="fa fa-user"></i> <?= $result["username"]; ?></p>
-                            <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $result["alamat"]; ?></p>
+                            <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $kotaAsalPenjual . ", " . $provinsiAsalPenjual; ?></p>
+
                         </div>
                     </a>
                 <?php endforeach; ?>
