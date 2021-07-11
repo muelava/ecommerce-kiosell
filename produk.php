@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+include "admin/koneksi.php";
+
 $id_barang = $_GET["id"];
 if (!$id_barang) {
 
@@ -8,9 +10,6 @@ if (!$id_barang) {
     return false;
 }
 
-
-
-$conn = mysqli_connect("localhost", "root", "", "kiosell");
 
 // cari barang
 $barang = mysqli_query($conn, "SELECT *FROM barang where id_barang = '$id_barang' ORDER BY id_barang DESC");

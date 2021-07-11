@@ -2,6 +2,8 @@
 
 session_start();
 
+include "admin/koneksi.php";
+
 if (isset($_SESSION["login"])) {
     header("Location: admin");
 }
@@ -73,8 +75,6 @@ function hari_ini()
 
 $waktu = strip_tags(hari_ini() . ", " . date('d/m/Y') . " " . date("H:i:s"));
 
-
-$conn = mysqli_connect("localhost", "root", "", "kiosell");
 
 
 if (isset($_POST["register"])) {

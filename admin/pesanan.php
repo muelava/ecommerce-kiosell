@@ -3,14 +3,14 @@
 
 session_start();
 
+include "koneksi.php";
+
 if (!isset($_SESSION["login"])) {
     header("Location: ../login");
 }
 
 
 $username = $_SESSION["login"];
-
-$conn = mysqli_connect("localhost", "root", "", "kiosell");
 
 
 if ($_SESSION["status"] === "admin") {

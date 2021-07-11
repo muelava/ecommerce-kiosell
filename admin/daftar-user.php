@@ -2,6 +2,9 @@
 
 session_start();
 
+include "koneksi.php";
+
+
 if (!isset($_SESSION["login"])) {
     header("Location: ../login");
     return false;
@@ -13,8 +16,6 @@ if (!isset($_SESSION["login"])) {
 
 $username = $_SESSION["login"];
 
-
-$conn = mysqli_connect('localhost', 'root', '', 'kiosell');
 
 
 $user = mysqli_query($conn, "SELECT *FROM user ORDER BY id_user DESC");

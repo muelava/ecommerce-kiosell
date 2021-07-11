@@ -2,12 +2,11 @@
 
 session_start();
 
+include "admin/koneksi.php";
+
 if (isset($_SESSION["login"])) {
     header("Location: admin");
 }
-
-$conn = mysqli_connect("localhost", "root", "", "kiosell");
-
 
 
 if (isset($_POST["login"])) {

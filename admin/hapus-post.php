@@ -2,6 +2,9 @@
 
 session_start();
 
+include "koneksi.php";
+
+
 if (!isset($_SESSION["login"])) {
     header("Location: ../login");
     return false;
@@ -10,8 +13,6 @@ if (!isset($_SESSION["login"])) {
     return false;
 }
 
-
-$conn = mysqli_connect('localhost', 'root', '', 'kiosell');
 
 $id_barang = $_GET["id_post"];
 

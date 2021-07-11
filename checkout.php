@@ -2,6 +2,8 @@
 
 session_start();
 
+include "admin/koneksi.php";
+
 if (!isset($_SESSION["login"])) {
     echo "<script>alert('Silakan masuk ke dalam akun Kamu.'); document.location.href = 'login'</script>";
     return false;
@@ -16,7 +18,7 @@ if (!$id_barang) {
     return false;
 }
 
-$conn = mysqli_connect("localhost", "root", "", "kiosell");
+
 
 // cari barang
 $barang = mysqli_query($conn, "SELECT *FROM barang where id_barang = '$id_barang' ORDER BY id_barang DESC");

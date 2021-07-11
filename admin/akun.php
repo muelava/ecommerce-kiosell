@@ -3,6 +3,9 @@
 
 session_start();
 
+include "koneksi.php";
+
+
 if (!isset($_SESSION["login"])) {
     header("Location: ../login");
     return false;
@@ -19,9 +22,6 @@ if (!$id_user) {
 
 // ambil id use dari session
 $username = $_SESSION["login"];
-
-
-$conn = mysqli_connect("localhost", "root", "", "kiosell");
 
 
 // cari user

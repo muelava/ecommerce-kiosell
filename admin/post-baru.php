@@ -2,6 +2,9 @@
 
 session_start();
 
+include "koneksi.php";
+
+
 if (!isset($_SESSION["login"])) {
     header("Location: ../login");
     return false;
@@ -13,7 +16,6 @@ if (!isset($_SESSION["login"])) {
 
 $username = $_SESSION["login"];
 
-$conn = mysqli_connect('localhost', 'root', '', 'kiosell');
 
 $admin = mysqli_query($conn, "SELECT *FROM admin WHERE username = '$username'");
 $result  = mysqli_fetch_assoc($admin);
