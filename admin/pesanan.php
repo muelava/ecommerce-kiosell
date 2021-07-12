@@ -22,6 +22,11 @@ if ($_SESSION["status"] === "admin") {
 }
 
 
+$id_user = $result["id_user"];
+
+$transaksi = mysqli_query($conn, "SELECT *FROM transaksi WHERE id_user = '$id_user'");
+$result_transaksi = mysqli_fetch_assoc($transaksi);
+
 
 
 ?>
@@ -103,7 +108,7 @@ if ($_SESSION["status"] === "admin") {
                         <?php else : ?>
                             <li>
                                 <a href="pesanan" class="nav-link px-0 align-middle">
-                                    <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_shopping_cart_black_24dp.png" class="me-2" width="35" alt=""> Pesanan</span></a>
+                                    <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_shopping_cart_black_24dp.png" class="me-2" width="35" alt=""> Pembelian</span></a>
                             </li>
                         <?php endif; ?>
                     </ul>
@@ -117,8 +122,31 @@ if ($_SESSION["status"] === "admin") {
             </span>
 
             <div class="col py-3 mt-5" id="content">
-                <h2 class="pt-5 text-capitalize">Belum ada <b>Pesanan!</b></h2>
-
+                <h2 class="pt-5 text-capitalize">Daftar <b>Pembelian</b></h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">No.</th>
+                            <th scope="col">Produk</th>
+                            <th scope="col">Total Harga</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($transaksi as $result) : ?>
+                            <tr>
+                                <th scope="row">1</th>
+                                <td><?= $result["nama_barang"]; ?></td>
+                                <td><?= $result["jml_tagihan"]; ?></td>
+                                <td><?= $result["status"]; ?></td>
+                                <td>
+                                    <a class="btn btn-sm btn-primary" href="../transaksi?id_transaksi=<?= $result['id_transaksi'] ?>">Rincian Pembayaran</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
 

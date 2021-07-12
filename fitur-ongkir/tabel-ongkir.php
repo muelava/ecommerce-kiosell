@@ -61,14 +61,14 @@ for ($k = 0; $k < count($data['rajaongkir']['results']); $k++) {
                 <tr>
                     <td><?php echo $l + 1; ?></td>
                     <td>
-                        <div style="font:bold 14px Arial"><?php echo $data['rajaongkir']['results'][$k]['costs'][$l]['service']; ?></div>
+                        <div style="font:bold 14px Arial" id="servis"><?php echo $data['rajaongkir']['results'][$k]['costs'][$l]['service']; ?></div>
                         <div style="font:normal 10px Arial"><?php echo $data['rajaongkir']['results'][$k]['costs'][$l]['description']; ?></div>
                     </td>
                     <td align="center">&nbsp;<?php echo $data['rajaongkir']['results'][$k]['costs'][$l]['cost'][0]['etd']; ?> hari</td>
                     <td align="right"><?php echo number_format($data['rajaongkir']['results'][$k]['costs'][$l]['cost'][0]['value']); ?></td>
                     <td>
 
-                        <div class="radio cobain">
+                        <div class="radio">
                             <label><input type="radio" tarif="<?php echo $data['rajaongkir']['results'][$k]['costs'][$l]['cost'][0]['value']; ?>" name="pilih_ongkir" class="pilih_ongkir"></label>
                         </div>
                     </td>
@@ -114,7 +114,6 @@ for ($k = 0; $k < count($data['rajaongkir']['results']); $k++) {
         var tarif = parseInt($(this).attr("tarif"));
         var subtotal = parseInt($('#subtotal').text());
         var total = tarif + subtotal;
-
 
 
         $('#ongkir').text(format_rupiah(tarif))

@@ -388,8 +388,7 @@ function upload3()
                         <label for="floatingInputInvalid">Berat(gram)</label>
                     </div>
                     <div class="mb-3 d-flex form-floating w-100">
-                        <select class="form-select form-select-sm" aria-label="Default select example" name="kategori" required>
-                            <option></option>
+                        <select class="form-select form-select-sm" aria-label="Default select example" name="kategori" id="kategori" required>
                             <option value="Elektronik">Elektronik</option>
                             <option value="Pakaian">Pakaian</option>
                             <option value="Otomotif">Otomotif</option>
@@ -443,6 +442,9 @@ function upload3()
             $("#btn-burger").click(function() {
                 $(".sidebar").toggle(250);
             });
+
+            // kategori default
+            $('#kategori').val("<?= $result_barang['kategori'] ?>").change();
         });
     </script>
     <!-- bootstrap js -->

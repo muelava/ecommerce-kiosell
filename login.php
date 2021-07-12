@@ -130,7 +130,7 @@ if (isset($_POST["login"])) {
     <h4 class="text-center mt-5">Selamat Datang Di <strong>Kiosell</strong></h4>
     <p class="text-center">Tempat membuang-buang uang. Jangan kesini jika belum waktu <b>gajian</b>, <br> karena kami tidak bertanggung jawab apabila anda membeli <br> banyak <b>barang</b> yang sebenarnya tidak diperlukan.</p>
 
-    <form action="" method="POST" class="form-login">
+    <form action="" method="POST" class="form-login" style="margin-top: 10%;">
         <ul style="list-style: none;" class="p-0">
             <li><input type="text" class="form-control" placeholder="username" name="username" autofocus required></li><br>
             <li><input type="password" class="form-control" placeholder="password" name="password" required></li><br>

@@ -9,7 +9,6 @@ if (!isset($_SESSION["login"])) {
     return false;
 }
 
-
 $id_barang = $_GET["id"];
 
 
@@ -17,6 +16,53 @@ if (!$id_barang) {
     header("Location:index");
     return false;
 }
+
+
+
+
+
+// ketika tombol pilihan pembayaran ditekan
+if (isset($_POST["rincian_pembelian"])) {
+
+    $id_transaksi = rand(1000, 9999);
+    $id_admin = $_POST["id_admin"];
+    $alamat_penjual = $_POST["alamat_penjual"];
+    $id_user = $_POST['id_user'];
+    $rekening = $_POST["pilih_bank"];
+
+
+    $nama_barang = $_POST["nama_barang"];
+    $harga = $_POST["harga"];
+    $subtotal = $_POST["subtotal"];
+    $jml_tagihan = $_POST["jml_tagihan"];
+    $jml_barang = $_POST["jml_barang"];
+    $total_berat = $_POST["total_berat"];
+
+
+    $catatan = strip_tags($_POST["catatan"]);
+    $alamat_pembeli = $_POST["alamat"];
+    $kode_pos = $_POST["kode-pos"];
+    $kota_kab = $_POST["kota-kab"];
+    $provinsi = $_POST["provinsi"];
+
+    $kurir = $_POST["kurir"];
+    $ongkir = $_POST["ongkir"];
+
+    if (empty($jml_tagihan)) {
+        echo "<script>alert('Lengkapi Pengiriman Anda!'); window.location.href='pembelian?id=$id_barang'</script>";
+        return false;
+        die();
+    }
+
+    mysqli_query($conn, "INSERT INTO transaksi VALUES('$id_transaksi','$id_admin','$id_user','$rekening','$nama_barang','$jml_tagihan','$jml_barang','$harga','$subtotal','$total_berat','$catatan','$alamat_pembeli','$alamat_penjual','$kode_pos','$kota_kab','$provinsi','$kurir','$ongkir','false')");
+
+    echo "<script>alert('Berhasil!'); window.location.href='transaksi?id_transaksi=$id_transaksi'</script>";
+    return mysqli_affected_rows($conn);
+    die();
+}
+// /ketika tombol pilihan pembayaran ditekan
+
+
 
 
 
@@ -105,8 +151,6 @@ if ($_SESSION["status"] == "user") {
 }
 
 
-
-
 ?>
 
 <!doctype html>
@@ -129,9 +173,14 @@ if ($_SESSION["status"] == "user") {
         #subtotal::before {
             content: "Rp. ";
         }
+
+        #berat::after {
+            content: "gram";
+            font-size: 12px;
+        }
     </style>
 
-    <title>Checkout</title>
+    <title>Pembelian</title>
 </head>
 
 <body>
@@ -210,12 +259,12 @@ if ($_SESSION["status"] == "user") {
                         <table class="table caption-top">
                             <caption>
                                 <p><i class="fa fa-user"></i> <?= $result_admin["username"]; ?> <img src="admin/assets/img/check-verifed.png" alt="" width="14"></p>
-                                <p>Dikirim Dari : <i class="fa fa-map-marker"></i> <strong><?= $kotaAsalPenjual . ", " . $provinsiAsalPenjual; ?></strong></p>
+                                <p>Dikirim Dari : <i class="fa fa-map-marker"></i> <strong id="alamat_penjual"><?= $kotaAsalPenjual . ", " . $provinsiAsalPenjual; ?></strong></p>
                             </caption>
                             <thead>
                                 <tr>
                                     <th>
-                                        <img src="admin/assets/img/post/<?= $result['gambar1'] ?>" width="50" alt="">
+                                        <img src="admin/assets/img/post/<?= $result['gambar1'] ?>" width="100" alt="">
                                     </th>
                                     <th>
                                         <h5 class="fw-bold">
@@ -235,11 +284,11 @@ if ($_SESSION["status"] == "user") {
                                 </tr>
                                 <tr>
                                     <td>Berat </td>
-                                    <td class="text-end"><?= number_format($result["berat"], '0', ',', '.'); ?> <sub>gram</sub></td>
+                                    <td class="text-end" id="berat"><?= $result["berat"]; ?><sub></sub></td>
                                 </tr>
                                 <tr>
                                     <td>Quantity </td>
-                                    <td class="text-end"><input type="number" min="1" max="<?= $result["jml_barang"]; ?>" value="1" style="border:none; max-width:15%" id="quantity"></td>
+                                    <td class="text-end"><input type="number" min="1" value="1" style="border:none; max-width:15%" id="quantity"></td>
                                 </tr>
                                 <tr>
                                     <td>Subtotal </td>
@@ -254,19 +303,19 @@ if ($_SESSION["status"] == "user") {
                                 <h5 class="mt-3 mb-2 fw-bold" id="mycolor-text">Pengiriman :</h5>
 
                                 <p class="fw-bold" style="font-size: 12px;">Alamat</p>
-                                <p class="mb-3" style="font-size: 14px;"><?= $result_user['alamat']; ?></p>
+                                <p class="mb-3" style="font-size: 14px;" id="alamat"><?= $result_user['alamat']; ?></p>
 
                                 <p class="fw-bold" style="font-size: 12px;">Kode Pos</p>
-                                <h6 class="mb-3"><?= $result_user['kode_pos']; ?></h6>
+                                <h6 class="mb-3" id="kode-pos"><?= $result_user['kode_pos']; ?></h6>
 
                                 <p class="fw-bold" style="font-size: 12px;">Kota / Kabupaten</p>
-                                <h6 class="mb-3"><?= $kotaAsalPembeli; ?></h6>
+                                <h6 class="mb-3" id="kota-kab"><?= $kotaAsalPembeli; ?></h6>
 
                                 <p class="fw-bold">Provinsi</p>
-                                <h6><?= $provinsiAsalPembeli; ?></h6>
+                                <h6 id="provinsi"><?= $provinsiAsalPembeli; ?></h6>
 
                             </div>
-                            <div class="col">
+                            <div class="col-md">
                                 <label>Kurir</label><br>
                                 <select class="form-control form-control-sm" id="kurir" name="kurir">
                                     <option value="">Pilih Kurir</option>
@@ -278,7 +327,7 @@ if ($_SESSION["status"] == "user") {
                             </div>
 
                             <div class="text-end">
-                                <button class="btn btn-danger tombol-beli" id="mycolor-bg" data-bs-toggle="modal" data-bs-target="#exampleModal">Lanjutkan</button>
+                                <button class="btn btn-danger pilih-pembayaran" data-bs-toggle="modal" data-bs-target="#exampleModal" id="mycolor-bg">Pilih Pembayaran</button>
                             </div>
                         <?php else : echo "<script> alert('Kamu masuk sebagai admin');</script> " ?>
                         <?php endif; ?>
@@ -299,45 +348,53 @@ if ($_SESSION["status"] == "user") {
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Konfirmasi</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Pilih Pembayaran</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    Apakah sudah yakin ?
-                    <div id="tes"></div>
+                <form action="" method="POST">
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" id="mycolor-bg" class="btn btn-primary Bayar">Bayar</button>
-                </div>
+                    <input type="text" name="id_admin" id="id_admin">
+                    <input type="text" name="alamat_penjual" id="almt_penjual">
+
+                    <input type="text" name="nama_barang" id="nama_barang">
+                    <input type="text" name="harga" id="harga">
+                    <input type="text" name="subtotal" id="sub_total">
+                    <input type="text" name="jml_tagihan" id="jumlah_tagihan">
+                    <input type="text" name="jml_barang" id="jml_barang">
+                    <input type="text" name="total_berat" id="total_berat">
+                    <input type="text" name="id_user" id="id_user">
+                    <input type="text" name="catatan" id="note">
+                    <input type="text" name="alamat" id="almt">
+                    <input type="text" name="kode-pos" id="kodepos">
+                    <input type="text" name="kota-kab" id="kotakab">
+                    <input type="text" name="provinsi" id="prov">
+                    <input type="text" name="kurir" id="krr">
+                    <input type="text" name="ongkir" id="plh_ongkir">
+
+                    <div class="modal-body">
+                        <div class="d-flex justify-content-around align-items-center mb-3">
+                            <div>Transfer Bank</div>
+                            <div class="mb-1">
+                                <select class="form-select" name="pilih_bank" id="">
+                                    <option value="bca">BANK BCA</option>
+                                    <option value="bri">BANK BRI</option>
+                                    <option value="mandiri">BANK MANDIRI</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" id="mycolor-bg" class="btn btn-primaryr" name="rincian_pembelian">Rincian Pembelian</button>
+                    </div>
+
+                </form>
             </div>
         </div>
     </div>
     <!-- end modal -->
 
-
-    <script>
-        $(".tombol-beli").on("click", function() {
-
-            // if ($(this).find('option:selected').length == 0) {
-            //     //some code 
-            // }
-
-            var aaku = "coba";
-
-            $.ajax({
-                type: 'POST',
-                url: 'pembayaran.php',
-                data: {
-                    'coba': aaku
-                },
-                success: function(data) {
-                    $("#tes").html(data);
-                }
-            });
-        })
-    </script>
 
     <!-- Footer -->
     <footer class="text-center text-lg-start bg-light text-muted">
@@ -412,17 +469,28 @@ if ($_SESSION["status"] == "user") {
             $(".detail-produk").css("maxHeight", "initial");
         })
 
-        $('#quantity').on('click keyup', function() {
-            var q = $(this).val();
-            var j = <?= $result["harga"]; ?>;
-            var jml = q * j;
-            $('#subtotal').html(jml);
-        });
-
 
         // ongkir breakpoint
 
-        $('#kurir').on("change", function() {
+        $('#kurir, #quantity').on("change keyup", function() {
+
+            // value default jika user tidak mengunput atau menginput 0 atau bahkan
+            if ($("#quantity").val() == "" || $("#quantity").val() == "0") {
+                var q = 1;
+            } else if (parseInt($("#quantity").val()) > parseInt(<?= $result['jml_barang'] ?>)) {
+                var max = parseInt(<?= $result["jml_barang"]; ?>)
+                var q = parseInt($("#quantity").val(max));
+            } else {
+                var q = parseInt($("#quantity").val());
+            }
+
+            var b = parseInt(<?= $result["berat"]; ?>)
+            var berat = q * b;
+            $("#berat").html(berat);
+
+            var j = <?= $result["harga"]; ?>;
+            var jml = q * j;
+            $('#subtotal').html(jml);
 
             //Mengambil value dari option select provinsi asal, kabupaten, kurir kemudian parameternya dikirim menggunakan ajax
             var kab = <?= $kota_pembeli; ?>;
@@ -434,7 +502,7 @@ if ($_SESSION["status"] == "user") {
 
                 var subtotal = parseInt($('#subtotal').text());
                 var asal_distrik = <?= $result_admin['distrik'] ?>;
-                var berat = <?= $result['berat'] ?>;
+                var berat = parseInt($("#berat").html());
 
                 $.ajax({
                     type: 'POST',
@@ -453,6 +521,60 @@ if ($_SESSION["status"] == "user") {
                 });
             }
         });
+
+
+        $(".pilih-pembayaran").on("click", function() {
+
+            $("#almt_penjual").val($("#alamat_penjual").text());
+
+
+            let str = $("#total").text();
+            let ambilNol = str.substring(str.length - 3);
+            let acak = Math.floor((Math.random() * 900) + 100);
+            let timpa = str.replace(ambilNol, acak);
+
+            $("#jumlah_tagihan").val(timpa);
+
+            $("#harga").val("<?= $result['harga'] ?>")
+
+            $("#sub_total").val($("#subtotal").text());
+
+
+            $("#id_admin").val("<?= $id_admin ?>")
+            $("#id_user").val("<?= $result_user["id_user"]; ?>")
+
+
+            $("#nama_barang").val("<?= $result["nama_barang"]; ?>")
+            $("#jml_barang").val($("#quantity").val())
+
+
+
+            $("#total_berat").val($("#berat").text())
+            $("#almt").val("<?= $result_user['alamat']; ?>")
+            $("#kodepos").val($("#kode-pos").text())
+            $("#kotakab").val($("#kota-kab").text())
+            $("#prov").val($("#provinsi").text())
+            $("#krr").val($('#kurir').val())
+            $("#plh_ongkir").val($('#ongkir').text())
+
+
+
+            $("#note").val($('#catatan').val())
+
+            // var aaku = "coba";
+
+            // $.ajax({
+            //     type: 'POST',
+            //     url: 'pembayaran.php',
+            //     data: {
+            //         'coba': aaku
+            //     },
+            //     success: function(data) {
+            //         $("#tes").html(data);
+            //     }
+            // });
+
+        })
     </script>
 
 

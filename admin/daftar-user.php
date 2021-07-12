@@ -40,7 +40,7 @@ function query($query)
 
 function cari($keyword)
 {
-    $query = "SELECT *FROM user WHERE nama_user LIKE '%$keyword%' OR username LIKE '%$keyword%' OR email LIKE '%$keyword%' ORDER BY id_user DESC";
+    $query = "SELECT *FROM user WHERE nama_user LIKE '%$keyword%' OR username LIKE '%$keyword%' OR nomor_hp LIKE '%$keyword%' ORDER BY id_user DESC";
     return query($query);
 }
 // end cari
@@ -144,7 +144,7 @@ if ($_SESSION["status"] === "admin") {
                             <th scope="col">No</th>
                             <th scope="col">Nama</th>
                             <th scope="col">Username</th>
-                            <th scope="col">Email</th>
+                            <th scope="col">Nomor Hp</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -195,7 +195,7 @@ if ($_SESSION["status"] === "admin") {
                                     <a href="hapus-user?id_user=<?= $crs["id_user"] ?>" class="btn btn-outline-danger btn-sm" title="Hapus <?= $crs['nama_user'] ?> ?" onclick=" return confirm('Yakin Ingin Menghapus <?= $crs["nama_user"] ?>  ?')">
                                         <i class="fa fa-trash"></i>
                                     </a>
-                                    <a href="akun?id_user=<?= $crs["id_user"] ?>" class="btn btn-outline-success btn-sm" title="Hapus <?= $crs['nama_user'] ?> ?">
+                                    <a href="akun?id_user=<?= $crs["id_user"] ?>" class="btn btn-outline-success btn-sm" title="Akun <?= $crs['nama_user'] ?> ?">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                 </td>

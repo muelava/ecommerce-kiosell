@@ -1,2 +1,2 @@
 <?php
-echo $coba = $_POST["coba"];
+// echo $coba = $_POST["coba"];

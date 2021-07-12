@@ -129,7 +129,6 @@ if (isset($_POST["register"])) {
     <title>Register</title>
     <link rel="stylesheet" href="admin/assets/css/main.css">
 
-
     <link rel="stylesheet" href="assets/css/main.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -204,17 +203,17 @@ if (isset($_POST["register"])) {
     </nav>
 
     <!-- container -->
-    <h4 class="text-center mt-5">Selamat Datang <strong>Register</strong></h4>
+    <h4 class="text-center mt-5"><strong>Membuat Akun</strong> - Langsung Belanja!</h4>
 
-    <form action="" method="POST" class="form-login">
+    <form action="" method="POST" class="form-login" style="margin-top: 10%;">
         <ul style="list-style: none;" class="p-0">
             <li><input type="text" class="form-control" placeholder="Nama Depan" name="nama_depan" autofocus required></li><br>
-            <li><input type="text" class="form-control" placeholder="Nama Belakang" name="nama_belakang"></li><br>
-            <li><input type="text" class="form-control" placeholder="Username" name="username"></li><br>
-            <li><input type="email" class="form-control" placeholder="Email" name="email"></li><br>
-            <li><input type="text" class="form-control" placeholder="Nomor Hp/WhatsApp" name="nomor_hp"></li><br>
+            <li><input type="text" class="form-control" placeholder="Nama Belakang" name="nama_belakang" required></li><br>
+            <li><input type="text" class="form-control" placeholder="Username" name="username" required></li><br>
+            <li><input type="email" class="form-control" placeholder="Email" name="email" required></li><br>
+            <li><input type="text" class="form-control" placeholder="Nomor Hp/WhatsApp" name="nomor_hp" required></li><br>
             <li>
-                <select class="form-control" name='provinsi' id='provinsi'>";
+                <select class="form-control" name='provinsi' id='provinsi' required>";
                     <option>Pilih Provinsi</option>
                     <?php
                     $get = json_decode($response, true);
@@ -225,12 +224,14 @@ if (isset($_POST["register"])) {
                 </select>
             </li><br>
             <li>
-                <label>Kabupaten</label><br>
                 <select class="form-control form-control-sm" id="kabupaten" name="kabupaten" disabled="true" required>
+                    <option>Kota/Kabupaten</option>
                     <!-- Data kabupaten akan diload menggunakan AJAX -->
                 </select> <br>
             </li><br>
-            <li><input type="text" class="form-control" placeholder="Alamat Lengkap" name="alamat"></li><br>
+            <li>
+                <textarea class="form-control" name="alamat" rows="5" placeholder="Alamat" required></textarea>
+            </li><br>
             <li><input type="text" class="form-control w-50" placeholder="Kode Pos" name="kode_pos" required></li><br>
             <li><input type="password" class="form-control" placeholder="password" id="password" name="password" required></li><br>
             <li><input type="password" class="form-control" placeholder="Konfirmasi Password" id="konfirm_password" name="konfirm_password" required></li>
@@ -242,7 +243,7 @@ if (isset($_POST["register"])) {
 
 
     <script>
-        $('#password, #konfirm_password').on('keyup', function() {
+        $('#konfirm_password').on('keyup', function() {
             if ($('#password').val() == $('#konfirm_password').val()) {
                 $('#message').html('password sesuai').css('color', 'green');
             } else
