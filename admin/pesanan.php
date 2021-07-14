@@ -7,6 +7,8 @@ include "koneksi.php";
 
 if (!isset($_SESSION["login"])) {
     header("Location: ../login");
+} elseif ($_SESSION["status"] != "user") {
+    header("Location:index");
 }
 
 
@@ -24,7 +26,7 @@ if ($_SESSION["status"] === "admin") {
 
 $id_user = $result["id_user"];
 
-$transaksi = mysqli_query($conn, "SELECT *FROM transaksi WHERE id_user = '$id_user'");
+$transaksi = mysqli_query($conn, "SELECT *FROM transaksi WHERE id_user = '$id_user' ORDER BY id_transaksi DESC");
 $result_transaksi = mysqli_fetch_assoc($transaksi);
 
 
@@ -130,7 +132,7 @@ $result_transaksi = mysqli_fetch_assoc($transaksi);
                             <th scope="col">Produk</th>
                             <th scope="col">Total Harga</th>
                             <th scope="col">Status</th>
-                            <th scope="col">Aksi</th>
+                            <th scope="col">Detail</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -138,15 +140,29 @@ $result_transaksi = mysqli_fetch_assoc($transaksi);
                             <tr>
                                 <th scope="row">1</th>
                                 <td><?= $result["nama_barang"]; ?></td>
-                                <td><?= $result["jml_tagihan"]; ?></td>
-                                <td><?= $result["status"]; ?></td>
+                                <td>Rp. <?= $result["jml_tagihan"]; ?></td>
+                                <td class="text-primary">
+                                    <?php
+                                    if ($result["status"] == "true") {
+                                        $result["status"] = "Sedang Dikirim";
+                                    } else {
+                                        $result["status"] = "Belum Dibayar";
+                                    }
+                                    echo $result["status"]; ?>
+                                </td>
                                 <td>
-                                    <a class="btn btn-sm btn-primary" href="../transaksi?id_transaksi=<?= $result['id_transaksi'] ?>">Rincian Pembayaran</a>
+                                    <a class="btn btn-sm btn-success" href="../transaksi?id_transaksi=<?= $result['id_transaksi'] ?>">Rincian</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+                <?php if (mysqli_num_rows($transaksi) == 0) : ?>
+                    <h5 class="text-center" style="margin-top: 15%;"><strong>Ooops!!</strong> Belum ada Transaksi</h5>
+                    <div class="d-flex justify-content-center">
+                        <img src="../assets/img/empty.jpg" class="img-fluid col-md-5" alt="">
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
 

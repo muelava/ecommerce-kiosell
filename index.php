@@ -187,8 +187,9 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
                         <div class="img-content">
                             <img class="img-fluid" width="120" src="admin/assets/img/post/<?= $rst_terbaru['gambar1'] ?>" alt="">
                         </div>
-                        <h6 class="my-3"><?= $rst_terbaru["nama_barang"]; ?></h6>
+                        <h6 class="my-3" id="nama_barang"><?= $rst_terbaru["nama_barang"]; ?></h6>
                         <div class="text-start">
+                            <p class="lokasi mb-1"><i class="fa fa-bookmark"></i> <?= $rst_terbaru["kategori"]; ?></p>
                             <p class="fw-bold harga">Rp <?= number_format($rst_terbaru["harga"], 0, ',', '.'); ?></p>
                             <?php
                             $id_admin = $rst_terbaru["id_admin"];
@@ -324,12 +325,12 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
                         <h6 class="text-capitalize fw-bold mb-4">
                             Sosial Media
                         </h6>
-                        <p><i class="fa fa-facebook me-3 fa-2x text-primary"></i>Hokisell
+                        <p><i class="fa fa-facebook me-3 fa-2x text-primary"></i>Kiosell
                         </p>
                         <p>
-                            <i class="fa fa-instagram fa-2x me-3 text-danger"></i>Hokisell
+                            <i class="fa fa-instagram fa-2x me-3 text-danger"></i>Kiosell
                         </p>
-                        <p><i class="fa fa-whatsapp me-3 fa-2x text-success"></i>082115100979</p>
+                        <p><i class="fa fa-whatsapp me-3 fa-2x text-success"></i>0882-1053-4512</p>
                     </div>
                     <!-- Grid column -->
                 </div>
@@ -340,13 +341,23 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
         <!-- Copyright -->
         <div class="text-center p-4">
             © 2021 Copyright :
-            <a class="text-reset fw-bold" href="https://muelava.github.io" target="_blank">Muelava</a>
+            <a class="text-reset fw-bold" href="https://github.com/muelava" target="_blank">Kiosell</a>
         </div>
         <!-- Copyright -->
     </footer>
     <!-- Footer -->
 
 
+    <!-- myjavascript -->
+    <script>
+        $(document).ready(function() {
+            let str = $("#nama_barang").text();
+
+            let myArr = str.split(" ");
+
+            // $("#nama_barang").text(myArr);
+        })
+    </script>
 
     <!-- Optional JavaScript; choose one of the two! -->
     <script src="assets/js/main.js"></script>

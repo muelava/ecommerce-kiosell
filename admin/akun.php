@@ -133,8 +133,8 @@ $provinsiUser = $data['rajaongkir']['origin_details']['province'];
                                 </a>
                             </li>
                             <li>
-                                <a href="pemberitahuan" class="nav-link px-0 align-middle" style="opacity: .5;">
-                                    <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_notifications_active_black_24dp.png" class="me-2" width="35" alt=""> Pemberitahuan</span></a>
+                                <a href="penjualan" class="nav-link px-0 align-middle" style="opacity: .5;">
+                                    <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_notifications_active_black_24dp.png" class="me-2" width="35" alt=""> Penjualan</span></a>
                             </li>
                         <?php else : ?>
                             <li>

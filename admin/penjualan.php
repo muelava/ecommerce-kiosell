@@ -27,8 +27,8 @@ if ($_SESSION["status"] === "admin") {
     $result  = mysqli_fetch_assoc($user);
 }
 
-
-
+$penjualan = mysqli_query($conn, "SELECT *FROM transaksi ORDER BY id_transaksi DESC");
+// $result_penjualan = mysqli_fetch_assoc($penjualan);
 
 ?>
 
@@ -39,7 +39,7 @@ if ($_SESSION["status"] === "admin") {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pemberitahuan</title>
+    <title>Penjualan</title>
 
     <script src="assets/js/main.js"></script>
 
@@ -92,8 +92,8 @@ if ($_SESSION["status"] === "admin") {
                                 </a>
                             </li>
                             <li>
-                                <a href="pemberitahuan" class="nav-link px-0 align-middle">
-                                    <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_notifications_active_black_24dp.png" class="me-2" width="35" alt=""> Pemberitahuan</span></a>
+                                <a href="penjualan" class="nav-link px-0 align-middle">
+                                    <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_notifications_active_black_24dp.png" class="me-2" width="35" alt=""> Penjualan</span></a>
                             </li>
                         <?php endif; ?>
                     </ul>
@@ -106,9 +106,53 @@ if ($_SESSION["status"] === "admin") {
                 <div class="humberger"></div>
             </span>
 
+            <!-- container -->
             <div class="col py-3 mt-5" id="content">
-                <h2 class="pt-5 text-capitalize">Belum ada <b>Pemberitahuan!</b></h2>
 
+                <h2 class="pt-5 text-capitalize">Data <b>Penjualan</b></h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">No.</th>
+                            <th scope="col">Produk</th>
+                            <th scope="col">Kode</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php $i = 1 ?>
+                        <?php foreach ($penjualan as $result) : ?>
+                            <tr>
+                                <th scope="row"><?= $i++; ?></th>
+                                <td><?= substr($result["nama_barang"], 0, 15); ?> ..</td>
+                                <td>K-<?= $result["id_transaksi"]; ?></td>
+                                <td>Rp. <?= $result["jml_tagihan"]; ?></td>
+                                <td class="text-primary">
+                                    <?php
+                                    if ($result["status"] == "true") {
+                                        $result["status"] = "Sedang Dikirim";
+                                    } else {
+                                        $result["status"] = "Belum Dibayar";
+                                    }
+                                    echo $result["status"]; ?>
+                                </td>
+                                <td>
+                                    <a class="btn btn-sm btn-success" href="../konfirmasi?id_transaksi=<?= $result['id_transaksi'] ?>">Konfirmasi</a><br>
+                                    <a onclick="return confirm('Yakin hapus transaksi <?= $result["nama_barang"] ?>')" class="btn btn-sm btn-danger" href="../hapus-transaksi?id_transaksi=<?= $result['id_transaksi'] ?>">Hapus</a><br>
+                                    <a class="btn btn-sm btn-info" href="../transaksi?id_transaksi=<?= $result['id_transaksi'] ?>">Detail</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <?php if (mysqli_num_rows($penjualan) == 0) : ?>
+                    <h5 class="text-center" style="margin-top: 15%;"><strong>Lapor,</strong> Belum ada Penjualan Boss!!</h5>
+                    <div class="d-flex justify-content-center">
+                        <img src="../assets/img/empty.jpg" class="img-fluid col-md-5" alt="">
+                    </div>
+                <?php endif; ?>
 
             </div>
         </div>

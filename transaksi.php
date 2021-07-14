@@ -11,7 +11,6 @@ if (!isset($_SESSION["login"])) {
 
 $id_transaksi = $_GET["id_transaksi"];
 
-
 if (!$id_transaksi) {
     header("Location:index");
     return false;
@@ -21,15 +20,62 @@ if (!$id_transaksi) {
 $transaksi = mysqli_query($conn, "SELECT *FROM transaksi where id_transaksi = '$id_transaksi'");
 $result_transaksi = mysqli_fetch_assoc($transaksi);
 
-if ($result_transaksi["status"] == "false") {
-    $result_transaksi["status"] = "Belum dibayar";
+// cari barang : 
+$id_barang = $result_transaksi["id_barang"];
+$barang = mysqli_query($conn, "SELECT *FROM barang where id_barang = '$id_barang'");
+$result_barang = mysqli_fetch_assoc($barang);
+
+
+// cari penjual : 
+$id_admin = $result_transaksi["id_admin"];
+$penjual = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");
+$result_penjual = mysqli_fetch_assoc($penjual);
+
+
+// cari pembeli :
+$id_user = $result_transaksi["id_user"];
+$user = mysqli_query($conn, "SELECT *FROM user where id_user = '$id_user'");
+$result_user = mysqli_fetch_assoc($user);
+
+
+// jika bukan user pembeli 
+if ($_SESSION["status"] == "user") {
+    $username = $_SESSION["login"];
+    $pembeli = mysqli_query($conn, "SELECT *FROM user where username = '$username'");
+    $result_pembeli = mysqli_fetch_assoc($pembeli);
+
+    if (($result_pembeli["id_user"] != $result_transaksi["id_user"])) {
+        header("Location:admin/pesanan");
+    }
 }
+
 
 
 if (mysqli_num_rows($transaksi) === 0) {
     header("Location:login");
     return false;
 }
+
+
+if ($result_transaksi["status"] == "true") {
+    $result_transaksi["status"] = "Sedang Dikirim";
+} else {
+    $result_transaksi["status"] = "Belum Dibayar";
+}
+
+
+if ($result_transaksi["rekening"] == "bri") {
+    $norek = "BRI-08132456789";
+    $atasNama = "PT. Kiosell ";
+} elseif ($result_transaksi["rekening"] == "bca") {
+    $norek = "BCA-1234567";
+    $atasNama = "PT. Kiosell ";
+} elseif ($result_transaksi["rekening"] == "mandiri") {
+    $norek = "MANDIRI-32100012";
+    $atasNama = "PT. Kiosell ";
+}
+
+
 
 
 ?>
@@ -47,10 +93,58 @@ if (mysqli_num_rows($transaksi) === 0) {
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
+    <!-- fontawesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/fontawesome.min.css" integrity="sha384-wESLQ85D6gbsF459vf1CiZ2+rr+CsxRY0RpiF1tLlQpDnAgg6rwdsUF1+Ics2bni" crossorigin="anonymous">
+
     <!-- jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-    <title>Transaksi</title>
+    <title>Rincian Pembelian</title>
+
+    <style>
+        #detik,
+        #jam,
+        #menit,
+        #hari {
+            position: relative;
+        }
+
+        #detik::after {
+            content: "(Detik)";
+            font-size: .5em;
+            position: absolute;
+            left: 0%;
+            bottom: -50%;
+            font-weight: normal;
+        }
+
+        #menit::after {
+            content: "(Menit)";
+            font-size: .5em;
+            position: absolute;
+            left: 0%;
+            bottom: -50%;
+            font-weight: normal;
+        }
+
+        #jam::after {
+            content: "(Jam)";
+            font-size: .5em;
+            position: absolute;
+            left: 0%;
+            bottom: -50%;
+            font-weight: normal;
+        }
+
+        #hari::after {
+            content: "(Hari)";
+            font-size: .5em;
+            position: absolute;
+            left: 0%;
+            bottom: -50%;
+            font-weight: normal;
+        }
+    </style>
 </head>
 
 <body>
@@ -109,59 +203,233 @@ if (mysqli_num_rows($transaksi) === 0) {
     <!-- /navabar -->
 
     <!-- container -->
-    <div class="container" id="container-produk">
+    <div class="container bg-white px-5 py-3" id="container-produk">
 
-        <h5 class="mt-5 fw-bold">Rincian Pembelian</h5>
+        <div class="row justify-content-between">
+            <div class="col-md-8 mb-5 d-flex align-items-center">
+                <div class="me-3">
+                    <img src="admin/assets/img/post/<?= $result_barang["gambar1"]; ?>" width="100" alt="">
+                </div>
+                <h4 class="fw-bold d-inline"><?= $result_transaksi["nama_barang"]; ?></h4>
+            </div>
+            <div class="col-md-2">
+                <h2 class="fw-bold text-secondary text-uppercase">kiosell</h2>
+                <p>K-<?= $result_transaksi["id_transaksi"]; ?></p>
+                <p>Date : <span class="dateInvoice"></span></p>
+            </div>
+        </div>
+        <div class="text-center mt-3" id="tagihan">
+            <p>Batas Waktu Pembayaran :</p>
+            <div class="mb-3 text-center"><i class="fa fa-clock-o"></i> <span id="waktu">jam</span> &nbsp; &nbsp; &nbsp; <i class="fa fa-calendar-o"></i> <span id="tanggal-berakhir">tanggal berakhir</span></div>
+            <div class="mb-5 w-50 mx-auto d-flex justify-content-evenly" id="mycolor-text">
+                <h5 class="fw-bold" id="hari"></h5>
+                <h5 class="fw-bold" id="jam"></h5>
+                <h5 class="fw-bold" id="menit"></h5>
+                <h5 class="fw-bold" id="detik"></h5>
+            </div>
+            <p class="text-secondary">Jumlah Tagihan</p>
+            <h2 class="fw-bold shadow-sm d-inline-block p-1 rounded-circle" id="mycolor-text">Rp <?= $result_transaksi["jml_tagihan"]; ?></h2>
+            <p class="mt-4 text-secondary">Metode : Transfer <strong class="text-uppercase">BANK</strong></p>
+            <p class="mb-1"><strong class="text-uppercase"><?= $atasNama; ?></strong></p>
+            <h5 class="fw-bold shadow-sm d-inline-block p-1 mb-4"><?= $norek ?></h5>
+        </div>
+        <div class="mb-3 text-center">
+            <button id="status" class="btn btn-outline-primary text-capitalize" style="pointer-events:none"><?= $result_transaksi["status"]; ?></button>
+        </div>
+        <div class="text-center my-5">
+            <!-- <p>Batas Waktu Bayar</p> -->
+        </div>
+
+        <h5 class="mt-5 fw-bold text-center">Rincian Pembelian</h5>
+
         <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col"></th>
-                    <th scope="col"></th>
-                    <th scope="col"></th>
-                </tr>
-            </thead>
             <tbody>
                 <tr>
-                    <td>Id Transaksi</td>
-                    <th scope="row"><?= $result_transaksi["id_transaksi"]; ?></th>
+                    <td>Kode Transaksi</td>
+                    <th scope="row">K-<?= $result_transaksi["id_transaksi"]; ?></th>
                 </tr>
                 <tr>
-                    <td>Id Admin</td>
-                    <th scope="row"><?= $result_transaksi["id_admin"]; ?></th>
+                    <td>Tanggal Order</td>
+                    <th scope="row" class="dateInvoice"></th>
                 </tr>
                 <tr>
-                    <td>Id User</td>
-                    <th scope="row"><?= $result_transaksi["id_user"]; ?></th>
-                </tr>
-                <tr>
-                    <td>Rekening</td>
-                    <th scope="row"><?= $result_transaksi["rekening"]; ?></th>
-                </tr>
-                <tr>
-                    <td>Nama Barang</td>
+                    <td>Produk</td>
                     <th scope="row"><?= $result_transaksi["nama_barang"]; ?></th>
                 </tr>
                 <tr>
                     <td>Harga</td>
-                    <th scope="row">Rp. <?= number_format($result_transaksi["harga"], "0", ",", "."); ?></th>
+                    <th scope="row">Rp <?= number_format($result_transaksi["harga"], "0", ",", "."); ?></th>
                 </tr>
                 <tr>
-                    <td>Jumlah Barang</td>
+                    <td>Jumlah</td>
                     <th scope="row"><?= $result_transaksi["jml_barang"]; ?></th>
                 </tr>
                 <tr>
-                    <td>Jumlah Tagihan</td>
-                    <th scope="row"><?= $result_transaksi["jml_tagihan"]; ?></th>
+                    <td>Sub Total</td>
+                    <th scope="row">Rp <?= number_format($result_transaksi["subtotal"], "0", ",", "."); ?></th>
                 </tr>
                 <tr>
-                    <td>Status</td>
-                    <th scope="row"><?= $result_transaksi["status"]; ?></th>
+                    <td>Total Berat</td>
+                    <th scope="row"><?= number_format($result_transaksi["total_berat"], "0", ",", "."); ?>(g)</th>
+                </tr>
+                <tr>
+                    <td>Ongkos Kirim</td>
+                    <th scope="row">Rp <?= $result_transaksi["ongkir"]; ?></th>
+                </tr>
+                <tr>
+                    <td>Total</td>
+                    <th scope="row">Rp <?= $result_transaksi["jml_tagihan"]; ?></th>
+                </tr>
+                <tr>
+                    <td>Catatan</td>
+                    <th scope="row" class="fst-italic"><?= $result_transaksi["catatan"]; ?></th>
                 </tr>
             </tbody>
         </table>
 
+        <h5 class="mb-4 fw-bold mt-5 text-center">Pengiriman</h5>
+        <div class="row justify-content-between">
+            <div class="col-md-4">
+                <strong>Pengirim : </strong>
+                <p><?= $result_penjual["username"]; ?></p>
+                <small>Telepon :</small>
+                <p><?= $result_penjual["nomor_hp"]; ?></p>
+                <small>Dikirim Dari :</small>
+                <p><?= $result_transaksi["alamat_penjual"] ?></p>
+            </div>
+            <div class="col-md-4">
+                <strong>Penerima :</strong>
+                <p class="text-capitalize"><?= $result_user["nama_user"]; ?></p>
+                <small>Telepon :</small>
+                <p><?= $result_user["nomor_hp"]; ?></p>
+                <small>Alamat :</small>
+                <p><?= $result_transaksi["alamat_pembeli"] . ", <br>" . $result_transaksi["kota_kab"] . ", Prov. " . $result_transaksi["provinsi"] . ". <br>" . $result_transaksi["kode_pos"]; ?></p>
+                <small>Kurir :</small>
+                <p class="text-uppercase"><?= $result_transaksi["kurir"]; ?></p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="text-success col-5">
+                <strong>Note :</strong>
+                <ul>
+                    <li>
+                        <p>Silakan lakukan pembayaran dengan memasukan jumlah tagihan yang benar agar kami bisa mengkonfirmasi pembayaran anda.</p>
+                    </li>
+                    <li>
+                        <p>Setelah melakukan pembayaran, silakan tunggu. Kami akan langsung mengkonfirmasi dan Mengirim pesanan anda.</p>
+                    </li>
+                    <li>
+                        <p>Jika waktu pembayaran anda telah habis, maka Kosell otomatis membatalkan transaksi.</p>
+                        <!-- <p>Pastikan memasukan dengan benar 3 <i class="text-secondary">(contoh : Rp 1.000.<mark class="bg-info rounded">123</mark>)</i> digit angka pada Jumlah Tagihan. Agar lebih mudah konfirmasi transaksi Anda.</p> -->
+                    </li>
+                </ul>
+            </div>
+        </div>
+
     </div>
 
+
+    <!-- reminder -->
+    <div id="reminder" class="d-none text-center" style="position: fixed; z-index:99; top:0%; width:100%; height:100%; background-color:rgba(0,0,0,0.5);">
+        <img src="assets/img/reminder.jpg" width="50%" class="rounded" style="margin:5%;" alt="">
+    </div>
+
+
+
+    <script>
+        // // reminder
+        // setTimeout(() => {
+        //     $("#reminder").removeClass("d-none");
+
+        // }, 3000)
+
+        // $("#reminder").on("click", () => {
+        //     $("#reminder").addClass("d-none");
+        // })
+
+
+
+
+
+        let dapatWaktu = parseInt("<?= $result_transaksi['wkt_beli']; ?>")
+        let dateInv = new Date(dapatWaktu - 86400000);
+
+        $(".dateInvoice").text(dateInv.getDay() + "/" + dateInv.getMonth() + "/" + dateInv.getFullYear());
+        let ambilMenit = new Date(dapatWaktu).getMinutes();
+        let ambilJam = new Date(dapatWaktu).getHours();
+        let ambilTgl = new Date(dapatWaktu).getDay();
+        var month = new Array();
+        month[0] = "Januari";
+        month[1] = "Februari";
+        month[2] = "Maret";
+        month[3] = "April";
+        month[4] = "Mei";
+        month[5] = "Juni";
+        month[6] = "Juli";
+        month[7] = "Agustus";
+        month[8] = "September";
+        month[9] = "Oktober";
+        month[10] = "November";
+        month[11] = "Desember";
+        let ambilBulan = month[new Date(dapatWaktu).getMonth()];
+        let ambilTahun = new Date(dapatWaktu).getFullYear();
+
+        $("#waktu").text(ambilJam + " : " + ambilMenit);
+        $("#tanggal-berakhir").text(ambilTgl + ", " + ambilBulan + " " + ambilTahun);
+
+        let status = $("#status").text().toLowerCase();
+        if (status == "sedang dikirim") {
+            $("#detik,#menit,#jam,#hari,#waktu,#tanggal-berakhir, #tagihan").hide();
+            $("#status").text("pesanan kamu sedang dikirim!");
+            clearInterval(hitungMundur);
+        }
+
+        // hitung mundur / countdown :
+        let hitungMundur = setInterval(() => {
+
+            // Cari jarak antara sekarang adan hitung mundur
+            let sekarang = new Date().getTime();
+
+            let jarak = dapatWaktu - sekarang;
+
+            // kalkulasi untuk hari, jam, menit and detik
+            let hari = Math.floor(jarak / (1000 * 60 * 60 * 24));
+            let jam = Math.floor((jarak % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let menit = Math.floor((jarak % (1000 * 60 * 60)) / (1000 * 60));
+            let detik = Math.floor((jarak % (1000 * 60)) / 1000);
+
+
+
+            $("#detik").text(detik);
+            $("#menit").text(menit);
+            $("#jam").text(jam);
+            $("#hari").text(hari);
+
+            // Jika hitung mundur sudah habis maka lakukan ini :
+            if (jarak < 0) {
+                $("#detik,#menit,#jam,#hari,#waktu,#tanggal-berakhir").hide();
+                clearInterval(hitungMundur);
+
+                $("#status").text("expired");
+                let status = $("#status").text().toLowerCase();
+
+                if (status == "expired") {
+
+                    // jika expired, lakukan ini dalam ( waktu yang ditentukan)
+                    setTimeout(() => {
+                        $("#status").text("data dihapus");
+                        setInterval(hitungMundur);
+
+                    }, 2000)
+
+                }
+
+            }
+
+
+        }, 1000)
+    </script>
 
 
     <!-- Optional JavaScript; choose one of the two! -->

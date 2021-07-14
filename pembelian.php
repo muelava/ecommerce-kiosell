@@ -48,13 +48,15 @@ if (isset($_POST["rincian_pembelian"])) {
     $kurir = $_POST["kurir"];
     $ongkir = $_POST["ongkir"];
 
+    $wkt_beli = $_POST["wkt_beli"];
+
     if (empty($jml_tagihan)) {
         echo "<script>alert('Lengkapi Pengiriman Anda!'); window.location.href='pembelian?id=$id_barang'</script>";
         return false;
         die();
     }
 
-    mysqli_query($conn, "INSERT INTO transaksi VALUES('$id_transaksi','$id_admin','$id_user','$rekening','$nama_barang','$jml_tagihan','$jml_barang','$harga','$subtotal','$total_berat','$catatan','$alamat_pembeli','$alamat_penjual','$kode_pos','$kota_kab','$provinsi','$kurir','$ongkir','false')");
+    mysqli_query($conn, "INSERT INTO transaksi VALUES('$id_transaksi','$id_barang','$id_admin','$id_user','$rekening','$nama_barang','$jml_tagihan','$jml_barang','$harga','$subtotal','$total_berat','$catatan','$alamat_pembeli','$alamat_penjual','$kode_pos','$kota_kab','$provinsi','$kurir','$ongkir','false','$wkt_beli','')");
 
     echo "<script>alert('Berhasil!'); window.location.href='transaksi?id_transaksi=$id_transaksi'</script>";
     return mysqli_affected_rows($conn);
@@ -279,7 +281,7 @@ if ($_SESSION["status"] == "user") {
                                 <tr>
                                     <td>Catatan </td>
                                     <td class="text-end">
-                                        <textarea class="form-control" name="catatan" id="catatan" rows="3"></textarea>
+                                        <textarea class="form-control" name="catatan" id="catatan" rows="3" placeholder="Warna, Ukuran, dsb"></textarea>
                                     </td>
                                 </tr>
                                 <tr>
@@ -370,6 +372,7 @@ if ($_SESSION["status"] == "user") {
                     <input type="text" name="provinsi" id="prov">
                     <input type="text" name="kurir" id="krr">
                     <input type="text" name="ongkir" id="plh_ongkir">
+                    <input type="text" name="wkt_beli" id="waktu_beli">
 
                     <div class="modal-body">
                         <div class="d-flex justify-content-around align-items-center mb-3">
@@ -443,7 +446,8 @@ if ($_SESSION["status"] == "user") {
                         <p>
                             <i class="fa fa-instagram fa-2x me-3 text-danger"></i>Kiosell
                         </p>
-                        <p><i class="fa fa-whatsapp me-3 fa-2x text-success"></i>082115100979</p>
+                        <p><i class="fa fa-whatsapp me-3 fa-2x text-success"></i>0882-1053-4512
+                        </p>
                     </div>
                     <!-- Grid column -->
                 </div>
@@ -454,7 +458,7 @@ if ($_SESSION["status"] == "user") {
         <!-- Copyright -->
         <div class="text-center p-4">
             © 2021 Copyright :
-            <a class="text-reset fw-bold" href="https://muelava.github.io" target="_blank">Muelava</a>
+            <a class="text-reset fw-bold" href="https://github.com/muelava" target="_blank">Kiosel</a>
         </div>
         <!-- Copyright -->
     </footer>
@@ -523,17 +527,23 @@ if ($_SESSION["status"] == "user") {
         });
 
 
+
+        // jika tombol pilih-pembayaran ditekan
         $(".pilih-pembayaran").on("click", function() {
 
             $("#almt_penjual").val($("#alamat_penjual").text());
 
-
-            let str = $("#total").text();
-            let ambilNol = str.substring(str.length - 3);
-            let acak = Math.floor((Math.random() * 900) + 100);
-            let timpa = str.replace(ambilNol, acak);
+            if ($("#total").text() == "") {
+                var timpa = 0;
+            } else {
+                let str = $("#total").text();
+                let ambilNol = str.substring(str.length - 3);
+                let acak = Math.floor((Math.random() * 900) + 100);
+                var timpa = str.replace(ambilNol, acak);
+            }
 
             $("#jumlah_tagihan").val(timpa);
+
 
             $("#harga").val("<?= $result['harga'] ?>")
 
@@ -556,6 +566,11 @@ if ($_SESSION["status"] == "user") {
             $("#prov").val($("#provinsi").text())
             $("#krr").val($('#kurir').val())
             $("#plh_ongkir").val($('#ongkir').text())
+
+
+            let ambilWaktu = new Date().getTime();
+            let dapatWaktu = ambilWaktu + 86400000;
+            $("#waktu_beli").val(dapatWaktu);
 
 
 

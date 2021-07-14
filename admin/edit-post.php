@@ -282,7 +282,7 @@ function upload3()
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Post</title>
+    <title>Edit - <?= $result_barang["nama_barang"]; ?> </title>
 
     <script src="assets/js/main.js"></script>
 
@@ -322,7 +322,7 @@ function upload3()
                             </div>
                         </li>
                         <li>
-                            <a href="post-baru" class="nav-link px-0 align-middle">
+                            <a href="post-baru" class="nav-link px-0 align-middle" style="opacity: .5">
                                 <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_post_add_black_24dp.png" class="me-2" width="35" alt=""> Post Baru</span>
                             </a>
                         </li>
@@ -338,8 +338,8 @@ function upload3()
                                 </a>
                             </li>
                             <li>
-                                <a href="pemberitahuan" class="nav-link px-0 align-middle" style="opacity: .5;">
-                                    <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_notifications_active_black_24dp.png" class="me-2" width="35" alt=""> Pemberitahuan</span></a>
+                                <a href="penjualan" class="nav-link px-0 align-middle" style="opacity: .5;">
+                                    <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_notifications_active_black_24dp.png" class="me-2" width="35" alt=""> Penjualan</span></a>
                             </li>
                         <?php endif; ?>
                     </ul>
