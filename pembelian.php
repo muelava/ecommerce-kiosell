@@ -24,7 +24,7 @@ if (!$id_barang) {
 // ketika tombol pilihan pembayaran ditekan
 if (isset($_POST["rincian_pembelian"])) {
 
-    $id_transaksi = rand(1000, 9999);
+    $kode_transaksi = rand(1000, 9999);
     $id_admin = $_POST["id_admin"];
     $alamat_penjual = $_POST["alamat_penjual"];
     $id_user = $_POST['id_user'];
@@ -56,7 +56,13 @@ if (isset($_POST["rincian_pembelian"])) {
         die();
     }
 
-    mysqli_query($conn, "INSERT INTO transaksi VALUES('$id_transaksi','$id_barang','$id_admin','$id_user','$rekening','$nama_barang','$jml_tagihan','$jml_barang','$harga','$subtotal','$total_berat','$catatan','$alamat_pembeli','$alamat_penjual','$kode_pos','$kota_kab','$provinsi','$kurir','$ongkir','false','$wkt_beli','')");
+    mysqli_query($conn, "INSERT INTO transaksi VALUES('','$kode_transaksi','$id_barang','$id_admin','$id_user','$rekening','$nama_barang','$jml_tagihan','$jml_barang','$harga','$subtotal','$total_berat','$catatan','$alamat_pembeli','$alamat_penjual','$kode_pos','$kota_kab','$provinsi','$kurir','$ongkir','false','$wkt_beli','')");
+
+
+    $carTransaksi = mysqli_query($conn, "SELECT *FROM transaksi WHERE kode_transaksi = '$kode_transaksi'");
+    $resultTransaksi = mysqli_fetch_assoc($carTransaksi);
+    $id_transaksi = $resultTransaksi["id_transaksi"];
+
 
     echo "<script>alert('Berhasil!'); window.location.href='transaksi?id_transaksi=$id_transaksi'</script>";
     return mysqli_affected_rows($conn);

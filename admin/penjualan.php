@@ -17,6 +17,32 @@ if (!isset($_SESSION["login"])) {
 
 $username = $_SESSION["login"];
 
+$transaksi = mysqli_query($conn, "SELECT *FROM transaksi ORDER BY id_transaksi DESC");
+// $result_penjualan = mysqli_fetch_assoc($transaksi);
+
+
+// cari data
+if (isset($_POST["cari"])) {
+    $transaksi = cari($_POST["keyword"]);
+}
+
+function query($query)
+{
+    global $conn;
+    $result2 = mysqli_query($conn, $query);
+    $rows = [];
+    while ($row = mysqli_fetch_assoc($result2)) {
+        $rows[] = $row;
+    }
+    return $rows;
+}
+
+function cari($keyword)
+{
+    $query = "SELECT *FROM transaksi WHERE nama_barang LIKE '%$keyword%' OR kode_transaksi LIKE '%$keyword%' ORDER BY id_transaksi DESC";
+    return query($query);
+}
+// end cari
 
 
 if ($_SESSION["status"] === "admin") {
@@ -27,10 +53,43 @@ if ($_SESSION["status"] === "admin") {
     $result  = mysqli_fetch_assoc($user);
 }
 
-$penjualan = mysqli_query($conn, "SELECT *FROM transaksi ORDER BY id_transaksi DESC");
-// $result_penjualan = mysqli_fetch_assoc($penjualan);
+
+
+
+if (isset($_POST["konfirm"])) {
+    $id_transaksi = $_POST["id_transaksi"];
+    $no_resi = $_POST["no_resi"];
+    $status = "true";
+
+    // cari data transaksi dulu :
+    $cariTransaksi = mysqli_query($conn, "SELECT *FROM transaksi WHERE id_transaksi = '$id_transaksi'");
+    $resultTransaksi = mysqli_fetch_assoc($cariTransaksi);
+    $jml_barang = $resultTransaksi["jml_barang"];
+    $id_barang = $resultTransaksi["id_barang"];
+
+    // cari data barang :
+    $cariBarang = mysqli_query($conn, "SELECT *FROM barang WHERE id_barang = '$id_barang'");
+    $resultBarang = mysqli_fetch_assoc($cariBarang);
+    $stok_barang = $resultBarang["jml_barang"];
+
+    // stok barang kurangin jumlah beli barang
+    $kuranginStok = $stok_barang - $jml_barang;
+
+    if ($kuranginStok < 0) {
+        echo "<script>alert('Stok Barang Habis atau tidak Mencukupi!'); window.location.href='penjualan'</script>";
+        return false;
+    }
+
+    mysqli_query($conn, "UPDATE barang SET jml_barang = '$kuranginStok'");
+    mysqli_query($conn, "UPDATE transaksi SET no_resi = '$no_resi', status = '$status'");
+
+    echo "<script> alert('Pesanan telah dikonfirmasi'); window.location.href='penjualan'</script>";
+    return mysqli_affected_rows($conn);
+}
 
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -109,6 +168,13 @@ $penjualan = mysqli_query($conn, "SELECT *FROM transaksi ORDER BY id_transaksi D
             <!-- container -->
             <div class="col py-3 mt-5" id="content">
 
+                <form action="" class="form-cari" method="POST">
+                    <div class="mb-3 d-flex p-3">
+                        <input class="form-control mainLoginInput me-2" type="text" placeholder="&#61442; Cari nama atau kode transaksi" name="keyword" autocomplete="off" autofocus />
+                        <button type="submit" class="form-control btncari text-white fw-bold" name="cari">Cari</button>
+                    </div>
+                </form>
+
                 <h2 class="pt-5 text-capitalize">Data <b>Penjualan</b></h2>
                 <table class="table">
                     <thead>
@@ -123,31 +189,36 @@ $penjualan = mysqli_query($conn, "SELECT *FROM transaksi ORDER BY id_transaksi D
                     </thead>
                     <tbody>
                         <?php $i = 1 ?>
-                        <?php foreach ($penjualan as $result) : ?>
+                        <?php foreach ($transaksi as $result) : ?>
                             <tr>
                                 <th scope="row"><?= $i++; ?></th>
-                                <td><?= substr($result["nama_barang"], 0, 15); ?> ..</td>
-                                <td>K-<?= $result["id_transaksi"]; ?></td>
+                                <td><?= $result["nama_barang"] ?></td>
+                                <td>K-<?= $result["kode_transaksi"]; ?></td>
                                 <td>Rp. <?= $result["jml_tagihan"]; ?></td>
                                 <td class="text-primary">
                                     <?php
                                     if ($result["status"] == "true") {
-                                        $result["status"] = "Sedang Dikirim";
+                                        $result["status"] = "<span class='text-success'>Sedang Dikirim</span>" . " <i class='fa fa-check-circle text-success'></i>";
                                     } else {
                                         $result["status"] = "Belum Dibayar";
                                     }
                                     echo $result["status"]; ?>
                                 </td>
                                 <td>
-                                    <a class="btn btn-sm btn-success" href="../konfirmasi?id_transaksi=<?= $result['id_transaksi'] ?>">Konfirmasi</a><br>
-                                    <a onclick="return confirm('Yakin hapus transaksi <?= $result["nama_barang"] ?>')" class="btn btn-sm btn-danger" href="../hapus-transaksi?id_transaksi=<?= $result['id_transaksi'] ?>">Hapus</a><br>
+                                    <?php
+                                    if ($result["status"] == "Belum Dibayar") : ?>
+                                        <button id="konfirmasi" data-bs-toggle="modal" data-bs-target="#exampleModal" id_trans="<?= $result['id_transaksi'] ?>" class="btn btn-sm btn-success">Konfirmasi</button><br>
+                                    <?php endif; ?>
+                                    <a onclick="return confirm('Yakin hapus transaksi <?= $result["nama_barang"] ?>')" class="btn btn-sm btn-danger" href="hapus-transaksi?id_transaksi=<?= $result['id_transaksi'] ?>">Hapus</a><br>
                                     <a class="btn btn-sm btn-info" href="../transaksi?id_transaksi=<?= $result['id_transaksi'] ?>">Detail</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
-                <?php if (mysqli_num_rows($penjualan) == 0) : ?>
+                <?php
+                $transaksi = mysqli_query($conn, "SELECT *FROM transaksi");
+                if (mysqli_num_rows($transaksi) == 0) : ?>
                     <h5 class="text-center" style="margin-top: 15%;"><strong>Lapor,</strong> Belum ada Penjualan Boss!!</h5>
                     <div class="d-flex justify-content-center">
                         <img src="../assets/img/empty.jpg" class="img-fluid col-md-5" alt="">
@@ -156,17 +227,51 @@ $penjualan = mysqli_query($conn, "SELECT *FROM transaksi ORDER BY id_transaksi D
 
             </div>
         </div>
+    </div>
 
-        <script>
-            $(document).ready(function() {
-                $("#btn-burger").click(function() {
-                    $(".sidebar").toggle(250);
-                });
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Masukan Nomor Resi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="" method="POST">
+                    <div class="modal-body">
+                        <div class="d-flex justify-content-around align-items-center">
+                            <p>Nomor Resi : </p>
+                            <input class="form-control w-50" type="text" name="no_resi" id="nomor-resi" required>
+                            <input class="form-control w-50" type="hidden" name="id_transaksi" id="id-transaksi" required>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success" name="konfirm" id="konfirm">Konfirm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- end modal -->
+
+
+    <script>
+        $(document).ready(function() {
+            $("#btn-burger").click(function() {
+                $(".sidebar").toggle(250);
             });
-        </script>
-        <!-- bootstrap js -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+        });
 
+
+        $("#konfirmasi").on("click", () => {
+            $("#id-transaksi").val($("#konfirmasi").attr("id_trans"));
+        })
+    </script>
+    <!-- bootstrap js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
 </body>
 
 </html>

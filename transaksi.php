@@ -24,6 +24,9 @@ $result_transaksi = mysqli_fetch_assoc($transaksi);
 $id_barang = $result_transaksi["id_barang"];
 $barang = mysqli_query($conn, "SELECT *FROM barang where id_barang = '$id_barang'");
 $result_barang = mysqli_fetch_assoc($barang);
+if ($result_barang["jml_barang"] == 0) {
+    $result_barang["jml_barang"] = "Habis";
+}
 
 
 // cari penjual : 
@@ -210,11 +213,13 @@ if ($result_transaksi["rekening"] == "bri") {
                 <div class="me-3">
                     <img src="admin/assets/img/post/<?= $result_barang["gambar1"]; ?>" width="100" alt="">
                 </div>
-                <h4 class="fw-bold d-inline"><?= $result_transaksi["nama_barang"]; ?></h4>
+                <h4 class="fw-bold d-inline"><?= $result_transaksi["nama_barang"]; ?>
+                    <br> <small style="font-size:.6em;" id="mycolor-text">Stok : <?= $result_barang["jml_barang"]; ?></small>
+                </h4>
             </div>
             <div class="col-md-2">
                 <h2 class="fw-bold text-secondary text-uppercase">kiosell</h2>
-                <p>K-<?= $result_transaksi["id_transaksi"]; ?></p>
+                <p>K-<?= $result_transaksi["kode_transaksi"]; ?></p>
                 <p>Date : <span class="dateInvoice"></span></p>
             </div>
         </div>
@@ -246,7 +251,7 @@ if ($result_transaksi["rekening"] == "bri") {
             <tbody>
                 <tr>
                     <td>Kode Transaksi</td>
-                    <th scope="row">K-<?= $result_transaksi["id_transaksi"]; ?></th>
+                    <th scope="row">K-<?= $result_transaksi["kode_transaksi"]; ?></th>
                 </tr>
                 <tr>
                     <td>Tanggal Order</td>

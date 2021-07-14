@@ -92,7 +92,7 @@ $waktu = strip_tags(hari_ini() . ", " . date('d/m/Y') . " " . date("H:i:s"));
 // update data
 if (isset($_POST['Update'])) {
     $id_admin = $result["id_admin"];
-    $judul = strip_tags($_POST['judul']);
+    $judul = strip_tags(strtoupper($_POST['judul']));
     // $gambar1 = strip_tags($_POST['gambar1']);
     // $gambar2 = strip_tags($_POST['gambar2']);
     // $gambar3 = strip_tags($_POST['gambar3']);

@@ -187,7 +187,7 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
                         <div class="img-content">
                             <img class="img-fluid" width="120" src="admin/assets/img/post/<?= $rst_terbaru['gambar1'] ?>" alt="">
                         </div>
-                        <h6 class="my-3" id="nama_barang"><?= $rst_terbaru["nama_barang"]; ?></h6>
+                        <h6 class="my-3" id="nama_barang"><?= substr($rst_terbaru["nama_barang"], 0, 38); ?>...</h6>
                         <div class="text-start">
                             <p class="lokasi mb-1"><i class="fa fa-bookmark"></i> <?= $rst_terbaru["kategori"]; ?></p>
                             <p class="fw-bold harga">Rp <?= number_format($rst_terbaru["harga"], 0, ',', '.'); ?></p>
@@ -214,7 +214,7 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
                         <div class="img-content">
                             <img class="img-fluid" width="120" src="admin/assets/img/post/<?= $pakaian['gambar1'] ?>" alt="">
                         </div>
-                        <h6 class="my-3"><?= $pakaian["nama_barang"]; ?></h6>
+                        <h6 class="my-3"><?= substr($pakaian["nama_barang"], 0, 38); ?>...</h6>
                         <div class="text-start">
                             <p class="fw-bold harga">Rp <?= number_format($pakaian["harga"], 0, ',', '.'); ?></p>
                             <?php
@@ -239,7 +239,7 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
                         <div class="img-content">
                             <img class="img-fluid" width="120" src="admin/assets/img/post/<?= $elektronik['gambar1'] ?>" alt="">
                         </div>
-                        <h6 class="my-3"><?= $elektronik["nama_barang"]; ?></h6>
+                        <h6 class="my-3"><?= substr($elektronik["nama_barang"], 0, 38); ?>...</h6>
                         <div class="text-start">
                             <p class="fw-bold harga">Rp <?= number_format($elektronik["harga"], 0, ',', '.'); ?></p>
                             <?php
@@ -264,7 +264,7 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
                         <div class="img-content">
                             <img class="img-fluid" width="120" src="admin/assets/img/post/<?= $otomotif['gambar1'] ?>" alt="">
                         </div>
-                        <h6 class="my-3"><?= $otomotif["nama_barang"]; ?></h6>
+                        <h6 class="my-3"><?= substr($otomotif["nama_barang"], 0, 38); ?>...</h6>
                         <div class="text-start">
                             <p class="fw-bold harga">Rp <?= number_format($otomotif["harga"], 0, ',', '.'); ?></p>
                             <?php

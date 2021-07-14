@@ -147,6 +147,7 @@ if ($_SESSION["status"] === "admin") {
                             <th scope="col">Judul</th>
                             <th scope="col">Harga</th>
                             <th scope="col">Kategori</th>
+                            <th scope="col">Stok</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -161,6 +162,7 @@ if ($_SESSION["status"] === "admin") {
                                 </td>
                                 <td><?= number_format($crs["harga"], '0', '', '.'); ?></td>
                                 <td><?= $crs["kategori"]; ?></td>
+                                <td><?= $crs["jml_barang"]; ?></td>
                                 <td>
                                     <a href="../produk?id=<?= $crs["id_barang"] ?>" class="btn btn-outline-success btn-sm" target="_blank" title="Lihat <?= $crs['nama_barang'] ?>">
                                         <i class="fa fa-eye"></i>

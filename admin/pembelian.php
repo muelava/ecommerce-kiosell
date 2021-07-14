@@ -40,7 +40,7 @@ $result_transaksi = mysqli_fetch_assoc($transaksi);
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin</title>
+    <title>Pembelian</title>
 
     <script src="assets/js/main.js"></script>
 
@@ -109,7 +109,7 @@ $result_transaksi = mysqli_fetch_assoc($transaksi);
                             </li>
                         <?php else : ?>
                             <li>
-                                <a href="pesanan" class="nav-link px-0 align-middle">
+                                <a href="pembelian" class="nav-link px-0 align-middle">
                                     <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_shopping_cart_black_24dp.png" class="me-2" width="35" alt=""> Pembelian</span></a>
                             </li>
                         <?php endif; ?>
@@ -158,7 +158,9 @@ $result_transaksi = mysqli_fetch_assoc($transaksi);
                     </tbody>
                 </table>
                 <?php if (mysqli_num_rows($transaksi) == 0) : ?>
-                    <h5 class="text-center" style="margin-top: 15%;"><strong>Ooops!!</strong> Belum ada Transaksi</h5>
+                    <h5 class="text-center" style="margin-top: 10%;"><strong>Ooops!!</strong> Belum ada Transaksi <br><br>
+                        <a href="../index" class="btn text-white text-center" style="background-color:#ff4500">Belanja Sekarang</a>
+                    </h5>
                     <div class="d-flex justify-content-center">
                         <img src="../assets/img/empty.jpg" class="img-fluid col-md-5" alt="">
                     </div>
