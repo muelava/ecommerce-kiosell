@@ -30,6 +30,10 @@ function query($query)
 {
     global $conn;
     $result2 = mysqli_query($conn, $query);
+    // jika tidak ditemukan
+    if (mysqli_num_rows($result2) == 0) {
+        echo "<script>alert('Tidak ditemukan!')</script>";
+    }
     $rows = [];
     while ($row = mysqli_fetch_assoc($result2)) {
         $rows[] = $row;
@@ -40,6 +44,7 @@ function query($query)
 function cari($keyword)
 {
     $query = "SELECT *FROM transaksi WHERE nama_barang LIKE '%$keyword%' OR kode_transaksi LIKE '%$keyword%' ORDER BY id_transaksi DESC";
+
     return query($query);
 }
 // end cari
@@ -55,33 +60,35 @@ if ($_SESSION["status"] === "admin") {
 
 
 
-
+// ketika tombol konfirm ditekan
 if (isset($_POST["konfirm"])) {
     $id_transaksi = $_POST["id_transaksi"];
     $no_resi = $_POST["no_resi"];
     $status = "true";
 
-    // cari data transaksi dulu :
-    $cariTransaksi = mysqli_query($conn, "SELECT *FROM transaksi WHERE id_transaksi = '$id_transaksi'");
-    $resultTransaksi = mysqli_fetch_assoc($cariTransaksi);
-    $jml_barang = $resultTransaksi["jml_barang"];
-    $id_barang = $resultTransaksi["id_barang"];
+    // cari jumlah order dan id barang di table transaksi
+    $dataTransaksi = mysqli_query($conn, "SELECT *FROM transaksi WHERE id_transaksi = '$id_transaksi'");
+    $resultDataTransaksi = mysqli_fetch_assoc($dataTransaksi);
+    $jumlahBarang = $resultDataTransaksi["jml_barang"];
+    $idBarang = $resultDataTransaksi["id_barang"];
 
-    // cari data barang :
-    $cariBarang = mysqli_query($conn, "SELECT *FROM barang WHERE id_barang = '$id_barang'");
-    $resultBarang = mysqli_fetch_assoc($cariBarang);
-    $stok_barang = $resultBarang["jml_barang"];
 
-    // stok barang kurangin jumlah beli barang
-    $kuranginStok = $stok_barang - $jml_barang;
+    // cari stok barang
+    $stokBarang = mysqli_query($conn, "SELECT jml_barang FROM barang WHERE id_barang = '$idBarang'");
+    $resultStokBarang = mysqli_fetch_assoc($stokBarang);
+    $jumlahStok = $resultStokBarang["jml_barang"];
 
-    if ($kuranginStok < 0) {
-        echo "<script>alert('Stok Barang Habis atau tidak Mencukupi!'); window.location.href='penjualan'</script>";
+    $totalStok = $jumlahStok - $jumlahBarang;
+
+    if ($totalStok < 0) {
+        echo "<script>alert('Stok Barang tidak mencukupi'); window.location.href='penjualan';</script>";
         return false;
     }
 
-    mysqli_query($conn, "UPDATE barang SET jml_barang = '$kuranginStok'");
-    mysqli_query($conn, "UPDATE transaksi SET no_resi = '$no_resi', status = '$status'");
+    // update data
+    mysqli_query($conn, "UPDATE transaksi SET status = '$status', no_resi = '$no_resi' WHERE id_transaksi = '$id_transaksi'");
+    mysqli_query($conn, "UPDATE barang SET jml_barang = '$totalStok' WHERE id_barang = '$idBarang'");
+
 
     echo "<script> alert('Pesanan telah dikonfirmasi'); window.location.href='penjualan'</script>";
     return mysqli_affected_rows($conn);
@@ -194,20 +201,20 @@ if (isset($_POST["konfirm"])) {
                                 <th scope="row"><?= $i++; ?></th>
                                 <td><?= $result["nama_barang"] ?></td>
                                 <td>K-<?= $result["kode_transaksi"]; ?></td>
-                                <td>Rp. <?= $result["jml_tagihan"]; ?></td>
+                                <td>Rp <?= $result["jml_tagihan"]; ?></td>
                                 <td class="text-primary">
                                     <?php
                                     if ($result["status"] == "true") {
-                                        $result["status"] = "<span class='text-success'>Sedang Dikirim</span>" . " <i class='fa fa-check-circle text-success'></i>";
+                                        echo "<span class='text-success'>Dikirim</span>" . " <i class='fa fa-check-circle text-success'></i>";
                                     } else {
-                                        $result["status"] = "Belum Dibayar";
+                                        echo "<i class='fa fa-clock-o'></i> Menunggu <br> Pembayaran";
                                     }
-                                    echo $result["status"]; ?>
+                                    ?>
                                 </td>
                                 <td>
                                     <?php
-                                    if ($result["status"] == "Belum Dibayar") : ?>
-                                        <button id="konfirmasi" data-bs-toggle="modal" data-bs-target="#exampleModal" id_trans="<?= $result['id_transaksi'] ?>" class="btn btn-sm btn-success">Konfirmasi</button><br>
+                                    if ($result["status"] == "false") : ?>
+                                        <button data-bs-toggle="modal" data-bs-target="#exampleModal" id_transaksi="<?= $result['id_transaksi'] ?>" class="btn btn-sm btn-success konfirmasi">Konfirmasi</button><br>
                                     <?php endif; ?>
                                     <a onclick="return confirm('Yakin hapus transaksi <?= $result["nama_barang"] ?>')" class="btn btn-sm btn-danger" href="hapus-transaksi?id_transaksi=<?= $result['id_transaksi'] ?>">Hapus</a><br>
                                     <a class="btn btn-sm btn-info" href="../transaksi?id_transaksi=<?= $result['id_transaksi'] ?>">Detail</a>
@@ -235,13 +242,13 @@ if (isset($_POST["konfirm"])) {
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Masukan Nomor Resi</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Konfirmasi Pembayaran</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="" method="POST">
                     <div class="modal-body">
-                        <div class="d-flex justify-content-around align-items-center">
-                            <p>Nomor Resi : </p>
+                        <div class="d-flex justify-content-around">
+                            <p>Masukkan Resi :</p>
                             <input class="form-control w-50" type="text" name="no_resi" id="nomor-resi" required>
                             <input class="form-control w-50" type="hidden" name="id_transaksi" id="id-transaksi" required>
                         </div>
@@ -266,9 +273,9 @@ if (isset($_POST["konfirm"])) {
         });
 
 
-        $("#konfirmasi").on("click", () => {
-            $("#id-transaksi").val($("#konfirmasi").attr("id_trans"));
-        })
+        $(".konfirmasi").on("click", function() {
+            $("#id-transaksi").val($(this).attr("id_transaksi"));
+        });
     </script>
     <!-- bootstrap js -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>

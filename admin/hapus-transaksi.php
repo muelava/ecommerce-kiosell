@@ -8,9 +8,6 @@ include "koneksi.php";
 if (!isset($_SESSION["login"])) {
     header("Location: ../login");
     return false;
-} elseif ($_SESSION["status"] != "admin") {
-    header("Location: index");
-    return false;
 }
 
 

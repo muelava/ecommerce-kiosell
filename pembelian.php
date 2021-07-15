@@ -361,24 +361,24 @@ if ($_SESSION["status"] == "user") {
                 </div>
                 <form action="" method="POST">
 
-                    <input type="text" name="id_admin" id="id_admin">
-                    <input type="text" name="alamat_penjual" id="almt_penjual">
+                    <input type="hidden" name="id_admin" id="id_admin">
+                    <input type="hidden" name="alamat_penjual" id="almt_penjual">
 
-                    <input type="text" name="nama_barang" id="nama_barang">
-                    <input type="text" name="harga" id="harga">
-                    <input type="text" name="subtotal" id="sub_total">
-                    <input type="text" name="jml_tagihan" id="jumlah_tagihan">
-                    <input type="text" name="jml_barang" id="jml_barang">
-                    <input type="text" name="total_berat" id="total_berat">
-                    <input type="text" name="id_user" id="id_user">
-                    <input type="text" name="catatan" id="note">
-                    <input type="text" name="alamat" id="almt">
-                    <input type="text" name="kode-pos" id="kodepos">
-                    <input type="text" name="kota-kab" id="kotakab">
-                    <input type="text" name="provinsi" id="prov">
-                    <input type="text" name="kurir" id="krr">
-                    <input type="text" name="ongkir" id="plh_ongkir">
-                    <input type="text" name="wkt_beli" id="waktu_beli">
+                    <input type="hidden" name="nama_barang" id="nama_barang">
+                    <input type="hidden" name="harga" id="harga">
+                    <input type="hidden" name="subtotal" id="sub_total">
+                    <input type="hidden" name="jml_tagihan" id="jumlah_tagihan">
+                    <input type="hidden" name="jml_barang" id="jml_barang">
+                    <input type="hidden" name="total_berat" id="total_berat">
+                    <input type="hidden" name="id_user" id="id_user">
+                    <input type="hidden" name="catatan" id="note">
+                    <input type="hidden" name="alamat" id="almt">
+                    <input type="hidden" name="kode-pos" id="kodepos">
+                    <input type="hidden" name="kota-kab" id="kotakab">
+                    <input type="hidden" name="provinsi" id="prov">
+                    <input type="hidden" name="kurir" id="krr">
+                    <input type="hidden" name="ongkir" id="plh_ongkir">
+                    <input type="hidden" name="wkt_beli" id="waktu_beli">
 
                     <div class="modal-body">
                         <div class="d-flex justify-content-around align-items-center mb-3">
@@ -575,7 +575,7 @@ if ($_SESSION["status"] == "user") {
 
 
             let ambilWaktu = new Date().getTime();
-            let dapatWaktu = ambilWaktu + 86400000;
+            let dapatWaktu = ambilWaktu + 3000; //+ 86400000 = 24 jam
             $("#waktu_beli").val(dapatWaktu);
 
 

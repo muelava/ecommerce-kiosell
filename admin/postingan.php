@@ -143,11 +143,11 @@ if ($_SESSION["status"] === "admin") {
                     <thead>
                         <tr style="border-bottom: 1px solid #C9C9C9;">
                             <th scope="col">No</th>
-                            <th scope="col"><i class="fa fa-history"></i></th>
+                            <th scope="col" class="text-center"><i class="fa fa-clock-o"></i></th>
                             <th scope="col">Judul</th>
                             <th scope="col">Harga</th>
                             <th scope="col">Kategori</th>
-                            <th scope="col">Stok</th>
+                            <th scope="col" class="text-center">Stok</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -162,7 +162,7 @@ if ($_SESSION["status"] === "admin") {
                                 </td>
                                 <td><?= number_format($crs["harga"], '0', '', '.'); ?></td>
                                 <td><?= $crs["kategori"]; ?></td>
-                                <td><?= $crs["jml_barang"]; ?></td>
+                                <td class="fw-bold text-center"><?= $crs["jml_barang"]; ?></td>
                                 <td>
                                     <a href="../produk?id=<?= $crs["id_barang"] ?>" class="btn btn-outline-success btn-sm" target="_blank" title="Lihat <?= $crs['nama_barang'] ?>">
                                         <i class="fa fa-eye"></i>

@@ -203,7 +203,7 @@ if (isset($_POST["register"])) {
     </nav>
 
     <!-- container -->
-    <h4 class="text-center mt-5"><strong>Membuat Akun</strong> - Langsung Belanja!</h4>
+    <h4 class="text-center mt-5"><strong>Hai,</strong> Mari bergabung dan temukan keperluan anda!</h4>
 
     <form action="" method="POST" class="form-login" style="margin-top: 10%;">
         <ul style="list-style: none;" class="p-0">

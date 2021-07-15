@@ -131,27 +131,28 @@ $result_transaksi = mysqli_fetch_assoc($transaksi);
                             <th scope="col">No.</th>
                             <th scope="col">Produk</th>
                             <th scope="col">Total Harga</th>
-                            <th scope="col">Status</th>
+                            <th scope="col" class="text-center">Status</th>
                             <th scope="col">Detail</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <?php $i = 1; ?>
                         <?php foreach ($transaksi as $result) : ?>
                             <tr>
-                                <th scope="row">1</th>
+                                <th scope="row"><?= $i++; ?></th>
                                 <td><?= $result["nama_barang"]; ?></td>
-                                <td>Rp. <?= $result["jml_tagihan"]; ?></td>
-                                <td class="text-primary">
+                                <td class="fw-bold">Rp <?= $result["jml_tagihan"]; ?></td>
+                                <td class="text-warning text-center">
                                     <?php
                                     if ($result["status"] == "true") {
-                                        $result["status"] = "Sedang Dikirim";
+                                        echo "<i style='transform: rotateY(180deg);' class='fa fa-truck text-success fa-2x'>_</i>" . "<br> <span class='text-success'>Dalam Perjalanan</span>";
                                     } else {
-                                        $result["status"] = "Belum Dibayar";
+                                        echo "<i style='transform: rotateY(180deg);' class='fa fa-clock-o fa-2x'></i>" . "<br> <span>Menunggu Pembayaran</span>";
                                     }
-                                    echo $result["status"]; ?>
+                                    ?>
                                 </td>
                                 <td>
-                                    <a class="btn btn-sm btn-success" href="../transaksi?id_transaksi=<?= $result['id_transaksi'] ?>">Rincian</a>
+                                    <a class="btn btn-sm btn-primary" href="../transaksi?id_transaksi=<?= $result['id_transaksi'] ?>">Rincian</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

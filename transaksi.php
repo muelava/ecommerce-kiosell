@@ -60,10 +60,8 @@ if (mysqli_num_rows($transaksi) === 0) {
 }
 
 
-if ($result_transaksi["status"] == "true") {
-    $result_transaksi["status"] = "Sedang Dikirim";
-} else {
-    $result_transaksi["status"] = "Belum Dibayar";
+if ($result_transaksi["status"] == "false") {
+    $result_transaksi["status"] = "Menunggu Pembayaran";
 }
 
 
@@ -214,7 +212,8 @@ if ($result_transaksi["rekening"] == "bri") {
                     <img src="admin/assets/img/post/<?= $result_barang["gambar1"]; ?>" width="100" alt="">
                 </div>
                 <h4 class="fw-bold d-inline"><?= $result_transaksi["nama_barang"]; ?>
-                    <br> <small style="font-size:.6em;" id="mycolor-text">Stok : <?= $result_barang["jml_barang"]; ?></small>
+                    <br> <span style="font-size:.6em;" id="mycolor-text">Rp<?= number_format($result_barang["harga"], '0', ',', '.'); ?></span>
+                    <br> <small style="font-size:.5em;">Stok : <?= $result_barang["jml_barang"]; ?></small>
                 </h4>
             </div>
             <div class="col-md-2">
@@ -224,7 +223,7 @@ if ($result_transaksi["rekening"] == "bri") {
             </div>
         </div>
         <div class="text-center mt-3" id="tagihan">
-            <p>Batas Waktu Pembayaran :</p>
+            <p class="fw-bold text-secondary">Batas Waktu Pembayaran :</p>
             <div class="mb-3 text-center"><i class="fa fa-clock-o"></i> <span id="waktu">jam</span> &nbsp; &nbsp; &nbsp; <i class="fa fa-calendar-o"></i> <span id="tanggal-berakhir">tanggal berakhir</span></div>
             <div class="mb-5 w-50 mx-auto d-flex justify-content-evenly" id="mycolor-text">
                 <h5 class="fw-bold" id="hari"></h5>
@@ -239,11 +238,18 @@ if ($result_transaksi["rekening"] == "bri") {
             <h5 class="fw-bold shadow-sm d-inline-block p-1 mb-4"><?= $norek ?></h5>
         </div>
         <div class="mb-3 text-center">
-            <button id="status" class="btn btn-outline-primary text-capitalize" style="pointer-events:none"><?= $result_transaksi["status"]; ?></button>
+            <div class="d-none mb-4" id="waktu-habis">
+                <p class="mb-0"></p>
+                <img src="assets/img/shock.jpg" width="20%" alt=""><br>
+            </div>
+            <button id="status" class="btn fw-bold btn-outline-warning text-capitalize" style="pointer-events:none"><?= $result_transaksi["status"]; ?></button>
         </div>
-        <div class="text-center my-5">
-            <!-- <p>Batas Waktu Bayar</p> -->
-        </div>
+        <?php if ($result_transaksi["status"] == "true") : ?>
+            <div class="text-center my-5">
+                <p id="copy">Nomor Resi :</p>
+                <h5 id="no_resi" class="fw-bold text-secondary"><?= $result_transaksi["no_resi"]; ?></h5>
+            </div>
+        <?php endif; ?>
 
         <h5 class="mt-5 fw-bold text-center">Rincian Pembelian</h5>
 
@@ -337,6 +343,7 @@ if ($result_transaksi["rekening"] == "bri") {
 
     <!-- reminder -->
     <div id="reminder" class="d-none text-center" style="position: fixed; z-index:99; top:0%; width:100%; height:100%; background-color:rgba(0,0,0,0.5);">
+        <p>Yukk!! Bayar sekarang, sebelum kehabisan</p>
         <img src="assets/img/reminder.jpg" width="50%" class="rounded" style="margin:5%;" alt="">
     </div>
 
@@ -352,7 +359,6 @@ if ($result_transaksi["rekening"] == "bri") {
         // $("#reminder").on("click", () => {
         //     $("#reminder").addClass("d-none");
         // })
-
 
 
 
@@ -383,10 +389,12 @@ if ($result_transaksi["rekening"] == "bri") {
         $("#waktu").text(ambilJam + " : " + ambilMenit);
         $("#tanggal-berakhir").text(ambilTgl + ", " + ambilBulan + " " + ambilTahun);
 
-        let status = $("#status").text().toLowerCase();
-        if (status == "sedang dikirim") {
+        let status = '<?= $result_transaksi['status'] ?>';
+        if (status == "true") {
             $("#detik,#menit,#jam,#hari,#waktu,#tanggal-berakhir, #tagihan").hide();
-            $("#status").text("pesanan kamu sedang dikirim!");
+            $("#status").text("pesanan Kamu Dalam Perjalanan");
+            $("#status").removeClass("btn-outline-warning");
+            $("#status").addClass("btn-outline-success");
             clearInterval(hitungMundur);
         }
 
@@ -405,7 +413,7 @@ if ($result_transaksi["rekening"] == "bri") {
             let detik = Math.floor((jarak % (1000 * 60)) / 1000);
 
 
-
+            // tampilkan
             $("#detik").text(detik);
             $("#menit").text(menit);
             $("#jam").text(jam);
@@ -413,8 +421,10 @@ if ($result_transaksi["rekening"] == "bri") {
 
             // Jika hitung mundur sudah habis maka lakukan ini :
             if (jarak < 0) {
-                $("#detik,#menit,#jam,#hari,#waktu,#tanggal-berakhir").hide();
                 clearInterval(hitungMundur);
+                $("#detik,#menit,#jam,#hari, #waktu, #tanggal-berakhir, #tagihan, .table").hide();
+                $("#waktu-habis").removeClass("d-none");
+                $("#waktu-habis p").html("<b>Upps..</b> Batas waktu Pembayaran kamu sudah habis.<br> Jangan khawatir, kamu bisa pesan lagi kok.<br><br><i>Dalam 10 detik akan dibatalkan</i>");
 
                 $("#status").text("expired");
                 let status = $("#status").text().toLowerCase();
@@ -423,10 +433,21 @@ if ($result_transaksi["rekening"] == "bri") {
 
                     // jika expired, lakukan ini dalam ( waktu yang ditentukan)
                     setTimeout(() => {
-                        $("#status").text("data dihapus");
                         setInterval(hitungMundur);
+                        // $("#status").text("data dihapus");
+                        var id_trans = <?= $result_transaksi['id_transaksi'] ?>;
 
-                    }, 2000)
+                        $.ajax({
+                            type: 'GET',
+                            url: 'admin/hapus-transaksi.php',
+                            data: 'id_transaksi=' + id_trans,
+
+                            success: function(data) {
+                                alert("Pesanan dibatalkan!");
+                                window.location.href = "admin";
+                            }
+                        });
+                    }, 10000)
 
                 }
 

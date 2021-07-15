@@ -134,7 +134,7 @@ if ($_SESSION["status"] === "admin") {
             <div class="col py-3 mt-5" id="content">
                 <form action="" class="form-cari" method="POST">
                     <div class="mb-3 d-flex p-3">
-                        <input class="form-control mainLoginInput me-2" type="text" placeholder="&#61442; Cari Nama User" name="keyword" autocomplete="off" autofocus />
+                        <input class="form-control mainLoginInput me-2" type="text" placeholder="&#61442; Cari Nama" name="keyword" autocomplete="off" autofocus />
                         <button type="submit" class="form-control btncari text-white fw-bold" name="cari">Cari</button>
                     </div>
                 </form>
