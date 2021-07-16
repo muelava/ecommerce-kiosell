@@ -305,6 +305,12 @@ if (isset($_POST["kirim"])) {
                 <p class="mb-0"></p>
                 <img src="assets/img/shock.jpg" width="20%" alt=""><br>
             </div>
+            <div class="mb-3 d-none" id="dalam-perjalanan">
+                _<i class="fa fa-truck text-success fa-3x"></i>__
+            </div>
+            <div class="mb-3 d-none" id="selesai">
+                <i class="fa fa-check-circle text-secondary fa-3x"></i>
+            </div>
             <button id="status" class="btn fw-bold btn-outline-warning text-capitalize" style="pointer-events:none"><?= $result_transaksi["status"]; ?></button>
         </div>
         <?php if ($result_transaksi["status"] == "true") : ?>
@@ -434,7 +440,7 @@ if (isset($_POST["kirim"])) {
         </table>
 
         <h5 class="mb-4 fw-bold mt-5 text-center">Pengiriman</h5>
-        <div class="row justify-content-between">
+        <div class="row mb-3 justify-content-between">
             <div class="col-md-4">
                 <strong>Pengirim : </strong>
                 <p><?= $result_penjual["username"]; ?></p>
@@ -456,7 +462,7 @@ if (isset($_POST["kirim"])) {
         </div>
 
         <div class="row">
-            <div class="text-success col-5">
+            <div class="text-success col-md-5">
                 <strong>Note :</strong>
                 <ul>
                     <li>
@@ -477,9 +483,11 @@ if (isset($_POST["kirim"])) {
 
 
     <!-- reminder -->
-    <div id="reminder" class="d-none text-center" style="position: fixed; z-index:99; top:0%; width:100%; height:100%; background-color:rgba(0,0,0,0.5);">
-        <img src="assets/img/reminder.jpg" width="30%" class="rounded" style="margin:5%;" alt="">
-    </div>
+    <?php if ($_SESSION["status"] != "admin") : ?>
+        <div id="reminder" class="d-none text-center" style="position: fixed; z-index:99; top:0%; width:100%; height:100%; background-color:rgba(0,0,0,0.5);">
+            <img src="assets/img/reminder.jpg" width="70%" class="rounded" style="margin:0;" alt="">
+        </div>
+    <?php endif; ?>
 
 
 
@@ -513,12 +521,14 @@ if (isset($_POST["kirim"])) {
         let status = '<?= $result_transaksi['status'] ?>';
         if (status == "true") {
             $("#detik,#menit,#jam,#hari,#waktu,#tanggal-berakhir, #tagihan").hide();
+            $("#dalam-perjalanan").removeClass("d-none");
             $("#status").text("pesanan Dalam Perjalanan");
             $("#status").removeClass("btn-outline-warning");
             $("#status").addClass("btn-outline-success");
             clearInterval(hitungMundur);
         } else if (status == "done") {
             $("#detik,#menit,#jam,#hari,#waktu,#tanggal-berakhir, #tagihan").hide();
+            $("#selesai").removeClass("d-none");
             $("#status").text("Pesanan Anda Telah Selesai");
             $("#status").removeClass("btn-outline-warning");
             $("#status").addClass("btn-outline-secondary");

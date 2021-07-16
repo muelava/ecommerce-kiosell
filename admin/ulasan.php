@@ -18,7 +18,7 @@ $username = $_SESSION["login"];
 
 
 // cari ulasan, barang dan  user
-$ulasan = mysqli_query($conn, "SELECT gambar1, id_ulasan, id_barang, nama_barang, komentar, username, rating, wkt_ulasan FROM ulasan JOIN barang USING(id_barang) JOIN user USING(id_user) ORDER BY id_ulasan;");
+$ulasan = mysqli_query($conn, "SELECT gambar1, id_ulasan, id_barang, nama_barang, komentar, username, rating, wkt_ulasan FROM ulasan JOIN barang USING(id_barang) JOIN user USING(id_user) ORDER BY id_ulasan DESC;");
 
 
 
@@ -61,7 +61,7 @@ if ($_SESSION["status"] === "admin") {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar User</title>
+    <title>Semua Ulasan</title>
 
     <script src="assets/js/main.js"></script>
 
