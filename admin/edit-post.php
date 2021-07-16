@@ -23,7 +23,7 @@ if (!$id_barang) {
 // ambil id admin
 $username = $_SESSION["login"];
 
-$conn = mysqli_connect('localhost', 'root', '', 'kiosell');
+include "koneksi.php";
 
 // cari data barang
 $barang = mysqli_query($conn, "SELECT *FROM barang WHERE id_barang = '$id_barang'");
