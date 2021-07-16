@@ -40,7 +40,7 @@ function query($query)
 
 function cari($keyword)
 {
-    $query = "SELECT *FROM barang WHERE nama_barang LIKE '%$keyword%' OR harga LIKE '%$keyword%' OR kategori LIKE '%$keyword%' OR wkt_post LIKE '%$keyword%' ORDER BY id_barang DESC";
+    $query = "SELECT *FROM barang WHERE nama_barang LIKE '%$keyword%' OR harga LIKE '%$keyword%' OR jml_barang LIKE '%$keyword%' OR kategori LIKE '%$keyword%' ORDER BY id_barang DESC";
     return query($query);
 }
 // end cari
@@ -120,6 +120,10 @@ if ($_SESSION["status"] === "admin") {
                                 <a href="penjualan" class="nav-link px-0 align-middle" style="opacity: .5;">
                                     <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_notifications_active_black_24dp.png" class="me-2" width="35" alt=""> Penjualan</span></a>
                             </li>
+                            <li>
+                                <a href="ulasan" class="nav-link px-0 align-middle" style="opacity: .5;">
+                                    <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_thumbs_up_down_black_24dp.png" class="me-2" width="35" alt=""> Ulasan</span></a>
+                            </li>
                         <?php endif; ?>
                     </ul>
                     <hr>
@@ -134,7 +138,7 @@ if ($_SESSION["status"] === "admin") {
             <div class="col py-3 mt-5" id="content">
                 <form action="" class="form-cari" method="POST">
                     <div class="mb-3 d-flex p-3">
-                        <input class="form-control mainLoginInput me-2" type="text" placeholder="&#61442; Cari Postingan" name="keyword" autocomplete="off" autofocus />
+                        <input class="form-control mainLoginInput me-2" type="text" placeholder="&#61442; Cari Judul, Stok, Harga" name="keyword" autocomplete="off" autofocus />
                         <button type="submit" class="form-control btncari text-white fw-bold" name="cari">Cari</button>
                     </div>
                 </form>
@@ -145,9 +149,9 @@ if ($_SESSION["status"] === "admin") {
                             <th scope="col">No</th>
                             <th scope="col" class="text-center"><i class="fa fa-clock-o"></i></th>
                             <th scope="col">Judul</th>
+                            <th scope="col" class="text-center">Stok</th>
                             <th scope="col">Harga</th>
                             <th scope="col">Kategori</th>
-                            <th scope="col" class="text-center">Stok</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -158,11 +162,12 @@ if ($_SESSION["status"] === "admin") {
                                 <td><?= $i++; ?></td>
                                 <td><small style="font-size: 10px;"><?= $crs["wkt_post"] ?></small></td>
                                 <td class="d-flex align-items-center text-capitalize">
+                                    <img src="assets/img/post/<?= $crs['gambar1'] ?>" class="me-3" width="50" alt="">
                                     <?= $crs["nama_barang"]; ?>
                                 </td>
+                                <td class="fw-bold text-center"><?= $crs["jml_barang"]; ?></td>
                                 <td><?= number_format($crs["harga"], '0', '', '.'); ?></td>
                                 <td><?= $crs["kategori"]; ?></td>
-                                <td class="fw-bold text-center"><?= $crs["jml_barang"]; ?></td>
                                 <td>
                                     <a href="../produk?id=<?= $crs["id_barang"] ?>" class="btn btn-outline-success btn-sm" target="_blank" title="Lihat <?= $crs['nama_barang'] ?>">
                                         <i class="fa fa-eye"></i>

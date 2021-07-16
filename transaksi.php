@@ -20,6 +20,7 @@ if (!$id_transaksi) {
 $transaksi = mysqli_query($conn, "SELECT *FROM transaksi where id_transaksi = '$id_transaksi'");
 $result_transaksi = mysqli_fetch_assoc($transaksi);
 
+
 // cari barang : 
 $id_barang = $result_transaksi["id_barang"];
 $barang = mysqli_query($conn, "SELECT *FROM barang where id_barang = '$id_barang'");
@@ -48,7 +49,7 @@ if ($_SESSION["status"] == "user") {
     $result_pembeli = mysqli_fetch_assoc($pembeli);
 
     if (($result_pembeli["id_user"] != $result_transaksi["id_user"])) {
-        header("Location:admin/pesanan");
+        header("Location:admin/pembelian");
     }
 }
 
@@ -76,6 +77,68 @@ if ($result_transaksi["rekening"] == "bri") {
     $atasNama = "PT. Kiosell ";
 }
 
+
+
+// ambil waktu 
+// inisialisasi waktu
+date_default_timezone_set('Asia/Jakarta');
+
+function hari_ini()
+{
+    $hari = date("D");
+
+    switch ($hari) {
+        case 'Sun':
+            $hari_ini = "Minggu";
+            break;
+
+        case 'Mon':
+            $hari_ini = "Senin";
+            break;
+
+        case 'Tue':
+            $hari_ini = "Selasa";
+            break;
+
+        case 'Wed':
+            $hari_ini = "Rabu";
+            break;
+
+        case 'Thu':
+            $hari_ini = "Kamis";
+            break;
+
+        case 'Fri':
+            $hari_ini = "Jumat";
+            break;
+
+        case 'Sat':
+            $hari_ini = "Sabtu";
+            break;
+
+        default:
+            $hari_ini = "Tidak di ketahui";
+            break;
+    }
+
+    return "<b>" . $hari_ini . "</b>";
+}
+
+$waktu = strip_tags(hari_ini() . ", " . date('d/m/Y'));
+
+// memberikan ulasan dan rating jika tombol kirim ditekan
+if (isset($_POST["kirim"])) {
+    $rating = $_POST["rating"];
+    $komentar = $_POST["ulasan"];
+    $status = "done";
+
+    // update data
+    mysqli_query($conn, "INSERT INTO ulasan VALUES('', '$id_barang', '$id_user', '$rating', '$komentar','$waktu')");
+    mysqli_query($conn, "UPDATE transaksi SET status = '$status' WHERE id_transaksi = '$id_transaksi'");
+
+    echo "<script> alert('terimakasih atas penilaian Anda.'); window.location.href='admin/pembelian'</script>";
+    return mysqli_affected_rows($conn);
+}
 
 
 
@@ -207,15 +270,15 @@ if ($result_transaksi["rekening"] == "bri") {
     <div class="container bg-white px-5 py-3" id="container-produk">
 
         <div class="row justify-content-between">
-            <div class="col-md-8 mb-5 d-flex align-items-center">
+            <a href="produk?id=<?= $result_barang["id_barang"]; ?>" class="col-md-8 mb-5 d-flex btn">
                 <div class="me-3">
                     <img src="admin/assets/img/post/<?= $result_barang["gambar1"]; ?>" width="100" alt="">
                 </div>
-                <h4 class="fw-bold d-inline"><?= $result_transaksi["nama_barang"]; ?>
+                <h4 class="fw-bold d-inline text-start"><?= $result_transaksi["nama_barang"]; ?>
                     <br> <span style="font-size:.6em;" id="mycolor-text">Rp<?= number_format($result_barang["harga"], '0', ',', '.'); ?></span>
                     <br> <small style="font-size:.5em;">Stok : <?= $result_barang["jml_barang"]; ?></small>
                 </h4>
-            </div>
+            </a>
             <div class="col-md-2">
                 <h2 class="fw-bold text-secondary text-uppercase">kiosell</h2>
                 <p>K-<?= $result_transaksi["kode_transaksi"]; ?></p>
@@ -248,13 +311,85 @@ if ($result_transaksi["rekening"] == "bri") {
             <div class="text-center my-5">
                 <p id="copy">Nomor Resi :</p>
                 <h5 id="no_resi" class="fw-bold text-secondary"><?= $result_transaksi["no_resi"]; ?></h5>
+                <button class="my-5 px-4 btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Selesaikan</button>
+            </div>
+        <?php elseif ($result_transaksi["status"] == "done") : ?>
+            <div class="text-center my-5">
+                <p>Terimakasih telah belanja di <strong>KIOSELL</strong></p>
+                <a class="btn" id="mycolor-bg" href="index">Mau belanja lagi?</a>
             </div>
         <?php endif; ?>
+
+
+
+        <!-- Modal selesai / rating -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Berikan penilaian untuk produk ini Yuk!! <i class="fa fa-star text-warning"></i> <i class="fa fa-star text-warning"></i> <i class="fa fa-star text-warning"></i> <i class="fa fa-star text-warning"></i> <i class="fa fa-star text-warning"></i></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="" method="POST">
+
+                        <div class="modal-body">
+                            <div class="text-center">
+                                <img src="assets/img/happy.jpg" width="200px" alt="">
+                            </div>
+
+                            <div class="w-100 row justify-content-center mb-3">
+                                <p class="col-sm">Rating :</p>
+                                <div class="col-sm">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="rating" id="inlineRadio1" value="1">
+                                        <label class="form-check-label" for="inlineRadio1">1</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="rating" id="inlineRadio2" value="2">
+                                        <label class="form-check-label" for="inlineRadio2">2</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="rating" id="inlineRadio3" value="3">
+                                        <label class="form-check-label" for="inlineRadio3">3</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="rating" id="inlineRadio4" value="4">
+                                        <label class="form-check-label" for="inlineRadio4">4</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="rating" id="inlineRadio5" value="5" required>
+                                        <label class="form-check-label" for="inlineRadio5">5</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-floating">
+                                <textarea class="form-control" placeholder="Leave a comment here" id="ulasan" style="height: 100px;" name="ulasan"></textarea>
+                                <label for="ulasan">Ulasan/komentar</label>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" id="mycolor-bg" class="btn" name="kirim">Kirim</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- end modal -->
+
+
+
 
         <h5 class="mt-5 fw-bold text-center">Rincian Pembelian</h5>
 
         <table class="table">
             <tbody>
+                <tr>
+                    <td>Nama Pembeli</td>
+                    <th scope="row"><?= $result_user["nama_user"]; ?></th>
+                </tr>
                 <tr>
                     <td>Kode Transaksi</td>
                     <th scope="row">K-<?= $result_transaksi["kode_transaksi"]; ?></th>
@@ -264,7 +399,7 @@ if ($result_transaksi["rekening"] == "bri") {
                     <th scope="row" class="dateInvoice"></th>
                 </tr>
                 <tr>
-                    <td>Produk</td>
+                    <td>Nama Produk</td>
                     <th scope="row"><?= $result_transaksi["nama_barang"]; ?></th>
                 </tr>
                 <tr>
@@ -343,26 +478,12 @@ if ($result_transaksi["rekening"] == "bri") {
 
     <!-- reminder -->
     <div id="reminder" class="d-none text-center" style="position: fixed; z-index:99; top:0%; width:100%; height:100%; background-color:rgba(0,0,0,0.5);">
-        <p>Yukk!! Bayar sekarang, sebelum kehabisan</p>
-        <img src="assets/img/reminder.jpg" width="50%" class="rounded" style="margin:5%;" alt="">
+        <img src="assets/img/reminder.jpg" width="30%" class="rounded" style="margin:5%;" alt="">
     </div>
 
 
 
     <script>
-        // // reminder
-        // setTimeout(() => {
-        //     $("#reminder").removeClass("d-none");
-
-        // }, 3000)
-
-        // $("#reminder").on("click", () => {
-        //     $("#reminder").addClass("d-none");
-        // })
-
-
-
-
         let dapatWaktu = parseInt("<?= $result_transaksi['wkt_beli']; ?>")
         let dateInv = new Date(dapatWaktu - 86400000);
 
@@ -392,11 +513,29 @@ if ($result_transaksi["rekening"] == "bri") {
         let status = '<?= $result_transaksi['status'] ?>';
         if (status == "true") {
             $("#detik,#menit,#jam,#hari,#waktu,#tanggal-berakhir, #tagihan").hide();
-            $("#status").text("pesanan Kamu Dalam Perjalanan");
+            $("#status").text("pesanan Dalam Perjalanan");
             $("#status").removeClass("btn-outline-warning");
             $("#status").addClass("btn-outline-success");
             clearInterval(hitungMundur);
+        } else if (status == "done") {
+            $("#detik,#menit,#jam,#hari,#waktu,#tanggal-berakhir, #tagihan").hide();
+            $("#status").text("Pesanan Anda Telah Selesai");
+            $("#status").removeClass("btn-outline-warning");
+            $("#status").addClass("btn-outline-secondary");
+            clearInterval(hitungMundur);
         }
+
+        // reminder 3detik
+        setTimeout(() => {
+            $("#reminder").removeClass("d-none");
+
+        }, 3000)
+
+        $("#reminder").on("click", () => {
+            $("#reminder").addClass("d-none");
+        })
+        // /reminder
+
 
         // hitung mundur / countdown :
         let hitungMundur = setInterval(() => {

@@ -146,8 +146,10 @@ $result_transaksi = mysqli_fetch_assoc($transaksi);
                                     <?php
                                     if ($result["status"] == "true") {
                                         echo "<i style='transform: rotateY(180deg);' class='fa fa-truck text-success fa-2x'>_</i>" . "<br> <span class='text-success'>Dalam Perjalanan</span>";
-                                    } else {
+                                    } elseif ($result["status"] == "false") {
                                         echo "<i style='transform: rotateY(180deg);' class='fa fa-clock-o fa-2x'></i>" . "<br> <span>Menunggu Pembayaran</span>";
+                                    } else {
+                                        echo "<i class='fa fa-check text-secondary fa-2x'></i>" . "<br> <span class='text-secondary'>Selesai</span>";
                                     }
                                     ?>
                                 </td>

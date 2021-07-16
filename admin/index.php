@@ -101,6 +101,10 @@ if ($_SESSION["status"] === "admin") {
                                 <a href="penjualan" class="nav-link px-0 align-middle" style="opacity: .5;">
                                     <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_notifications_active_black_24dp.png" class="me-2" width="35" alt=""> Penjualan</span></a>
                             </li>
+                            <li>
+                                <a href="ulasan" class="nav-link px-0 align-middle" style="opacity: .5;">
+                                    <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_thumbs_up_down_black_24dp.png" class="me-2" width="35" alt=""> Ulasan</span></a>
+                            </li>
                         <?php else : ?>
                             <li>
                                 <a href="pembelian" class="nav-link px-0 align-middle" style="opacity: .5;">
@@ -120,8 +124,11 @@ if ($_SESSION["status"] === "admin") {
             <div class="col py-3 mt-5" id="content">
                 <h2 class="pt-5 text-capitalize">Hello, <b><?= $result["username"]; ?>!</b></h2>
                 <br>
-                <p>Ingat! Segudang uang tidak akan mampu membeli kesempatan kedua. <strong>Enjoyy!!</strong></p>
-                <a href="../">get Home</a> for check!
+                <p>"Segudang uang tidak akan mampu membeli kesempatan kedua." <strong>Enjoyy!!</strong></p>
+                <a class="btn btn-outline-success" href="../">Shopping Now!</a>
+                <div class="text-center">
+                    <img src="../assets/img/shopping.jpg" class="img-fluid" alt="">
+                </div>
 
 
             </div>

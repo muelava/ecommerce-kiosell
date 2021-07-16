@@ -1,6 +1,5 @@
 <?php
 
-
 session_start();
 
 include "koneksi.php";
@@ -9,56 +8,49 @@ include "koneksi.php";
 if (!isset($_SESSION["login"])) {
     header("Location: ../login");
     return false;
-}
-
-
-// ambil id user dari get
-$id_user = $_GET["id_user"];
-
-if (!$id_user) {
-    header("Location:daftar-user");
+} elseif ($_SESSION["status"] != "admin") {
+    header("Location: index");
     return false;
 }
 
-// ambil id use dari session
+
 $username = $_SESSION["login"];
 
 
-// cari user
-$user = mysqli_query($conn, "SELECT *FROM user WHERE id_user = '$id_user'");
-$result = mysqli_fetch_assoc($user);
+// cari ulasan, barang dan  user
+$ulasan = mysqli_query($conn, "SELECT gambar1, id_ulasan, id_barang, nama_barang, komentar, username, rating, wkt_ulasan FROM ulasan JOIN barang USING(id_barang) JOIN user USING(id_user) ORDER BY id_ulasan;");
 
-// cek apakah tidak menemukan id_user
-if (mysqli_num_rows($user) === 0) {
-    echo "<script>  alert('user tidak ditemukan'); window.location.href='daftar-user'</script>";
-    return false;
+
+
+// cari data form pencari
+if (isset($_POST["cari"])) {
+    $ulasan = cari($_POST["keyword"]);
 }
 
-// data api rajongkir
-// cari kota dan provinsi user
-$distrik_user = $result["distrik"];
+function query($query)
+{
+    global $conn;
+    $result2 = mysqli_query($conn, $query);
+    $rows = [];
+    while ($row = mysqli_fetch_assoc($result2)) {
+        $rows[] = $row;
+    }
+    return $rows;
+}
 
-$curl = curl_init();
-curl_setopt_array($curl, array(
-    CURLOPT_URL => "http://api.rajaongkir.com/starter/cost",
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_ENCODING => "",
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 30,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-    CURLOPT_CUSTOMREQUEST => "POST",
-    CURLOPT_POSTFIELDS => "origin=" . $distrik_user . "&destination=" . $distrik_user . "&weight=500" . "&courier=jne",
-    CURLOPT_HTTPHEADER => array(
-        "content-type: application/x-www-form-urlencoded",
-        "key: 81d4424e2b099f8b8ea33708087f4b8c"
-    ),
-));
-$response = curl_exec($curl);
-$err = curl_error($curl);
-curl_close($curl);
-$data = json_decode($response, true);
-$distrikUser = $data['rajaongkir']['origin_details']['city_name'];
-$provinsiUser = $data['rajaongkir']['origin_details']['province'];
+function cari($keyword)
+{
+    $query = "SELECT *FROM barang JOIN ulasan USING(id_barang) JOIN user USING(id_user)  WHERE nama_barang LIKE '%$keyword%' OR rating LIKE '%$keyword%' OR username LIKE '%$keyword%' OR komentar LIKE '%$keyword%' OR wkt_ulasan LIKE '%$keyword%' ORDER BY id_ulasan";
+    return query($query);
+}
+// end cari
+
+
+if ($_SESSION["status"] === "admin") {
+    $admin = mysqli_query($conn, "SELECT *FROM admin WHERE username = '$username'");
+    $result  = mysqli_fetch_assoc($admin);
+}
+
 
 ?>
 
@@ -69,7 +61,7 @@ $provinsiUser = $data['rajaongkir']['origin_details']['province'];
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $result["nama_user"]; ?></title>
+    <title>Daftar User</title>
 
     <script src="assets/js/main.js"></script>
 
@@ -97,16 +89,16 @@ $provinsiUser = $data['rajaongkir']['origin_details']['province'];
                                     </span>
                                     <div class="row">
                                         <span class="ms-1 fw-bold text-capitalize" id="nama"><?= $_SESSION["login"]; ?> <?php if ($_SESSION["status"] == "admin") : ?> <img src="assets/img/check-verifed.png" alt="" width="16"><?php endif; ?> </span>
-                                        <span class="ms-1" id="sebagai"><?= $_SESSION["status"] ?></span>
+                                        <span class="ms-1" id="sebagai"><?= $result["status"]; ?></span>
                                     </div>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-light text-small border-0 shadow-sm">
                                     <?php if ($_SESSION["status"] == "user") : ?>
                                         <li class="py-1">
-                                            <a class="dropdown-item" href="akun?id_user=<?= $result["id_user"] ?>"><i class="fa fa-user-circle"></i> Akun</a>
+                                            <a class="dropdown-item" href="akun?id_user=<?= $result['id_user'] ?>"><i class="fa fa-user-circle"></i> Akun</a>
                                         </li>
                                         <li class="py-1">
-                                            <a class="dropdown-item" href="edit-akun?id_user=<?= $result["id_user"] ?>"><i class="fa fa-edit"></i> Edit Akun</a>
+                                            <a class="dropdown-item" href="edit-akun?id_user=<?= $result['id_user'] ?>"><i class="fa fa-edit"></i> Edit Akun</a>
                                         </li>
                                     <?php endif; ?>
                                     <li class="py-1">
@@ -137,7 +129,7 @@ $provinsiUser = $data['rajaongkir']['origin_details']['province'];
                                     <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_notifications_active_black_24dp.png" class="me-2" width="35" alt=""> Penjualan</span></a>
                             </li>
                             <li>
-                                <a href="ulasan" class="nav-link px-0 align-middle" style="opacity: .5;">
+                                <a href="ulasan" class="nav-link px-0 align-middle">
                                     <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_thumbs_up_down_black_24dp.png" class="me-2" width="35" alt=""> Ulasan</span></a>
                             </li>
                         <?php else : ?>
@@ -157,81 +149,63 @@ $provinsiUser = $data['rajaongkir']['origin_details']['province'];
             </span>
 
             <div class="col py-3 mt-5" id="content">
-
-                <h2 class="py-5 text-capitalize">Data <b><?= $result["status"]; ?></b></h2>
-
+                <form action="" class="form-cari" method="POST">
+                    <div class="mb-3 d-flex p-3">
+                        <input class="form-control mainLoginInput me-2" type="text" placeholder="&#61442; Cari Nama, Ulasan, dsb" name="keyword" autocomplete="off" autofocus />
+                        <button type="submit" class="form-control btncari text-white fw-bold" name="cari">Cari</button>
+                    </div>
+                </form>
                 <table class="table table-borderless">
                     <thead>
-                        <tr>
-                            <td>Nama</td>
-                            <td>:</td>
-                            <td>
-                                <h5 class="text-capitalize fw-bold mb-0"><?= $result["nama_user"]; ?></h5>
-                            </td>
+                        <tr style="border-bottom: 1px solid #C9C9C9;">
+                            <th scope="col">No</th>
+                            <th scope="col">Produk</th>
+                            <th scope="col">Rating</th>
+                            <th scope="col">Komentar</th>
+                            <th scope="col">Username</th>
+                            <th scope="col">Tanggal</th>
+                            <th scope="col">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Username</td>
-                            <td>:</td>
-                            <td><?= $result["username"]; ?></td>
-                        </tr>
-                        <tr>
-                            <td>Email</td>
-                            <td>:</td>
-                            <td class="fw-bold"><?= $result["email"]; ?></td>
-                        </tr>
-                        <tr>
-                            <td>Nomor Hp</td>
-                            <td>:</td>
-                            <td class="fw-bold"><?= $result["nomor_hp"]; ?></td>
-                        </tr>
-                        <tr>
-                            <td>Alamat</td>
-                            <td>:</td>
-                            <td class="text-capitalize"><?= $result["alamat"]; ?></td>
-                        </tr>
-                        <tr>
-                            <td>Kode Pos</td>
-                            <td>:</td>
-                            <td><?= $result["kode_pos"]; ?></td>
-                        </tr>
-                        <tr>
-                            <td>Kota/Kabupaten</td>
-                            <td>:</td>
-                            <td class="fw-bold"><?= $distrikUser; ?></td>
-                        </tr>
-                        <tr>
-                            <td>Provinsi</td>
-                            <td>:</td>
-                            <td class="fw-bold"><?= $provinsiUser; ?></td>
-                        </tr>
-                        <tr>
-                            <td>Waktu Registrasi</td>
-                            <td>:</td>
-                            <td><?= $result["wkt_register"]; ?></td>
-                        </tr>
+                        <?php $i = 1 ?>
+                        <?php foreach ($ulasan as $crs) : ?>
+                            <tr>
+                                <td><?= $i++; ?></td>
+                                <td class="d-flex align-items-center text-capitalize">
+                                    <img src="assets/img/post/<?= $crs['gambar1'] ?>" class="me-3" width="50" alt="">
+                                    <?= $crs["nama_barang"]; ?>
+                                </td>
+                                <td class="text-center"><i class="fa fa-star text-warning"></i> (<?= $crs["rating"]; ?>)</td>
+                                <td class="fst-italic"><?= $crs["komentar"]; ?></td>
+                                <td><?= $crs["username"]; ?></td>
+                                <td><?= $crs["wkt_ulasan"]; ?></td>
+                                <td>
+                                    <a href="hapus-ulasan?id_ulasan=<?= $crs['id_ulasan'] ?>" class="btn btn-outline-danger btn-sm" title="" onclick=" return confirm('Yakin ingin menghapus ulasan <?= $crs['username'] ?> ?')">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                    <a href="../produk?id=<?= $crs['id_barang'] ?>" class="btn btn-outline-success btn-sm" title="Lihat <?= $crs['nama_barang'] ?>">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
 
-                <?php if ($_SESSION["status"] == "admin") : ?>
-                    <a class="btn btn-danger text-" href="hapus-user?id_user=<?= $result['id_user']; ?>" title="Hapus <?= $result['id_user']; ?>" onclick=" return confirm('Yakin Ingin Menghapus <?= $result["nama_user"] ?> ')">Hapus</a>
-                <?php else : ?>
-                    <a class="btn btn-primary text-" href="edit-akun?id_user=<?= $result['id_user']; ?>" title="Edit <?= $result['id_user']; ?>">Edit</a>
-                <?php endif; ?>
-
             </div>
         </div>
+    </div>
 
-        <script>
-            $(document).ready(function() {
-                $("#btn-burger").click(function() {
-                    $(".sidebar").toggle(250);
-                });
+    <script>
+        $(document).ready(function() {
+            $("#btn-burger").click(function() {
+                $(".sidebar").toggle(250);
             });
-        </script>
-        <!-- bootstrap js -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+        });
+    </script>
+    <!-- bootstrap js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
 
 </body>
 

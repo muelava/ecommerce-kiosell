@@ -7,6 +7,8 @@ include "admin/koneksi.php";
 
 $barang = mysqli_query($conn, "SELECT *FROM barang ORDER BY id_barang DESC");
 
+
+
 $kategori_pakaian = mysqli_query($conn, "SELECT *FROM barang where kategori='pakaian' ORDER BY id_barang DESC");
 $kategori_elektro = mysqli_query($conn, "SELECT *FROM barang where kategori='elektronik' ORDER BY id_barang DESC");
 $kategori_otomotif = mysqli_query($conn, "SELECT *FROM barang where kategori='otomotif' ORDER BY id_barang DESC");
@@ -152,10 +154,10 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
                     <img src="assets/img/banner.png" class="d-block w-100" alt="assets/img/banner.png">
                 </div>
                 <div class="carousel-item">
-                    <img src="assets/img/banner.png" class="d-block w-100" alt="assets/img/banner.png">
+                    <img src="assets/img/banner2.png" class="d-block w-100" alt="assets/img/banner2.png">
                 </div>
                 <div class="carousel-item">
-                    <img src="assets/img/banner.png" class="d-block w-100" alt="assets/img/banner.png">
+                    <img src="assets/img/banner3.png" class="d-block w-100" alt="assets/img/banner3.png">
                 </div>
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
@@ -191,6 +193,14 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
                         <div class="text-start">
                             <p class="lokasi mb-1"><i class="fa fa-bookmark"></i> <?= $rst_terbaru["kategori"]; ?></p>
                             <p class="fw-bold harga">Rp <?= number_format($rst_terbaru["harga"], 0, ',', '.'); ?></p>
+
+                            <!-- cari jumlah ulasan -->
+                            <?php $id_brg = $rst_terbaru["id_barang"];
+                            $ulasan = mysqli_query($conn, "SELECT count(*) as jumlah_ulasan from ulasan where id_barang='$id_brg'");
+                            foreach ($ulasan as $ulsn) : ?>
+                                <p class="lokasi mb-1"><i class="fa fa-star text-warning"></i> (<?= $ulsn["jumlah_ulasan"]; ?>) Ulasan</p>
+                            <?php endforeach; ?>
+
                             <?php
                             $id_admin = $rst_terbaru["id_admin"];
                             $query = mysqli_query($conn, "SELECT *FROM admin WHERE id_admin = '$id_admin'");
@@ -216,7 +226,16 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
                         </div>
                         <h6 class="my-3"><?= substr($pakaian["nama_barang"], 0, 38); ?>...</h6>
                         <div class="text-start">
+                            <p class="lokasi mb-1"><i class="fa fa-bookmark"></i> <?= $pakaian["kategori"]; ?></p>
                             <p class="fw-bold harga">Rp <?= number_format($pakaian["harga"], 0, ',', '.'); ?></p>
+
+                            <!-- cari jumlah ulasan -->
+                            <?php $id_brg = $pakaian["id_barang"];
+                            $ulasan = mysqli_query($conn, "SELECT count(*) as jumlah_ulasan from ulasan where id_barang='$id_brg'");
+                            foreach ($ulasan as $ulsn) : ?>
+                                <p class="lokasi mb-1"><i class="fa fa-star text-warning"></i> (<?= $ulsn["jumlah_ulasan"]; ?>) Ulasan</p>
+                            <?php endforeach; ?>
+
                             <?php
                             $id_admin = $pakaian["id_admin"];
                             $query = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");
@@ -241,7 +260,16 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
                         </div>
                         <h6 class="my-3"><?= substr($elektronik["nama_barang"], 0, 38); ?>...</h6>
                         <div class="text-start">
+                            <p class="lokasi mb-1"><i class="fa fa-bookmark"></i> <?= $elektronik["kategori"]; ?></p>
                             <p class="fw-bold harga">Rp <?= number_format($elektronik["harga"], 0, ',', '.'); ?></p>
+
+                            <!-- cari jumlah ulasan -->
+                            <?php $id_brg = $elektronik["id_barang"];
+                            $ulasan = mysqli_query($conn, "SELECT count(*) as jumlah_ulasan from ulasan where id_barang='$id_brg'");
+                            foreach ($ulasan as $ulsn) : ?>
+                                <p class="lokasi mb-1"><i class="fa fa-star text-warning"></i> (<?= $ulsn["jumlah_ulasan"]; ?>) Ulasan</p>
+                            <?php endforeach; ?>
+
                             <?php
                             $id_admin = $elektronik["id_admin"];
                             $query = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");
@@ -266,7 +294,16 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
                         </div>
                         <h6 class="my-3"><?= substr($otomotif["nama_barang"], 0, 38); ?>...</h6>
                         <div class="text-start">
+                            <p class="lokasi mb-1"><i class="fa fa-bookmark"></i> <?= $otomotif["kategori"]; ?></p>
                             <p class="fw-bold harga">Rp <?= number_format($otomotif["harga"], 0, ',', '.'); ?></p>
+
+                            <!-- cari jumlah ulasan -->
+                            <?php $id_brg = $otomotif["id_barang"];
+                            $ulasan = mysqli_query($conn, "SELECT count(*) as jumlah_ulasan from ulasan where id_barang='$id_brg'");
+                            foreach ($ulasan as $ulsn) : ?>
+                                <p class="lokasi mb-1"><i class="fa fa-star text-warning"></i> (<?= $ulsn["jumlah_ulasan"]; ?>) Ulasan</p>
+                            <?php endforeach; ?>
+
                             <?php
                             $id_admin = $otomotif["id_admin"];
                             $query = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");

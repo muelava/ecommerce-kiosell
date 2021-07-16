@@ -83,7 +83,7 @@ $provinsiUser = $data['rajaongkir']['origin_details']['province'];
 
 // tombol update di tekan
 if (isset($_POST["update"])) {
-    $nama_user = strip_tags($_POST["nama_lengkap"]);
+    $nama_user = strip_tags(ucwords($_POST["nama_lengkap"]));
     $email = strip_tags($_POST["email"]);
     $nomor_hp = strip_tags($_POST["nomor_hp"]);
     $provinsi = $_POST["provinsi"];

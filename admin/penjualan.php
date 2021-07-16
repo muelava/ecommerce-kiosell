@@ -161,6 +161,10 @@ if (isset($_POST["konfirm"])) {
                                 <a href="penjualan" class="nav-link px-0 align-middle">
                                     <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_notifications_active_black_24dp.png" class="me-2" width="35" alt=""> Penjualan</span></a>
                             </li>
+                            <li>
+                                <a href="ulasan" class="nav-link px-0 align-middle" style="opacity: .5;">
+                                    <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_thumbs_up_down_black_24dp.png" class="me-2" width="35" alt=""> Ulasan</span></a>
+                            </li>
                         <?php endif; ?>
                     </ul>
                     <hr>
@@ -202,12 +206,14 @@ if (isset($_POST["konfirm"])) {
                                 <td><?= $result["nama_barang"] ?></td>
                                 <td>K-<?= $result["kode_transaksi"]; ?></td>
                                 <td>Rp <?= $result["jml_tagihan"]; ?></td>
-                                <td class="text-primary">
+                                <td class="text-secondary">
                                     <?php
                                     if ($result["status"] == "true") {
-                                        echo "<span class='text-success'>Dikirim</span>" . " <i class='fa fa-check-circle text-success'></i>";
+                                        echo "<span class='text-success'>Dikirim</span>" . " <i class='fa fa-truck text-success'></i>_";
+                                    } elseif ($result["status"] == "false") {
+                                        echo "<span class='text-warning'>Menunggu</span>" . " <i class='fa fa-clock-o text-warning'></i>";
                                     } else {
-                                        echo "<i class='fa fa-clock-o'></i> Menunggu <br> Pembayaran";
+                                        echo "<span>Selesai</span>" . " <i class='fa fa-check'></i>";
                                     }
                                     ?>
                                 </td>

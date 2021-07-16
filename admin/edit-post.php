@@ -341,6 +341,10 @@ function upload3()
                                 <a href="penjualan" class="nav-link px-0 align-middle" style="opacity: .5;">
                                     <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_notifications_active_black_24dp.png" class="me-2" width="35" alt=""> Penjualan</span></a>
                             </li>
+                            <li>
+                                <a href="ulasan" class="nav-link px-0 align-middle" style="opacity: .5;">
+                                    <i class="fs-4 bi-table"></i> <span class="ms-1" id="navigasi"><img src="assets/img/outline_thumbs_up_down_black_24dp.png" class="me-2" width="35" alt=""> Ulasan</span></a>
+                            </li>
                         <?php endif; ?>
                     </ul>
                     <hr>

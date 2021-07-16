@@ -79,10 +79,10 @@ $waktu = strip_tags(hari_ini() . ", " . date('d/m/Y') . " " . date("H:i:s"));
 
 if (isset($_POST["register"])) {
 
-    $nama_user = $_POST["nama_depan"] . " " . $_POST["nama_belakang"];
+    $nama_user = strip_tags(ucwords($_POST["nama_depan"])) . " " . strip_tags(ucwords($_POST["nama_belakang"]));
     $username = strtolower(stripslashes($_POST["username"]));
-    $email = $_POST["email"];
-    $nomor_hp = $_POST["nomor_hp"];
+    $email = strip_tags($_POST["email"]);
+    $nomor_hp = strip_tags($_POST["nomor_hp"]);
     $provinsi = $_POST["provinsi"];
     $distrik = $_POST["kabupaten"];
     $kode_pos = strip_tags($_POST["kode_pos"]);

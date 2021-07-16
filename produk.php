@@ -63,6 +63,15 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
 
 
 
+// jumlah ulasan id barang
+$jmlUlasan = mysqli_query($conn, "SELECT COUNT(*) AS jumlah FROM ulasan WHERE id_barang = '$id_barang'");
+$resultJmlUlasan = mysqli_fetch_assoc($jmlUlasan);
+
+// cari data ulasan dan namau user dengan join
+$ulasan = mysqli_query($conn, "SELECT nama_user, komentar, wkt_ulasan, rating FROM user join ulasan using(id_user) WHERE id_barang = '$id_barang' ORDER BY id_ulasan DESC");
+
+
+
 ?>
 
 <!doctype html>
@@ -82,6 +91,23 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <title><?= $result["nama_barang"]; ?></title>
+
+
+    <style>
+        #inisial {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            padding: 20px;
+            line-height: initial;
+        }
+    </style>
 </head>
 
 <body>
@@ -154,9 +180,9 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
     <!-- container -->
     <div class="container" id="container-produk">
 
-        <div class="row mt-5">
+        <div class="row my-5">
             <div class="kiri col-md">
-                <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+                <div id="carouselExampleIndicators" class="mb-5 carousel slide" data-bs-ride="carousel">
                     <div class="carousel-indicators">
                         <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
                         <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -186,7 +212,7 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
             <div class="kanan col-md">
                 <div class="detail">
                     <h3 class="fw-bold"><?= $result["nama_barang"]; ?></h3>
-                    <p>0 ulasan</p>
+                    <p><i class="fa fa-star text-warning"></i> (<?= $resultJmlUlasan["jumlah"]; ?>) Ulasan</p>
                     <h3 class="fw-bold mb-3">Rp<?= number_format($result["harga"], 0, ',', '.'); ?></h3>
                     <p>Kondisi : <strong><?= $result["kondisi"]; ?></strong></p>
                     <p>Stok : <strong><?= $result["jml_barang"]; ?></strong></p>
@@ -212,6 +238,84 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
                 </div>
             </div>
         </div>
+        <h6 class="mb-5 fw-bold">Semua Ulasan Pembeli (<?= $resultJmlUlasan["jumlah"]; ?>)</h6>
+
+        <div class="row" style="max-height: 100vh; overflow-y:scroll; position:relative">
+            <?php foreach ($ulasan as $resultUlasan) : ?>
+
+                <div class="col-md-3">
+                    <p id="mycolor-text" class="fw-bold mb-3 text-capitalize row justify-content-center">
+                        <span class="inisial rounded-circle col-3">
+                            <span class="text-white position-absolute fw-bold coba">
+                                <?php
+                                $nama = substr($resultUlasan["nama_user"], 0, 1);
+                                if ($nama == "A" || $nama == "D" || $nama == "H" || $nama == "L" || $nama == "P" || $nama == "T" || $nama == "X") {
+                                    echo "
+                                                <span style='background: rgb(255,0,0,.5); color:red' class='rounded-circle me-2' id='inisial'>
+                                                <span class='text-uppercase position-absolute fw-bold '>$nama</span>
+                                                </span>
+                                                ";
+                                } else if ($nama == "B" || $nama == "E" || $nama == "I" || $nama == "M" || $nama == "Q" || $nama == "U" || $nama == "Y") {
+                                    echo "
+                                                <span style='background: rgb(0,255,68,0.5);color:#007D21' class='rounded-circle me-2' id='inisial'>
+                                                <span class='text-uppercase position-absolute fw-bold'>$nama</span>
+                                                </span>
+                                                ";
+                                } else if ($nama == "C" || $nama == "F" || $nama == "J" || $nama == "N" || $nama == "R" || $nama == "V" || $nama == "Z") {
+                                    echo "
+                                                <span style='background: rgb(255,180,4,.5); color:#D29B19' class='rounded-circle me-2' id='inisial'>
+                                                <span class='text-uppercase position-absolute fw-bold'>$nama</span>
+                                                </span>
+                                                ";
+                                } else {
+                                    echo "
+                                                <span style='background: rgb(8,0,255,.5); color:#0700DC' class='rounded-circle me-2' id='inisial'>
+                                                <span class='text-uppercase position-absolute fw-bold'>$nama</span>
+                                                </span>
+                                                ";
+                                }
+
+                                ?>
+                            </span>
+                        </span>
+                        <span class="col">
+                            <?= $resultUlasan["nama_user"]; ?><br>
+                            <small style="font-size: .7em;" class="text-secondary fw-normal"><?= $resultUlasan["wkt_ulasan"]; ?></small>
+                        </span>
+                    </p>
+                </div>
+                <div class="col-md-7 mb-3">
+                    <p>
+                        <?php
+                        if ($resultUlasan["rating"] == 1) {
+                            for ($i = 1; $i <= $resultUlasan["rating"]; $i++) {
+                                echo "<i class= 'fa fa-star text-warning'></i> ";
+                            }
+                        } elseif ($resultUlasan["rating"] == 2) {
+                            for ($i = 1; $i <= $resultUlasan["rating"]; $i++) {
+                                echo "<i class= 'fa fa-star text-warning'></i> ";
+                            }
+                        } elseif ($resultUlasan["rating"] == 3) {
+                            for ($i = 1; $i <= $resultUlasan["rating"]; $i++) {
+                                echo "<i class= 'fa fa-star text-warning'></i> ";
+                            }
+                        } elseif ($resultUlasan["rating"] == 4) {
+                            for ($i = 1; $i <= $resultUlasan["rating"]; $i++) {
+                                echo "<i class= 'fa fa-star text-warning'></i> ";
+                            }
+                        } elseif ($resultUlasan["rating"] == 5) {
+                            for ($i = 1; $i <= $resultUlasan["rating"]; $i++) {
+                                echo "<i class= 'fa fa-star text-warning'></i> ";
+                            }
+                        }
+                        ?>
+                    </p>
+                    <p><?= $resultUlasan["komentar"]; ?></p>
+                    <hr>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
 
         <section id="section2" class="mt-5">
             <h5 class="fw-bold mb-4 subheading" id="terbaru">Produk Lainnya</h5>

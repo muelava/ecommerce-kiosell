@@ -64,7 +64,7 @@ if (isset($_POST["rincian_pembelian"])) {
     $id_transaksi = $resultTransaksi["id_transaksi"];
 
 
-    echo "<script>alert('Berhasil!'); window.location.href='transaksi?id_transaksi=$id_transaksi'</script>";
+    echo "<script>alert('Pesanan Telah Dibuat! Silakan lakukan pembayaran.'); window.location.href='transaksi?id_transaksi=$id_transaksi'</script>";
     return mysqli_affected_rows($conn);
     die();
 }
@@ -575,7 +575,7 @@ if ($_SESSION["status"] == "user") {
 
 
             let ambilWaktu = new Date().getTime();
-            let dapatWaktu = ambilWaktu + 3000; //+ 86400000 = 24 jam
+            let dapatWaktu = ambilWaktu + 86400000; //+ 86400000 = 24 jam
             $("#waktu_beli").val(dapatWaktu);
 
 
