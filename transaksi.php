@@ -132,6 +132,12 @@ if (isset($_POST["kirim"])) {
     $komentar = $_POST["ulasan"];
     $status = "done";
 
+    // cek apakah sebgai admin?
+    if ($_SESSION["status"] == "admin") {
+        echo "<script>alert('Tidak dapat memberikan ulasan, karena sebagai admin!'); window.location.href='admin/ulasan';</script>";
+        return false;
+    }
+
     // update data
     mysqli_query($conn, "INSERT INTO ulasan VALUES('', '$id_barang', '$id_user', '$rating', '$komentar','$waktu')");
     mysqli_query($conn, "UPDATE transaksi SET status = '$status' WHERE id_transaksi = '$id_transaksi'");
@@ -472,7 +478,7 @@ if (isset($_POST["kirim"])) {
                         <p>Setelah melakukan pembayaran, silakan tunggu. Kami akan langsung mengkonfirmasi dan Mengirim pesanan anda.</p>
                     </li>
                     <li>
-                        <p>Jika waktu pembayaran anda telah habis, maka Kosell otomatis membatalkan transaksi.</p>
+                        <p>Jika waktu pembayaran anda telah habis, maka Kiosell otomatis membatalkan transaksi.</p>
                         <!-- <p>Pastikan memasukan dengan benar 3 <i class="text-secondary">(contoh : Rp 1.000.<mark class="bg-info rounded">123</mark>)</i> digit angka pada Jumlah Tagihan. Agar lebih mudah konfirmasi transaksi Anda.</p> -->
                     </li>
                 </ul>
@@ -485,7 +491,7 @@ if (isset($_POST["kirim"])) {
     <!-- reminder -->
     <?php if ($_SESSION["status"] != "admin") : ?>
         <div id="reminder" class="d-none text-center" style="position: fixed; z-index:99; top:0%; width:100%; height:100%; background-color:rgba(0,0,0,0.5);">
-            <img src="assets/img/reminder.jpg" width="70%" class="rounded" style="margin:0;" alt="">
+            <img src="assets/img/reminder.jpg" width="60%" class="rounded" style="margin:0;" alt="">
         </div>
     <?php endif; ?>
 

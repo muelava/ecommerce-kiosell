@@ -43,7 +43,7 @@ function query($query)
 
 function cari($keyword)
 {
-    $query = "SELECT *FROM transaksi WHERE nama_barang LIKE '%$keyword%' OR kode_transaksi LIKE '%$keyword%' ORDER BY id_transaksi DESC";
+    $query = "SELECT *FROM transaksi WHERE nama_barang LIKE '%$keyword%' OR kode_transaksi LIKE '%$keyword%' OR jml_tagihan LIKE '%$keyword%' ORDER BY id_transaksi DESC";
 
     return query($query);
 }

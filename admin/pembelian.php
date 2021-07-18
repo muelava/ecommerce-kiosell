@@ -154,6 +154,7 @@ $result_transaksi = mysqli_fetch_assoc($transaksi);
                                     ?>
                                 </td>
                                 <td>
+                                    <a class="btn btn-sm btn-danger" onclick="return confirm('Batalkan pembelian <?= $result['nama_barang'] ?>? transaksi akan dihapus.')" href="hapus-transaksi?id_transaksi=<?= $result['id_transaksi'] ?>">Batal</a>
                                     <a class="btn btn-sm btn-primary" href="../transaksi?id_transaksi=<?= $result['id_transaksi'] ?>">Rincian</a>
                                 </td>
                             </tr>

@@ -20,6 +20,14 @@ if ($_SESSION["status"] === "admin") {
 } else {
     $user = mysqli_query($conn, "SELECT *FROM user WHERE username = '$username'");
     $result  = mysqli_fetch_assoc($user);
+    $id_user = $result["id_user"];
+
+    $caritransaksi = mysqli_query($conn, "SELECT *FROM transaksi WHERE id_user ='$id_user'");
+    // $resultTransaksi = mysqli_fetch_assoc($caritransaksi);
+
+    foreach ($caritransaksi as $status) {
+        $status["status"];
+    }
 }
 
 
@@ -134,7 +142,33 @@ if ($_SESSION["status"] === "admin") {
             </div>
         </div>
 
+
+        <!-- reminder -->
+        <?php if ($_SESSION["status"] != "admin" && $status["status"] == "false") : ?>
+            <div id="reminder" class="d-none text-center" style="position: fixed; z-index:99; top:0%; width:100%; height:100%; background-color:rgba(0,0,0,0.5);">
+                <h3 class="text-light mt-3 text-capitalize"> Hai <strong><?= $_SESSION["login"]; ?></strong>, Ada pembayaran yang menunggu nih. <br> Segera selesaikan.</h3>
+                <img src="../assets/img/reminder.jpg" width="60%" class="rounded" style="margin:0;" alt="">
+            </div>
+        <?php endif; ?>
+        <!-- /reminder -->
+
+
+
         <script>
+            // reminder 3detik
+            setTimeout(() => {
+                $("#reminder").removeClass("d-none");
+
+            }, 2000)
+
+            $("#reminder").on("click", () => {
+                $("#reminder").addClass("d-none");
+            })
+            // /reminder
+
+
+
+
             $(document).ready(function() {
                 $("#btn-burger").click(function() {
                     $(".sidebar").toggle(250);

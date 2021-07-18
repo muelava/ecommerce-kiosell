@@ -241,7 +241,7 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
                             $query = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");
                             $result = mysqli_fetch_assoc($query);
                             ?>
-                            <p class="stok">Stok : <strong><?= $rst_terbaru["jml_barang"]; ?></strong> </p>
+                            <p class="stok">Stok : <strong><?= $pakaian["jml_barang"]; ?></strong> </p>
                             <p class="lokasi mb-1"><i class="fa fa-user"></i> <?= $result["username"]; ?></p>
                             <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $kotaAsalPenjual . ", " . $provinsiAsalPenjual; ?></p>
                         </div>
@@ -275,7 +275,7 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
                             $query = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");
                             $result = mysqli_fetch_assoc($query);
                             ?>
-                            <p class="stok">Stok : <strong><?= $rst_terbaru["jml_barang"]; ?></strong> </p>
+                            <p class="stok">Stok : <strong><?= $elektronik["jml_barang"]; ?></strong> </p>
                             <p class="lokasi mb-1"><i class="fa fa-user"></i> <?= $result["username"]; ?></p>
                             <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $kotaAsalPenjual . ", " . $provinsiAsalPenjual; ?></p>
                         </div>
@@ -309,7 +309,7 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
                             $query = mysqli_query($conn, "SELECT *FROM admin where id_admin = '$id_admin'");
                             $result = mysqli_fetch_assoc($query);
                             ?>
-                            <p class="stok">Stok : <strong><?= $rst_terbaru["jml_barang"]; ?></strong> </p>
+                            <p class="stok">Stok : <strong><?= $otomotif["jml_barang"]; ?></strong> </p>
                             <p class="lokasi mb-1"><i class="fa fa-user"></i> <?= $result["username"]; ?></p>
                             <p class="penjual mb-1"><i class="fa fa-map-marker"></i> <?= $kotaAsalPenjual . ", " . $provinsiAsalPenjual; ?></p>
                         </div>
