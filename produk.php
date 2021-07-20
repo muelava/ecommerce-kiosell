@@ -118,7 +118,7 @@ $ulasan = mysqli_query($conn, "SELECT nama_user, komentar, wkt_ulasan, rating FR
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
         <div class="container-fluid mx-5">
-            <a class="navbar-brand fw-bold" href="/kiosell">Kiosell</a>
+            <a class="navbar-brand fw-bold" href="/">Kiosell</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -321,12 +321,12 @@ $ulasan = mysqli_query($conn, "SELECT nama_user, komentar, wkt_ulasan, rating FR
             <h5 class="fw-bold mb-4 subheading" id="terbaru">Produk Lainnya</h5>
             <div class="row">
                 <?php foreach ($barang_ktgr as $rst_terbaru) : ?>
-                    <a href="produk?id=<?= $rst_terbaru['id_barang'] ?>" target="_blank" class="btn shadow-sm col-sm-2">
+                    <a href="produk?id=<?= $rst_terbaru['id_barang'] ?>" target="_blank" class="btn shadow-sm col-md-2">
                         <div class="img-content">
                             <img class="img-fluid" width="100" src="admin/assets/img/post/<?= $rst_terbaru['gambar1'] ?>" alt="">
                         </div>
-                        <h6 class="my-3"><?= $rst_terbaru["nama_barang"]; ?></h6>
-                        <div class="text-start">
+                        <div class="text-start desk-produk">
+                            <h6 class="my-md-3"><?= substr($rst_terbaru["nama_barang"], 0, 38); ?>...</h6>
                             <p class="lokasi mb-1"><i class="fa fa-bookmark"></i> <?= $rst_terbaru["kategori"]; ?></p>
                             <p class="fw-bold harga">Rp <?= number_format($rst_terbaru["harga"], 0, ',', '.'); ?></p>
                             <?php

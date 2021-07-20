@@ -185,12 +185,12 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
             <h5 class="fw-bold mb-4 subheading" id="terbaru">Terbaru</h5>
             <div class="row">
                 <?php foreach ($barang as $rst_terbaru) : ?>
-                    <a href="produk?id=<?= $rst_terbaru['id_barang'] ?>" class="btn shadow-sm col-sm-2">
+                    <a href="produk?id=<?= $rst_terbaru['id_barang'] ?>" class="btn shadow-sm col-md-2">
                         <div class="img-content">
                             <img class="img-fluid" width="120" src="admin/assets/img/post/<?= $rst_terbaru['gambar1'] ?>" alt="">
                         </div>
-                        <h6 class="my-3" id="nama_barang"><?= substr($rst_terbaru["nama_barang"], 0, 38); ?>...</h6>
-                        <div class="text-start">
+                        <div class="text-start desk-produk">
+                            <h6 class="my-md-3" id="nama_barang"><?= substr($rst_terbaru["nama_barang"], 0, 38); ?>...</h6>
                             <p class="lokasi mb-1"><i class="fa fa-bookmark"></i> <?= $rst_terbaru["kategori"]; ?></p>
                             <p class="fw-bold harga">Rp <?= number_format($rst_terbaru["harga"], 0, ',', '.'); ?></p>
 
@@ -220,12 +220,12 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
             <h5 class="fw-bold mb-4 subheading" id="pakaian">Pakaian</h5>
             <div class="row">
                 <?php foreach ($kategori_pakaian as $pakaian) : ?>
-                    <a href="produk?id=<?= $pakaian['id_barang'] ?>" class="btn shadow-sm col-sm-2">
+                    <a href="produk?id=<?= $pakaian['id_barang'] ?>" class="btn shadow-sm col-md-2">
                         <div class="img-content">
                             <img class="img-fluid" width="120" src="admin/assets/img/post/<?= $pakaian['gambar1'] ?>" alt="">
                         </div>
-                        <h6 class="my-3"><?= substr($pakaian["nama_barang"], 0, 38); ?>...</h6>
-                        <div class="text-start">
+                        <div class="text-start desk-produk">
+                            <h6 class="my-md-3"><?= substr($pakaian["nama_barang"], 0, 38); ?>...</h6>
                             <p class="lokasi mb-1"><i class="fa fa-bookmark"></i> <?= $pakaian["kategori"]; ?></p>
                             <p class="fw-bold harga">Rp <?= number_format($pakaian["harga"], 0, ',', '.'); ?></p>
 
@@ -254,12 +254,12 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
             <h5 class="fw-bold mb-4 subheading" id="elektronik">Elektronik</h5>
             <div class="row">
                 <?php foreach ($kategori_elektro as $elektronik) : ?>
-                    <a href="produk?id=<?= $elektronik['id_barang'] ?>" class="btn shadow-sm col-sm-2">
+                    <a href="produk?id=<?= $elektronik['id_barang'] ?>" class="btn shadow-sm col-md-2">
                         <div class="img-content">
                             <img class="img-fluid" width="120" src="admin/assets/img/post/<?= $elektronik['gambar1'] ?>" alt="">
                         </div>
-                        <h6 class="my-3"><?= substr($elektronik["nama_barang"], 0, 38); ?>...</h6>
-                        <div class="text-start">
+                        <div class="text-start desk-produk">
+                            <h6 class="my-md-3"><?= substr($elektronik["nama_barang"], 0, 38); ?>...</h6>
                             <p class="lokasi mb-1"><i class="fa fa-bookmark"></i> <?= $elektronik["kategori"]; ?></p>
                             <p class="fw-bold harga">Rp <?= number_format($elektronik["harga"], 0, ',', '.'); ?></p>
 
@@ -288,12 +288,12 @@ $provinsiAsalPenjual = $data['rajaongkir']['origin_details']['province'];
             <h5 class="fw-bold mb-4 subheading" id="otomotif">Otomotif</h5>
             <div class="row">
                 <?php foreach ($kategori_otomotif as $otomotif) : ?>
-                    <a href="produk?id=<?= $otomotif['id_barang'] ?>" class="btn shadow-sm col-sm-2">
+                    <a href="produk?id=<?= $otomotif['id_barang'] ?>" class="btn shadow-sm col-md-2">
                         <div class="img-content">
                             <img class="img-fluid" width="120" src="admin/assets/img/post/<?= $otomotif['gambar1'] ?>" alt="">
                         </div>
-                        <h6 class="my-3"><?= substr($otomotif["nama_barang"], 0, 38); ?>...</h6>
-                        <div class="text-start">
+                        <div class="text-start desk-produk">
+                            <h6 class="my-md-3"><?= substr($otomotif["nama_barang"], 0, 38); ?>...</h6>
                             <p class="lokasi mb-1"><i class="fa fa-bookmark"></i> <?= $otomotif["kategori"]; ?></p>
                             <p class="fw-bold harga">Rp <?= number_format($otomotif["harga"], 0, ',', '.'); ?></p>
 
