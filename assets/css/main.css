@@ -175,4 +175,23 @@
 * body footer .foot .container .row div p {
   font-size: 14px;
 }
+
+@media (max-width: 767px) {
+  * body .container #section2 .row a,
+  * body .container #section3 .row a,
+  * body .container #section4 .row a {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+  }
+  * body .container #section2 .row a .desk-produk,
+  * body .container #section3 .row a .desk-produk,
+  * body .container #section4 .row a .desk-produk {
+    width: 70%;
+    margin-left: 2em;
+  }
+}
 /*# sourceMappingURL=main.css.map */

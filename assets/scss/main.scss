@@ -187,3 +187,27 @@ $primarycolor: #ff4500;
     }
   }
 }
+
+// responsive break point
+@media (max-width: 767px) {
+  * {
+    body {
+      .container {
+        #section2,
+        #section3,
+        #section4 {
+          .row {
+            a {
+              display: flex;
+              align-items: center;
+              .desk-produk {
+                width: 70%;
+                margin-left: 2em;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
